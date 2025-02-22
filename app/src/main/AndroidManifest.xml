@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".SunnyWeatherApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,6 +13,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.component.MaterialCardView"
+            android:exported="false"
+            android:label="@string/title_activity_material_card_view"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
+            android:name=".ui.component.SerachBar"
+            android:exported="false"
+            android:label="@string/title_activity_serach_bar"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
+            android:name=".ui.layout.fragment_place"
+            android:exported="false"
+            android:label="@string/title_activity_fragment_place"
+            android:theme="@style/Theme.SunnyWeather" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

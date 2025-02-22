@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SunnyWeather</string>
+    <string name="title_activity_fragment_place">fragment_place</string>
+    <string name="title_activity_serach_bar">SerachBar</string>
+    <string name="title_activity_search_bar">SearchBar</string>
+    <string name="title_activity_material_card_view">MaterialCardView</string>
 </resources>

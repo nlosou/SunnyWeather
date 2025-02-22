@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.sunnyweather.android"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.sunnyweather.android"
@@ -42,7 +42,12 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+   implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation ("com.google.code.gson:gson:2.12.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
