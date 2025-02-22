@@ -4,4 +4,5 @@
     <string name="title_activity_serach_bar">SerachBar</string>
     <string name="title_activity_search_bar">SearchBar</string>
     <string name="title_activity_material_card_view">MaterialCardView</string>
+    <string name="title_activity_hot_cityand_current_city">HotCityandCurrentCity</string>
 </resources>

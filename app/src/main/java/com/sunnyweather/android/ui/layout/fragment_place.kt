@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -32,19 +33,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sunnyweather.android.ui.component.SearchBar
 import com.sunnyweather.android.ui.component.Surface_Card
+import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting2(name: String, modifier: Modifier = Modifier) {
-    
+fun Greeting2(mainViewModel: PlaceViewModel) {
+
     Scaffold(
         topBar = {
             TopAppBar(
                 modifier = Modifier.shadow(10.dp),
                 title = {
-                        SearchBar()
+                        SearchBar(mainViewModel)
                 },
                 actions = {
                     Button(
@@ -70,7 +72,11 @@ fun Greeting2(name: String, modifier: Modifier = Modifier) {
                 ) {
 
                 items(20) { item ->
-                    Surface_Card()
+                    if(mainViewModel.text.value.isNotEmpty())
+                    {
+                        Surface_Card()
+                    }
+
                 }
             }
 
@@ -81,7 +87,8 @@ fun Greeting2(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview2() {
+    val mainViewModel = remember { PlaceViewModel() }
     SunnyWeatherTheme {
-        Greeting2("Android")
+        Greeting2(mainViewModel)
     }
 }

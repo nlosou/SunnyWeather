@@ -35,19 +35,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.place.PlaceViewModel
 
 
 @Composable
-fun SearchBar() {
-    var text by remember { mutableStateOf("") }
+fun SearchBar(mainViewModel: PlaceViewModel) {
+
+    //var text by remember { mutableStateOf("") }
+    var text=mainViewModel.text.value
     Box (modifier=Modifier.fillMaxSize(),
         contentAlignment=Alignment.Center
         ){
 
         BasicTextField(
-            value = text,
+            value = mainViewModel.text.value,
             onValueChange = {
-                text=it
+                mainViewModel.setText(it)
             },
             decorationBox = {
                 innerTextField ->
@@ -73,6 +76,7 @@ fun SearchBar() {
                             contentAlignment = Alignment.CenterEnd
                         ){
                             IconButton(onClick = {
+                                mainViewModel.setText("")
                                 text=""
                             },
                                 modifier=Modifier.size(16.dp),
@@ -99,6 +103,7 @@ fun SearchBar() {
 @Composable
 fun GreetingPreview3() {
     SunnyWeatherTheme {
-        SearchBar()
+        val mainViewModel = remember { PlaceViewModel() }
+        SearchBar(mainViewModel)
     }
 }
