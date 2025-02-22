@@ -1,4 +1,5 @@
 #!/bin/bash
+#Noser
 # 进入项目目录
 cd "$(dirname "$0")"
 # 添加所有更改
