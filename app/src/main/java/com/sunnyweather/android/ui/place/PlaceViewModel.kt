@@ -1,30 +1,57 @@
 package com.sunnyweather.android.ui.place
 
 import android.view.animation.Transformation
+import androidx.collection.mutableIntListOf
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.Repository
 import com.sunnyweather.android.logic.model.Place
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import retrofit2.http.Query
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlin.math.log
 
 class PlaceViewModel :ViewModel(){
     private val searchQuery = MutableStateFlow<String>("")
-    val placeList=ArrayList<Place>()
+     val _placeList = mutableStateListOf<Place>() // 可观察的列表
+    //val placeList: List<Place> = _placeList
+    // 定义一个可变状态变量，用于存储第一个文本框的值
     @OptIn(ExperimentalCoroutinesApi::class)
     val placeFlow = searchQuery.flatMapLatest { query ->
         // 假设 Repository.searchPlace(query) 返回一个 Flow<List<Place>>
-        Repository.searchPlace(query)
-    }
+        //"flatMapLatest".log(query)
+        Repository.searchPlaces(query)
+            .onEach { result ->
+            result.onSuccess {  places->
+                "Result.Success".log("${places}")
+                _placeList.clear()
+                _placeList.addAll(places)
+                "placeList".log("${_placeList.size}")
+                }.onFailure {
+                    error ->
+                "Result.error".log("${error}")
+            }
+
+            }
+        }.catch {
+                    e ->
+                "placeFlow caught exception".log(e.toString())
+            }
+
+
+
+
     fun searchPlaces(query: String)
     {
         searchQuery.value=query
     }
-
 
 
     // 定义一个可变状态变量，用于存储第一个文本框的值
@@ -44,6 +71,4 @@ class PlaceViewModel :ViewModel(){
     fun setText2(value: String) {
         _text2.value = value
     }
-
-
 }

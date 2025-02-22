@@ -9,6 +9,6 @@ import retrofit2.http.GET
 
 //API接口
 interface PlaceService {
-    @GET("v2.6/place?token=${SunnyWeatherApplication.TOKEN}&lang=zh_CN")
+    @GET("v2/place?token=${SunnyWeatherApplication.TOKEN}&lang=zh_CN")
     fun serachPlaces(@Query("query") query:String): Call<PlaceResponse>
 }

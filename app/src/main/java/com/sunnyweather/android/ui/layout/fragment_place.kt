@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sunnyweather.android.logic.model.Place
 import com.sunnyweather.android.ui.component.SearchBar
 import com.sunnyweather.android.ui.component.Surface_Card
 import com.sunnyweather.android.ui.place.PlaceViewModel
@@ -67,19 +68,20 @@ fun Greeting2(mainViewModel: PlaceViewModel) {
 
     ) { contentPadding ->
         // 主内容区域
+        if(mainViewModel.text.value.isNotEmpty())
+        {
             LazyColumn(modifier=Modifier.padding(contentPadding),
                 horizontalAlignment = Alignment.CenterHorizontally // 设置所有子项水平居中
-                ) {
+            ) {
 
-                items(20) { item ->
-                    if(mainViewModel.text.value.isNotEmpty())
-                    {
-                        Surface_Card()
-                    }
+                items(mainViewModel._placeList.size) { item ->
 
+                    Surface_Card(mainViewModel._placeList[item].name)
                 }
             }
-
+        }else{
+            HotCityAndCurrentCity(Modifier.padding(contentPadding))
+        }
         }
 
 }

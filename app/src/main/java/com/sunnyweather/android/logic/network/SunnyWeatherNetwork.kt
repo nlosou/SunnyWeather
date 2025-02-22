@@ -1,5 +1,6 @@
 package com.sunnyweather.android.logic.network
 
+import com.sunnyweather.android.log
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -16,6 +17,7 @@ object SunnyWeatherNetwork {
     suspend fun searchPlaces(query:String)= placeService.serachPlaces(query).await()
 
     private suspend fun <T> Call<T>.await():T{
+        "SunnyWeatherNetwork".log("start")
         return  suspendCoroutine { continuation ->
             enqueue(object :Callback<T>{
                 override fun onResponse(call: Call<T>, response: Response<T>) {

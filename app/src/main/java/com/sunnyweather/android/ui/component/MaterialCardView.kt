@@ -35,20 +35,19 @@ import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 
 
 @Composable
-fun Surface_Card() {
+fun Surface_Card(City_name:String) {
         Surface(shape = RoundedCornerShape(8.dp),
             shadowElevation = 10.dp,
             modifier = Modifier.fillMaxWidth().height(100.dp).padding(horizontal = 15.dp, vertical = 7.dp),
             ){
                 Column {
-
                     Row(
                         modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.SpaceBetween, // 水平两端对齐
                         verticalAlignment = Alignment.CenterVertically // 垂直居中
                     ){
                         Box(){
-                            Text("City")
+                            Text(City_name)
                         }
                         Box(){
                             IconButton(onClick = {
@@ -68,6 +67,6 @@ fun Surface_Card() {
 @Composable
 fun GreetingPreview4() {
     SunnyWeatherTheme {
-        Surface_Card()
+        Surface_Card("City")
     }
 }
