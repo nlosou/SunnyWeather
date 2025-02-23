@@ -36,11 +36,12 @@ import com.sunnyweather.android.ui.component.SearchBar
 import com.sunnyweather.android.ui.component.Surface_Card
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.weather.WeatherViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting2(mainViewModel: PlaceViewModel) {
+fun Greeting2(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
 
     Scaffold(
         topBar = {
@@ -90,7 +91,8 @@ fun Greeting2(mainViewModel: PlaceViewModel) {
 @Composable
 fun GreetingPreview2() {
     val mainViewModel = remember { PlaceViewModel() }
+    val WeatherViewModel= remember { WeatherViewModel() }
     SunnyWeatherTheme {
-        Greeting2(mainViewModel)
+        Greeting2(mainViewModel,WeatherViewModel)
     }
 }
