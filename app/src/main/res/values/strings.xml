@@ -6,4 +6,7 @@
     <string name="title_activity_material_card_view">MaterialCardView</string>
     <string name="title_activity_hot_cityand_current_city">HotCityandCurrentCity</string>
     <string name="title_activity_weather_situation">WeatherSituation</string>
+    <string name="title_activity_weather_location_easy_information">
+        Weather_location_easy_information
+    </string>
 </resources>
