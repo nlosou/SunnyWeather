@@ -2,6 +2,7 @@ package com.sunnyweather.android.logic
 
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.model.Place
+import com.sunnyweather.android.logic.model.RealtimeResponse
 import com.sunnyweather.android.logic.network.ServiceCreator
 import com.sunnyweather.android.logic.network.ServiceCreator_2
 import com.sunnyweather.android.logic.network.SunnyWeatherNetwork
@@ -32,6 +33,30 @@ object Repository {
             emit(Result.failure<List<Place>>(e))
         }
     }.flowOn(Dispatchers.IO)
+
+
+    fun RealWeather(lng:String,lat:String): Flow<Result<List<RealtimeResponse>>> = flow {
+
+        try {
+            // "Repository.searchPlaces".log()
+            val RealWeather = SunnyWeatherNetwork.getRealWeather(lng,lat)
+
+            if (RealWeather.status == "ok") {
+                val Weather = RealWeather.result
+                // "val places = placeResponse.places".log(Weather.toString())
+                emit(Result.success(Weather))
+            } else {
+                "not_is_ok".log(RealWeather.status)
+                emit(Result.failure(RuntimeException("Response status is ${RealWeather.status}")))
+
+            }
+        } catch (e: Exception) {
+            "placeResponse_Exception".log(e.toString())
+            emit(Result.failure<List<RealtimeResponse>>(e))
+        }
+    }.flowOn(Dispatchers.IO) as Flow<Result<List<RealtimeResponse>>>
+
+
 }
 
 object AdcodeService {
