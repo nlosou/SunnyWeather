@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sunnyweather.android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.sunnyweather.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".SunnyWeatherApplication"
         android:allowBackup="true"
@@ -15,7 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ui.layout.WeatherSituation"
+            android:exported="false"
+            android:label="@string/title_activity_weather_situation"
+            android:theme="@style/Theme.SunnyWeather" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

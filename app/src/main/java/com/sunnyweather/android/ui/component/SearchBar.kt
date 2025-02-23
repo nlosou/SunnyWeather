@@ -38,33 +38,14 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.weather.WeatherViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
 @Composable
-fun SearchBar(mainViewModel: PlaceViewModel) {
+fun SearchBar(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val scope = rememberCoroutineScope()
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                scope.launch {
-                    mainViewModel.placeFlow.collect { result ->
-                        when (result) {
-
-                        }
-                    }
-                }
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
     //var text by remember { mutableStateOf("") }
     var text=mainViewModel.text.value
     Box (modifier=Modifier.fillMaxSize(),
@@ -75,7 +56,7 @@ fun SearchBar(mainViewModel: PlaceViewModel) {
             value = mainViewModel.text.value,
             onValueChange = {
                 mainViewModel.setText(it)
-                "onValueChange".log(text)
+                "onValueChange".log(it)
                 if(it.isNotEmpty())
                 {
                     mainViewModel.searchPlaces(it)
@@ -136,6 +117,7 @@ fun SearchBar(mainViewModel: PlaceViewModel) {
 fun GreetingPreview3() {
     SunnyWeatherTheme {
         val mainViewModel = remember { PlaceViewModel() }
-        SearchBar(mainViewModel)
+        val WeatherViewModel= remember { WeatherViewModel() }
+        SearchBar(mainViewModel,WeatherViewModel)
     }
 }

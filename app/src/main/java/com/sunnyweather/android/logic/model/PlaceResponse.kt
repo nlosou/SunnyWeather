@@ -12,6 +12,6 @@ data class Place(
     var lng: Double,
     var lat: Double
 )
-data class Location(val lng:String,val lat:String)
+data class Location(var lng:String, var lat:String)
 
 

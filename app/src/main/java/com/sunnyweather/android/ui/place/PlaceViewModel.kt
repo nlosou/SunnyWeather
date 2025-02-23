@@ -17,10 +17,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
+import retrofit2.HttpException
 import kotlin.math.log
 
 
+
 class PlaceViewModel :ViewModel(){
+
+
     private val searchQuery = MutableStateFlow<String>("")
      val _placeList = mutableStateListOf<Place>() // 可观察的列表
     //val placeList: List<Place> = _placeList
@@ -66,8 +70,12 @@ class PlaceViewModel :ViewModel(){
                         "placeList".log("${_placeList.toList()}")
                     },
                     onFailure = {
-                            error ->
-                        "Result.error".log("${error}")
+                        "WeatherFlow".log(it.toString())
+                        if (it is HttpException) {
+                            "HTTP Exception: ".log("${it.response()?.errorBody()?.string()}")
+                        } else {
+                            "Other Exception: ".log("${it.message}")
+                        }
                     }
                 )
             }.catch {

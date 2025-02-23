@@ -23,32 +23,73 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.model.Place
 import com.sunnyweather.android.ui.component.SearchBar
 import com.sunnyweather.android.ui.component.Surface_Card
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.weather.WeatherViewModel
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Greeting2(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
 
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                scope.launch {
+                    mainViewModel.placeFlow.collect { result ->
+                        // 这里可以处理结果，或者日志记录
+                        "placeFlow.collect".log("result: $result")
+                        // 你也可以在这里调用其他函数，例如更新状态等
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                scope.launch {
+                    WeatherViewModel.WeatherFlow.collect { result ->
+                        "WeatherFlow.collect".log("result: $result")
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
                 modifier = Modifier.shadow(10.dp),
                 title = {
-                        SearchBar(mainViewModel)
+                        SearchBar(mainViewModel,WeatherViewModel)
                 },
                 actions = {
                     Button(
@@ -76,6 +117,10 @@ fun Greeting2(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
             ) {
 
                 items(mainViewModel._placeList.size) { item ->
+                    WeatherViewModel.SeacherWeather(
+                        mainViewModel._placeList[item].lng.toString(),
+                        mainViewModel._placeList[item].lat.toString()
+                    )
 
                     Surface_Card(mainViewModel._placeList[item].formatted_address)
                 }
