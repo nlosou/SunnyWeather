@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sunnyweather.android.log
+import com.sunnyweather.android.logic.AdcodeService
 import com.sunnyweather.android.logic.Repository
 import com.sunnyweather.android.logic.model.Place
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,11 +19,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlin.math.log
 
+
 class PlaceViewModel :ViewModel(){
     private val searchQuery = MutableStateFlow<String>("")
      val _placeList = mutableStateListOf<Place>() // 可观察的列表
     //val placeList: List<Place> = _placeList
     // 定义一个可变状态变量，用于存储第一个文本框的值
+    /*
     @OptIn(ExperimentalCoroutinesApi::class)
     val placeFlow = searchQuery.flatMapLatest { query ->
         // 假设 Repository.searchPlace(query) 返回一个 Flow<List<Place>>
@@ -44,15 +47,39 @@ class PlaceViewModel :ViewModel(){
                     e ->
                 "placeFlow caught exception".log(e.toString())
             }
+     */
 
+    /*
 
-
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val placeFlow=searchQuery.flatMapLatest {
+            query ->
+        AdcodeService.searchPlacesByKeyword(query)
+            .onEach {
+                    result ->
+                result.fold(
+                    onSuccess = {
+                        // 清空旧数据并添加新数据
+                        _placeList.clear()
+                        _placeList.addAll(it)
+                        "placeList".log("${_placeList.toList()}")
+                    },
+                    onFailure = {
+                            error ->
+                        "Result.error".log("${error}")
+                    }
+                )
+            }.catch {
+                    e ->
+                "placeFlow caught exception".log(e.toString())
+            }
+    }
 
     fun searchPlaces(query: String)
     {
         searchQuery.value=query
     }
-
 
     // 定义一个可变状态变量，用于存储第一个文本框的值
     private val _text = mutableStateOf("")

@@ -30,8 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
-
+import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 
 
 @Composable
@@ -58,8 +57,6 @@ fun Surface_Card(City_name:String) {
                         }
                     }
                 }
-
-
         }
 }
 

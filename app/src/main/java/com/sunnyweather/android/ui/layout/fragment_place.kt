@@ -54,7 +54,7 @@ fun Greeting2(mainViewModel: PlaceViewModel) {
                         onClick = { /* 按钮点击事件 */ },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0x0000000),   // 设置按钮背景颜色为白色
-                            contentColor = Color(0xFF0096FF)       // 设置按钮文本颜色为黑色
+                            contentColor = Color(68,142,226)       // 设置按钮文本颜色为黑色
                         )
                     ) {
                         Text("取消")
@@ -76,7 +76,7 @@ fun Greeting2(mainViewModel: PlaceViewModel) {
 
                 items(mainViewModel._placeList.size) { item ->
 
-                    Surface_Card(mainViewModel._placeList[item].name)
+                    Surface_Card(mainViewModel._placeList[item].formatted_address)
                 }
             }
         }else{

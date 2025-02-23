@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.sunnyweather.android.log
-import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.place.PlaceViewModel
+import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -76,7 +76,11 @@ fun SearchBar(mainViewModel: PlaceViewModel) {
             onValueChange = {
                 mainViewModel.setText(it)
                 "onValueChange".log(text)
-                mainViewModel.searchPlaces(it)
+                if(it.isNotEmpty())
+                {
+                    mainViewModel.searchPlaces(it)
+                }
+
                 mainViewModel._placeList.clear()
 
             },
@@ -120,7 +124,7 @@ fun SearchBar(mainViewModel: PlaceViewModel) {
 
             },
             modifier = Modifier.padding(horizontal = 10.dp)
-                .background(Color.LightGray, CircleShape)
+                .background(Color(240,240,240), CircleShape)
                 .height(50.dp)
                 .fillMaxWidth()
         )

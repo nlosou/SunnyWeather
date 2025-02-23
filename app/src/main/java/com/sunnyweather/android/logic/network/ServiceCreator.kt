@@ -17,3 +17,13 @@ object ServiceCreator {
     inline fun <reified T> create():T= create(T::class.java)
 
 }
+object ServiceCreator_2 {
+    private const val BASE_URL = "https://www.yangmutea.email/"
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val placeService: PlaceService = retrofit.create(PlaceService::class.java)
+}

@@ -1,6 +1,9 @@
 package com.sunnyweather.android.logic.network
 
 import com.sunnyweather.android.log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,7 +18,6 @@ object SunnyWeatherNetwork {
     private val placeService=ServiceCreator.create<PlaceService>()
 
     suspend fun searchPlaces(query:String)= placeService.serachPlaces(query).await()
-
     private suspend fun <T> Call<T>.await():T{
         "SunnyWeatherNetwork".log("start")
         return  suspendCoroutine { continuation ->
