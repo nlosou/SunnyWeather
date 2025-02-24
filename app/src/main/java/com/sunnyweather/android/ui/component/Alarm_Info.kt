@@ -11,8 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
-import Alarm
+import com.sunnyweather.android.ui.myiconpack.Alarm
 
 
 @Composable
@@ -28,7 +29,7 @@ fun Alarm_Info(modifier: Modifier) {
                     Text("更新时间")
                 }
                 Icon(
-                    Alarm,
+                    MyIconPack.Alarm,
                     contentDescription = "",
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )

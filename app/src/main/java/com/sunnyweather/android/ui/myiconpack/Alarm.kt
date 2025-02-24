@@ -15,9 +15,10 @@ import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sunnyweather.android.ui.MyIconPack
 import kotlin.Unit
 
-val Alarm: ImageVector
+public val MyIconPack.Alarm: ImageVector
     get() {
         if (_alarm != null) {
             return _alarm!!
@@ -74,8 +75,8 @@ private var _alarm: ImageVector? = null
 
 @Preview
 @Composable
-private fun Preview() {
+private fun Preview(): Unit {
     Box(modifier = Modifier.padding(12.dp)) {
-        Image(imageVector = Alarm, contentDescription = "")
+        Image(imageVector = MyIconPack.Alarm, contentDescription = "")
     }
 }
