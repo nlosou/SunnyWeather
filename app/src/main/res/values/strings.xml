@@ -9,4 +9,6 @@
     <string name="title_activity_weather_location_easy_information">
         Weather_location_easy_information
     </string>
+    <string name="title_activity_future_weather_cards">Future_Weather_Cards</string>
+    <string name="title_activity_alarm_info">Alarm_Info</string>
 </resources>

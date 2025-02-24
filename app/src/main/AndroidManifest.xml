@@ -17,6 +17,16 @@
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.Alarm_Info"
+            android:exported="false"
+            android:label="@string/title_activity_alarm_info"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
+            android:name=".ui.component.Future_Weather_Cards"
+            android:exported="false"
+            android:label="@string/title_activity_future_weather_cards"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
             android:name=".ui.component.Weather_location_easy_information"
             android:exported="false"
             android:label="@string/title_activity_weather_location_easy_information"

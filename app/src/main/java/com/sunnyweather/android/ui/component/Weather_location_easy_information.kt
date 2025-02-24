@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -43,33 +44,22 @@ import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.myiconpack.Leaf
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 
-class Weather_location_easy_information : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            SunnyWeatherTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting3(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
-fun Greeting3(name: String, modifier: Modifier = Modifier) {
-    Column {
+fun Weather_location_easy_information(modifier: Modifier) {
+    Column(modifier) {
         Text("地址")
         Box{
+            Column {
+                Row {
+                    Text("开启位置服务，获得当前位置天气")
+                    Icon(Icons.Filled.KeyboardArrowRight, contentDescription = "")
+                }
 
-            Row {
-                Text("开启位置服务，获得当前位置天气")
-                Icon(Icons.Filled.KeyboardArrowRight, contentDescription = "")
+                Icon(Icons.Filled.List, contentDescription = "")
+
             }
+
         }
         Text("dhd\n" +
                 "dhdh\n" +
@@ -96,74 +86,11 @@ fun Greeting3(name: String, modifier: Modifier = Modifier) {
 
     }
 }
-@Composable
-fun AnimatedLeaf() {
-    // 无限循环动画控制器
-    val infiniteTransition = rememberInfiniteTransition()
-
-    // Y轴偏移动画（模拟飘动）
-    val yOffset by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 50f,
-        animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                durationMillis = 2000
-                0f at 0 with LinearEasing
-                25f at 500 with FastOutSlowInEasing
-                50f at 1000
-                25f at 1500
-                0f at 2000
-            },
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
-    // 旋转动画（模拟旋转飘落）
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = -15f,
-        targetValue = 15f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
-    // 缩放动画（增强立体感）
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 0.9f,
-        targetValue = 1.1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.TopCenter)
-    ) {
-        Image(
-            imageVector = MyIconPack.Leaf,
-            contentDescription = "飘动的树叶",
-            modifier = Modifier
-                .size(48.dp)
-                .offset(y = yOffset.dp)
-                .rotate(rotation)
-                .scale(scale)
-                .graphicsLayer {
-                    // 优化动画性能
-                    renderEffect = null
-                }
-        )
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview6() {
     SunnyWeatherTheme {
-        Greeting3("Android")
-        AnimatedLeaf()
+        Weather_location_easy_information(modifier = Modifier)
     }
 }
