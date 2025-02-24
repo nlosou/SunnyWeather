@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.sunnyweather.android.ui.Anime.AnimatableCloud
 import com.sunnyweather.android.ui.component.Alarm_Info
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
@@ -99,6 +100,9 @@ fun Greeting() {
 
 
                 }
+                AnimatableCloud(Modifier.constrainAs(Weather_Icon){
+                    start.linkTo(Easy_Weather.end)
+                })
                 
 
             }

@@ -1,7 +1,7 @@
 package com.sunnyweather.android.ui
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.sunnyweather.android.ui.myiconpack.Alarm
+import Alarm
 import com.sunnyweather.android.ui.myiconpack.Image
 import com.sunnyweather.android.ui.myiconpack.Leaf
 import com.sunnyweather.android.ui.myiconpack.LetterT
