@@ -34,7 +34,7 @@ fun Alarm_Info(modifier: Modifier) {
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
-            Text("预警详细信息:dhsdhdhdhdhhdhdhdhdh")
+            Text("预警详细信息:dhsdhdhdhdhhddhdh")
         }
     }
 }
