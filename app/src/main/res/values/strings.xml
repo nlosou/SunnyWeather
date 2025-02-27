@@ -11,4 +11,6 @@
     </string>
     <string name="title_activity_future_weather_cards">Future_Weather_Cards</string>
     <string name="title_activity_alarm_info">Alarm_Info</string>
+    <string name="title_activity_back_groud">BackGroud</string>
+    <string name="title_activity_temperature_display">TemperatureDisplay</string>
 </resources>

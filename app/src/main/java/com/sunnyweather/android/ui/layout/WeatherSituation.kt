@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,6 +38,8 @@ import com.sunnyweather.android.ui.component.Alarm_Info
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.theme.WeatherType
+import com.sunnyweather.android.ui.theme.WeatherWallpaper
 
 class WeatherSituation : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,64 +60,79 @@ class WeatherSituation : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Greeting() {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {  },
-                actions = {
-                    IconButton(onClick = {
+    Box(
+        modifier = Modifier.fillMaxSize() // 占据整个屏幕
+    )
+    {
+        WeatherWallpaper(WeatherType.SUNNY)
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
+                    title = {  },
+                    actions = {
+                        IconButton(onClick = {
 
-                    }) {
-                        Icon(Icons.Filled.Add, contentDescription = "")
+                        }) {
+                            Icon(Icons.Filled.Add, contentDescription = "")
+                        }
+                        IconButton(onClick = {
+
+                        }) {
+                            Icon(Icons.Filled.MoreVert, contentDescription = "")
+                        }
                     }
-                    IconButton(onClick = {
+                )
+            },
 
-                    }) {
-                        Icon(Icons.Filled.MoreVert, contentDescription = "")
+            ) { contentPadding ->
+            // 主内容区域
+            Box (modifier = Modifier.padding(contentPadding)){
+                AnimatableCloud(modifier = Modifier
+                    .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
+                    .padding(end = 7.dp)  )   // 右侧留白)
+                ConstraintLayout(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val (Easy_Weather,Weather_Icon,future_caed,Alarm)= remember{createRefs()}
+                    Weather_location_easy_information(Modifier.padding(16.dp).constrainAs(Easy_Weather){
+                        top.linkTo(parent.top)
+
+                    })
+                    /*
+                    Alarm_Info(Modifier.constrainAs(Alarm){
+                        top.linkTo(Easy_Weather.bottom)
+                    })
+                     */
+
+                    LazyRow(Modifier.constrainAs(future_caed){
+                        top.linkTo(parent.bottom)
+                    }){items(15) {item->
+
+                        Future_Weather_Cards()
+
                     }
-                }
-            )
-        },
-    ) { contentPadding ->
-        // 主内容区域
-        Box (modifier = Modifier.padding(contentPadding)){
 
-            ConstraintLayout(
-                modifier = Modifier.fillMaxWidth().background(Color.LightGray).height(400.dp)
-            ) {
-                val (Easy_Weather,Weather_Icon,future_caed,Alarm)= remember{createRefs()}
-                Weather_location_easy_information(Modifier.width(200.dp).constrainAs(Easy_Weather){
-                    top.linkTo(parent.top)
 
-                })
-                Alarm_Info(Modifier.constrainAs(Alarm){
-                    top.linkTo(Easy_Weather.bottom)
-                })
-                LazyRow(Modifier.constrainAs(future_caed){
-                    top.linkTo(parent.bottom)
-                }){items(15) {item->
+                    }
 
-                    Future_Weather_Cards()
-
-                }
 
 
                 }
-                AnimatableCloud(Modifier.constrainAs(Weather_Icon){
-                    start.linkTo(Easy_Weather.end)
-                })
-                
 
             }
 
         }
-
     }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview5() {
+
     SunnyWeatherTheme {
         Greeting()
     }
