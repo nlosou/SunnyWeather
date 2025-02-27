@@ -261,5 +261,5 @@ fun PreviewSunnyWallpaper() {
 @Preview
 @Composable
 fun PreviewRainyWallpaper() {
-    WeatherWallpaper(weatherType = WeatherType.RAINY)
+    WeatherWallpaper(weatherType = WeatherType.CLOUDY)
 }

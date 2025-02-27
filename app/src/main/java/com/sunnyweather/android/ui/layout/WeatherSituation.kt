@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -37,6 +41,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.sunnyweather.android.ui.Anime.AnimatableCloud
 import com.sunnyweather.android.ui.component.Alarm_Info
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
+import com.sunnyweather.android.ui.component.Hour_Situation
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.theme.WeatherType
@@ -97,11 +102,35 @@ fun Greeting() {
                 ConstraintLayout(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val (Easy_Weather,Weather_Icon,future_caed,Alarm)= remember{createRefs()}
+                    val (BoxWith,Easy_Weather,Weather_Icon,future_caed,Alarm,hour_situation)= remember{createRefs()}
                     Weather_location_easy_information(Modifier.padding(16.dp).constrainAs(Easy_Weather){
                         top.linkTo(parent.top)
 
                     })
+                    Card(modifier = Modifier.background(Color.Transparent).constrainAs(hour_situation){
+                        top.linkTo(Easy_Weather.bottom, margin = 50.dp)
+                    }, colors = CardDefaults.cardColors(containerColor = Color.Transparent) ) {
+                        LazyRow() {
+                            items(24){
+                                items->
+                                Hour_Situation(Modifier)
+                            }
+
+                        }
+
+                    }
+                    BoxWithConstraints(
+                        modifier = Modifier.constrainAs(BoxWith){
+                            top.
+                        }.fillMaxSize()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(maxWidth)
+                                .height(1.dp)
+                                .background(Color.Gray)
+                        )
+                    }
                     /*
                     Alarm_Info(Modifier.constrainAs(Alarm){
                         top.linkTo(Easy_Weather.bottom)

@@ -5,7 +5,9 @@ import com.sunnyweather.android.ui.myiconpack.Alarm
 import com.sunnyweather.android.ui.myiconpack.Image
 import com.sunnyweather.android.ui.myiconpack.Leaf
 import com.sunnyweather.android.ui.myiconpack.LetterT
+import com.sunnyweather.android.ui.myiconpack.MapPoint
 import com.sunnyweather.android.ui.myiconpack.PencilLine
+import com.sunnyweather.android.ui.myiconpack.Point
 import com.sunnyweather.android.ui.myiconpack.Radioupnp
 import com.sunnyweather.android.ui.myiconpack.RedoLine
 import com.sunnyweather.android.ui.myiconpack.SnowLine
@@ -22,7 +24,7 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(Alarm, Image, Leaf, LetterT, PencilLine, Radioupnp, RedoLine, SnowLine,
-        TShirt, UndoLine)
+    __AllIcons= listOf(Alarm, Image, Leaf, LetterT, MapPoint, PencilLine, Point, Radioupnp,
+        RedoLine, SnowLine, TShirt, UndoLine)
     return __AllIcons!!
   }

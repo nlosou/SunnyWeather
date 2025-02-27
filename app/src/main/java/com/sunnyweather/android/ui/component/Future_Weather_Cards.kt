@@ -26,9 +26,6 @@ import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 @Composable
 fun Future_Weather_Cards( ) {
     Surface(
-        shape = RoundedCornerShape(8.dp),
-        shadowElevation = 10.dp,
-        modifier = Modifier.width(100.dp).height(350.dp)
     ) {
         Column {
             Text("今天")
