@@ -22,7 +22,7 @@ class WeatherViewModel:ViewModel() {
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->
-        "WeatherFlow".log(query.toString())
+        "WeatherFlow_location".log(query.toString())
         Repository.RealWeather(query.lng,query.lng)
             .onEach {
                 result ->
@@ -39,6 +39,29 @@ class WeatherViewModel:ViewModel() {
                 }
             }.catch {
                 e->
+                "WeatherFlow_catch".log(e.toString())
+            }
+    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val WeatherFlow2=locationFlowData.flatMapLatest {
+            query->
+        "WeatherFlow".log(query.toString())
+        Repository.RealWeather2()
+            .onEach {
+                    result ->
+                result.onSuccess {
+                        item->
+                    "WeatherFlow_onSuccess".log(item[0].result.realtime.toString())
+                }.onFailure {
+                    "WeatherFlow".log(it.toString())
+                    if (it is HttpException) {
+                        "HTTP Exception: ".log("${it.response()?.errorBody()?.string()}")
+                    } else {
+                        "Other Exception: ".log("${it.message}")
+                    }
+                }
+            }.catch {
+                    e->
                 "WeatherFlow_catch".log(e.toString())
             }
     }

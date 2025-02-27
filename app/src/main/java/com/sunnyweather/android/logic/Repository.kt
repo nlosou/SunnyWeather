@@ -55,6 +55,26 @@ object Repository {
             emit(Result.failure<List<RealtimeResponse>>(e))
         }
     }.flowOn(Dispatchers.IO)
+    fun RealWeather2(): Flow<Result<List<RealtimeResponse>>> = flow {
+
+        try {
+
+            val RealWeather = SunnyWeatherNetwork.getRealWeather2()
+            "getRealWeather".log(RealWeather.status)
+            if (RealWeather.status == "ok") {
+                val Weatherlist = listOf(RealWeather)
+                "RealWeather".log(Weatherlist.toString())
+                emit(Result.success( Weatherlist))
+            } else {
+                "not_is_ok".log(RealWeather.status)
+                emit(Result.failure(RuntimeException("Response status is ${RealWeather.status}")))
+
+            }
+        } catch (e: Exception) {
+            "placeResponse_Exception".log(e.toString())
+            emit(Result.failure<List<RealtimeResponse>>(e))
+        }
+    }.flowOn(Dispatchers.IO)
 
 
 }

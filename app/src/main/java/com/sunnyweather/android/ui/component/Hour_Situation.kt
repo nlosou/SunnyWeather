@@ -32,7 +32,7 @@ fun Hour_Situation( modifier: Modifier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box {
                 Column {
-                    Text("25",style = TextStyle(
+                    Text("25°",style = TextStyle(
                         fontSize = 15.sp,
                     )
                     )
