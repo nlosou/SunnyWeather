@@ -8,6 +8,7 @@ import com.sunnyweather.android.logic.model.Location
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class WeatherViewModel:ViewModel() {
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->
         "WeatherFlow_location".log(query.toString())
-        Repository.RealWeather(query.lng,query.lng)
+        Repository.RealWeather(query.lng, query.lng)
             .onEach {
                 result ->
                 result.onSuccess {

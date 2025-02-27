@@ -9,6 +9,7 @@ import com.sunnyweather.android.logic.network.SunnyWeatherNetwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
@@ -38,7 +39,9 @@ object Repository {
     fun RealWeather(lng:String,lat:String): Flow<Result<List<RealtimeResponse>>> = flow {
 
         try {
-
+            if (lng.isEmpty() || lat.isEmpty()) {
+                "有一个是空".log("有一个是空")
+            }
             val RealWeather = SunnyWeatherNetwork.getRealWeather(lng,lat)
             "getRealWeather".log(RealWeather.status)
             if (RealWeather.status == "ok") {
@@ -60,18 +63,18 @@ object Repository {
         try {
 
             val RealWeather = SunnyWeatherNetwork.getRealWeather2()
-            "getRealWeather".log(RealWeather.status)
+            "getRealWeather_2".log(RealWeather.status)
             if (RealWeather.status == "ok") {
                 val Weatherlist = listOf(RealWeather)
-                "RealWeather".log(Weatherlist.toString())
+                "RealWeather_2".log(Weatherlist.toString())
                 emit(Result.success( Weatherlist))
             } else {
-                "not_is_ok".log(RealWeather.status)
+                "not_is_ok_2".log(RealWeather.status)
                 emit(Result.failure(RuntimeException("Response status is ${RealWeather.status}")))
 
             }
         } catch (e: Exception) {
-            "placeResponse_Exception".log(e.toString())
+            "placeResponse_Exception_2".log(e.toString())
             emit(Result.failure<List<RealtimeResponse>>(e))
         }
     }.flowOn(Dispatchers.IO)
