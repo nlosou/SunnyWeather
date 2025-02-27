@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -92,7 +93,7 @@ fun Greeting() {
             Box (modifier = Modifier.padding(contentPadding)){
                 AnimatableCloud(modifier = Modifier
                     .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
-                    .padding(end = 7.dp)  )   // 右侧留白)
+                    .padding(end = 7.dp, bottom = 16.dp)  )   // 右侧留白)
                 ConstraintLayout(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -105,19 +106,19 @@ fun Greeting() {
                     Alarm_Info(Modifier.constrainAs(Alarm){
                         top.linkTo(Easy_Weather.bottom)
                     })
+
+
+                    LazyRow(Modifier.align(Alignment.BottomStart)){items(15) {item->
+
+                    Future_Weather_Cards()
+
+                }
                      */
 
-                    LazyRow(Modifier.constrainAs(future_caed){
-                        top.linkTo(parent.bottom)
-                    }){items(15) {item->
 
-                        Future_Weather_Cards()
-
-                    }
 
 
                     }
-
 
 
                 }
@@ -127,7 +128,6 @@ fun Greeting() {
         }
     }
 
-}
 
 @Preview(showBackground = true)
 @Composable
