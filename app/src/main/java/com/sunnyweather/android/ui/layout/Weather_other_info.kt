@@ -42,8 +42,8 @@ import com.sunnyweather.android.ui.myiconpack.Umbrella
 
 
 @Composable
-fun Weather_other_info(name: String, modifier: Modifier = Modifier) {
-    ConstraintLayout(modifier=Modifier.fillMaxSize()) {
+fun Weather_other_info( modifier:Modifier) {
+    ConstraintLayout(modifier) {
         val (Rainfall_forecast,Ultraviolet,humidity,somatosensory,Wind,sun,atmospheric_pressure,life) = remember { createRefs() }
         Card(modifier= Modifier
             .constrainAs(Rainfall_forecast) {
@@ -224,10 +224,18 @@ fun Weather_other_info(name: String, modifier: Modifier = Modifier) {
                             .weight(1f)  // 每个 Column 占据相等的权重
                             .padding(10.dp)
                     ) {
-                        Icon(MyIconPack.Clothes, contentDescription = "")
-                        Text("适宜厚外套", style = TextStyle(fontSize = 20.sp))
-                        Icon(MyIconPack.Car, contentDescription = "")
-                        Text("不易洗车", style = TextStyle(fontSize = 20.sp))
+                        Column(modifier = Modifier.padding(30.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center) {
+                            Icon(MyIconPack.Clothes, contentDescription = "")
+                            Text("适宜厚外套", style = TextStyle(fontSize = 20.sp))
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center){
+                            Icon(MyIconPack.Car, contentDescription = "")
+                            Text("不易洗车", style = TextStyle(fontSize = 20.sp))
+                        }
+
                     }
 
                     Column(
@@ -235,10 +243,21 @@ fun Weather_other_info(name: String, modifier: Modifier = Modifier) {
                             .weight(1f)  // 每个 Column 占据相等的权重
                             .padding(10.dp)
                     ) {
-                        Icon(MyIconPack.Cosmetic, contentDescription = "")
-                        Text("注意防晒", style = TextStyle(fontSize = 20.sp))
-                        Icon(MyIconPack.Umbrella, contentDescription = "")
-                        Text("不用带伞", style = TextStyle(fontSize = 20.sp))
+                        Column(
+                            modifier = Modifier.padding(30.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center){
+                            Icon(MyIconPack.Cosmetic, contentDescription = "")
+                            Text("注意防晒", style = TextStyle(fontSize = 20.sp))
+                        }
+                        Column(
+                            modifier = Modifier.padding(30.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center){
+                            Icon(MyIconPack.Umbrella, contentDescription = "")
+                            Text("不用带伞", style = TextStyle(fontSize = 20.sp))
+                        }
+
                     }
 
                     Column(
@@ -246,10 +265,21 @@ fun Weather_other_info(name: String, modifier: Modifier = Modifier) {
                             .weight(1f)  // 每个 Column 占据相等的权重
                             .padding(10.dp)
                     ) {
-                        Icon(MyIconPack.Sport, contentDescription = "")
-                        Text("宜室内运动", style = TextStyle(fontSize = 20.sp))
-                        Icon(MyIconPack.Drugs, contentDescription = "")
-                        Text("易感冒", style = TextStyle(fontSize = 20.sp))
+                        Column(
+                            modifier = Modifier.padding(30.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center) {
+                            Icon(MyIconPack.Sport, contentDescription = "")
+                            Text("宜室内运动", style = TextStyle(fontSize = 20.sp))
+                        }
+                        Column(
+                            modifier = Modifier.padding(30.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center) {
+                            Icon(MyIconPack.Drugs, contentDescription = "")
+                            Text("易感冒", style = TextStyle(fontSize = 20.sp))
+                        }
+
                     }
                 }
             }
@@ -262,6 +292,6 @@ fun Weather_other_info(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview11() {
     SunnyWeatherTheme {
-        Weather_other_info("Android")
+        Weather_other_info(Modifier)
     }
 }
