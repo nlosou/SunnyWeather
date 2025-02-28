@@ -2,6 +2,10 @@ package com.sunnyweather.android.ui
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.sunnyweather.android.ui.myiconpack.Alarm
+import com.sunnyweather.android.ui.myiconpack.Car
+import com.sunnyweather.android.ui.myiconpack.Clothes
+import com.sunnyweather.android.ui.myiconpack.Cosmetic
+import com.sunnyweather.android.ui.myiconpack.Drugs
 import com.sunnyweather.android.ui.myiconpack.Image
 import com.sunnyweather.android.ui.myiconpack.Leaf
 import com.sunnyweather.android.ui.myiconpack.LetterT
@@ -11,7 +15,9 @@ import com.sunnyweather.android.ui.myiconpack.Point
 import com.sunnyweather.android.ui.myiconpack.Radioupnp
 import com.sunnyweather.android.ui.myiconpack.RedoLine
 import com.sunnyweather.android.ui.myiconpack.SnowLine
+import com.sunnyweather.android.ui.myiconpack.Sport
 import com.sunnyweather.android.ui.myiconpack.TShirt
+import com.sunnyweather.android.ui.myiconpack.Umbrella
 import com.sunnyweather.android.ui.myiconpack.UndoLine
 import kotlin.collections.List as ____KtList
 
@@ -24,7 +30,7 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(Alarm, Image, Leaf, LetterT, MapPoint, PencilLine, Point, Radioupnp,
-        RedoLine, SnowLine, TShirt, UndoLine)
+    __AllIcons= listOf(Alarm, Car, Clothes, Cosmetic, Drugs, Image, Leaf, LetterT, MapPoint,
+        PencilLine, Point, Radioupnp, RedoLine, SnowLine, Sport, TShirt, Umbrella, UndoLine)
     return __AllIcons!!
   }
