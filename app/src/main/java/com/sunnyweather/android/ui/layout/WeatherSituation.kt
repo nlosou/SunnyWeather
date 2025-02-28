@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -32,9 +33,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,9 +45,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
+import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.Anime.AnimatableSun
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.Hour_Situation
@@ -52,26 +62,31 @@ import com.sunnyweather.android.ui.component.Weather_location_easy_information
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.theme.WeatherType
 import com.sunnyweather.android.ui.theme.WeatherWallpaper
-
-class WeatherSituation : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            SunnyWeatherTheme {
-
-                    Greeting(
-
-                    )
-
-            }
-        }
-    }
-}
+import com.sunnyweather.android.ui.weather.WeatherViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting() {
+fun Greeting(WeatherViewModel:WeatherViewModel) {
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                scope.launch {
+                    WeatherViewModel.WeatherFlow.collect { result ->
+                        "WeatherFlow.collect".log("result: $result")
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+    lateinit var fusedLocationClient: FusedLocationProviderClient
+    fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     var isExpanded by remember { mutableStateOf(false) }
     val offset by animateDpAsState(targetValue = if (isExpanded) 250.dp else 0.dp, animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = ""
@@ -93,6 +108,10 @@ fun Greeting() {
                             isExpanded = true
                         } else if (verticalChange > 0) {
                             isExpanded = false
+                        }
+                        // 触发下拉刷新时，设置 isRefreshRequested 为 true
+                        if (verticalChange > 50) { // 自定义触发条件
+                            WeatherViewModel.isRefreshRequested.value=true
                         }
                     }
                 }
@@ -137,7 +156,7 @@ fun Greeting() {
                             Modifier.padding(16.dp).constrainAs(Easy_Weather) {
                                 top.linkTo(parent.top)
 
-                            })
+                            }, fusedLocationClient = fusedLocationClient,WeatherViewModel )
                         Card(
                             modifier = Modifier.background(Color.Transparent)
                                 .constrainAs(hour_situation) {
@@ -218,8 +237,8 @@ fun Greeting() {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview5() {
-
+    val WeatherViewModel= remember { WeatherViewModel() }
     SunnyWeatherTheme {
-        Greeting()
+        Greeting(WeatherViewModel)
     }
 }

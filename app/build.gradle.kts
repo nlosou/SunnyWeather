@@ -42,6 +42,8 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+    implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation ("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation(libs.androidx.lifecycle.runtime.ktx)

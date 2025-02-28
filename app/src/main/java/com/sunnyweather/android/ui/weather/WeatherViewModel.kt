@@ -1,5 +1,6 @@
 package com.sunnyweather.android.ui.weather
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sunnyweather.android.log
@@ -19,7 +20,7 @@ class WeatherViewModel:ViewModel() {
     var locationLng=""
     var locationLat=""
     val placeName=""
-
+    val isRefreshRequested = mutableStateOf(false)
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->

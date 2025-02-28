@@ -1,82 +1,60 @@
 package com.sunnyweather.android.ui.component
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.LocationManager
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
-import androidx.core.content.PermissionChecker.checkSelfPermission
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
+import com.sunnyweather.android.logic.GMS.LocationUpdates
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.myiconpack.Leaf
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.weather.WeatherViewModel
 
 
 @Composable
-fun Weather_location_easy_information(modifier: Modifier) {
+fun Weather_location_easy_information(
+    modifier: Modifier,
+    fusedLocationClient: FusedLocationProviderClient,
+    WeatherViewModel: WeatherViewModel
+) {
     val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     // 是否授权了位置权限
@@ -115,13 +93,14 @@ fun Weather_location_easy_information(modifier: Modifier) {
     }
 
     Column(modifier) {
-        Text("地址",
-            style = TextStyle(
-                fontSize = 24.sp,
-            )
-        )
+
         Box{
             Column() {
+                Text("地址",
+                style = TextStyle(
+                    fontSize = 24.sp,
+                )
+            )
                 AnimatedVisibility(
                     visible = !isLocationEnabled, // 控制是否显示
                     enter = fadeIn(), // 渐显动画
@@ -133,7 +112,11 @@ fun Weather_location_easy_information(modifier: Modifier) {
                         Row(verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable {
                                 // 点击事件的逻辑处理
-                                Toast.makeText(context, "已点击", Toast.LENGTH_SHORT).show()
+
+                                // 跳转到设置页面开启定位服务
+                                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+
+                                context.startActivity(intent)
                             }) {
 
                             Text("开启位置服务，获得当前位置天气",fontSize = 10.sp,)
@@ -143,12 +126,20 @@ fun Weather_location_easy_information(modifier: Modifier) {
 
                     }
                 }
-
-                Icon(Icons.Filled.List, contentDescription = "")
-
+                if (isLocationEnabled) {
+                    // 显示定位信息
+                    // 显示定位信息
+                    LocationUpdates(
+                        fusedLocationClient = fusedLocationClient,
+                        WeatherViewModel
+                    )
+                } else {
+                    // 提示用户开启位置服务
+                }
             }
 
         }
+        Icon(Icons.Filled.List, contentDescription = "")
         TemperatureDisplay(9)
         Row {
             Text("天气")
@@ -180,6 +171,6 @@ fun Weather_location_easy_information(modifier: Modifier) {
 @Composable
 fun GreetingPreview6() {
     SunnyWeatherTheme {
-        Weather_location_easy_information(modifier = Modifier)
+       // Weather_location_easy_information( Modifier,FusedLocationProviderClient)
     }
 }

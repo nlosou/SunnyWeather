@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import com.sunnyweather.android.ui.layout.Greeting
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.layout.Greeting2
 import com.sunnyweather.android.ui.place.PlaceViewModel
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SunnyWeatherTheme {
-                Greeting2(mainViewModel,WeatherViewModel)
+                Greeting(WeatherViewModel)
             }
         }
     }
