@@ -24,7 +24,7 @@ class WeatherViewModel:ViewModel() {
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->
         "WeatherFlow_location".log(query.toString())
-        Repository.RealWeather(query.lng, query.lng)
+        Repository.RealWeather(query.lng, query.lat)
             .onEach {
                 result ->
                 result.onSuccess {

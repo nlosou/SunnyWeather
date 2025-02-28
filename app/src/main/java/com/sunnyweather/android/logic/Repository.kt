@@ -15,7 +15,6 @@ import kotlinx.coroutines.withContext
 
 object Repository {
     fun searchPlaces(query: String): Flow<Result<List<Place>>> = flow {
-
         try {
             "Repository.searchPlaces".log(query)
             val placeResponse = SunnyWeatherNetwork.searchPlaces(query)
@@ -37,13 +36,10 @@ object Repository {
 
 
     fun RealWeather(lng:String,lat:String): Flow<Result<List<RealtimeResponse>>> = flow {
-
         try {
-            if (lng.isEmpty() || lat.isEmpty()) {
-                "有一个是空".log("有一个是空")
-            }
+            "RealWeather_lng_lat".log("${lng},${lat}")
             val RealWeather = SunnyWeatherNetwork.getRealWeather(lng,lat)
-            "getRealWeather".log(RealWeather.status)
+            "getRealWeather".log(RealWeather.toString())
             if (RealWeather.status == "ok") {
                 val Weatherlist = listOf(RealWeather)
                  "RealWeather".log(Weatherlist.toString())

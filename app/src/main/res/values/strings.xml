@@ -14,4 +14,6 @@
     <string name="title_activity_back_groud">BackGroud</string>
     <string name="title_activity_temperature_display">TemperatureDisplay</string>
     <string name="title_activity_hour_situation">Hour_Situation</string>
+    <string name="title_activity_weather_other_info">Weather_other_info</string>
+    <string name="title_activity_uv">UV</string>
 </resources>

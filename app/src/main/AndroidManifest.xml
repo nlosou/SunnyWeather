@@ -17,6 +17,16 @@
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.UV"
+            android:exported="false"
+            android:label="@string/title_activity_uv"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
+            android:name=".ui.layout.Weather_other_info"
+            android:exported="false"
+            android:label="@string/title_activity_weather_other_info"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
             android:name=".ui.component.Hour_Situation"
             android:exported="false"
             android:label="@string/title_activity_hour_situation"
