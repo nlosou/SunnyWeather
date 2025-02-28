@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.Repository
 import com.sunnyweather.android.logic.model.Location
+import com.sunnyweather.android.logic.model.RealtimeResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -21,6 +22,7 @@ class WeatherViewModel:ViewModel() {
     var locationLat=""
     val placeName=""
     val isRefreshRequested = mutableStateOf(false)
+    var temp= mutableStateOf(0)
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->
@@ -31,6 +33,7 @@ class WeatherViewModel:ViewModel() {
                 result.onSuccess {
                     item->
                     "WeatherFlow_onSuccess".log(item[0].result.realtime.toString())
+                    temp.value=item[0].result.realtime.temperature.toInt()
                 }.onFailure {
                     "WeatherFlow".log(it.toString())
                     if (it is HttpException) {

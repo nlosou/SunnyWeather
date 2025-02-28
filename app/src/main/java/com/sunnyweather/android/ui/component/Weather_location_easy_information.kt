@@ -140,7 +140,7 @@ fun Weather_location_easy_information(
 
         }
         Icon(Icons.Filled.List, contentDescription = "")
-        TemperatureDisplay(9)
+        TemperatureDisplay(WeatherViewModel.temp.value)
         Row {
             Text("天气")
             Spacer(modifier = Modifier.padding(5.dp))
