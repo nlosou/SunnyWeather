@@ -32,7 +32,8 @@ class WeatherViewModel:ViewModel() {
                 result ->
                 result.onSuccess {
                     item->
-                    "WeatherFlow_onSuccess".log(item[0].result.realtime.toString())
+                    "WeatherFlow_onSuccess".log(item.toString())
+                    "WeatherFlow_onSuccess_type".log(item::class.simpleName.toString())
                     temp.value=item[0].result.realtime.temperature.toInt()
                 }.onFailure {
                     "WeatherFlow".log(it.toString())
@@ -47,6 +48,7 @@ class WeatherViewModel:ViewModel() {
                 "WeatherFlow_catch".log(e.toString())
             }
     }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow2=locationFlowData.flatMapLatest {
             query->

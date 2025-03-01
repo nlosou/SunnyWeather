@@ -2,7 +2,7 @@ package com.sunnyweather.android.logic.model
 
 import com.google.gson.annotations.SerializedName
 
-data class RealtimeResponse(
+public data class RealtimeResponse(
     val status: String,
     val result: Result
 ) {

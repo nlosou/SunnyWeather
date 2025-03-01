@@ -25,6 +25,7 @@ fun LocationUpdates(
     fusedLocationClient: FusedLocationProviderClient,
     WeatherViewModel: WeatherViewModel
 ) {
+    "LocationUpdates".log("start")
     val locationPermissionState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,

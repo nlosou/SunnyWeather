@@ -1,10 +1,5 @@
 package com.sunnyweather.android.ui.layout
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -45,7 +40,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -75,7 +69,7 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
             if (event == Lifecycle.Event.ON_START) {
                 scope.launch {
                     WeatherViewModel.WeatherFlow.collect { result ->
-                        "WeatherFlow.collect".log("result: $result")
+                        "WeatherFlow.collect".log("result: ${result.onSuccess { item->item.size }}}")
                     }
                 }
             }
@@ -85,6 +79,7 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     var isExpanded by remember { mutableStateOf(false) }
@@ -112,6 +107,7 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
                         // 触发下拉刷新时，设置 isRefreshRequested 为 true
                         if (verticalChange > 50) { // 自定义触发条件
                             WeatherViewModel.isRefreshRequested.value=true
+                            "detectVerticalDragGestures".log("start")
                         }
                     }
                 }
