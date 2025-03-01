@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *     <url id="cv1eejeg0jbfo2jvc6s0" type="url" status="parsed" title="Apache License, Version 2.0" wc="10467">https://www.apache.org/licenses/LICENSE-2.0</url>
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -76,105 +76,94 @@ import com.sunnyweather.android.ui.Anime.Snow
 import com.sunnyweather.android.ui.Anime.Sun
 import com.sunnyweather.android.ui.Anime.Thunder
 
+// 定义天气类型及其相关属性
 enum class Weather(
-    val text: String = "",
-    val composedIcon: ComposeInfo,
-    val icon: @Composable () -> Unit,
-    val animatableIcon: @Composable () -> Unit,
-    val background: BgColors
+    val text: String = "", // 天气类型的文字描述
+    val composedIcon: ComposeInfo, // 由多个元素组成的图标
+    val icon: @Composable () -> Unit, // 静态图标
+    val animatableIcon: @Composable () -> Unit, // 动态图标
+    val background: BgColors // 背景色
 ) {
     Sunny(
         "Sunny",
         SunnyComposed, SunnyIcon, SunnyAnimatableIcon, SunnyBg
-    ),
+    ), // 晴天
     MostlyClear(
         "Clear with periodic clouds",
         MostlyClearComposed, MostlyClearIcon, MostlyClearAnimatableIcon, ClearBg
-    ),
-
+    ), // 大部分晴朗
     Cloudy(
         "Cloudy",
         CloudyComposed, CloudyIcon, CloudyAnimatableIcon, CloudyBg
-    ),
-
+    ), // 多云
     CloudyRain(
         "Cloudy with periodic showers",
         CloudyRainComposed, RainIcon, RainAnimatableIcon, ShowersBg
-    ),
-
+    ), // 阵雨
     HeavyRain(
         "Heavy rain",
         HeavyRainComposed, HeavyRainIcon, HeavyRainAnimatableIcon, RainBg
-    ),
-
+    ), // 大雨
     Snowy(
         "Snowy",
         SnowyComposed, SnowyIcon, SnowAnimatableIcon, SnowBg
-    ),
-
+    ), // 下雪
     Storm(
         "Thundery storm",
         ThunderStormComposed, ThunderStormIcon, ThunderStormAnimatableIcon, StormBg
-    )
+    ) // 雷暴
 }
 
-/**
- * background color for each type of weather
- */
+// 背景色定义，包含顶部、中部和底部区域的颜色
 typealias BgColors = Triple<Color, Color, Color>
 
+// 天气背景类，存储不同天气的背景色
 object WeatherBackground {
 
     val ShowersBg = BgColors(
         teal700,
         Color.LightGray,
         teal900
-    )
-
+    ) // 阵雨
     val RainBg = BgColors(
         Color.LightGray,
         Color.Gray,
         Color.White
-    )
-
+    ) // 雨天
     val CloudyBg = BgColors(
         teal700,
         teal500,
         Color.White
-    )
-
+    ) // 多云
     val SunnyBg = BgColors(
         yellow200,
         teal500,
         yellow500
-    )
-
+    ) // 晴天
     val ClearBg = BgColors(
         teal500,
         teal900,
         teal500
-    )
-
+    ) // 大部分晴朗
     val SnowBg = BgColors(
         Color.LightGray,
         Color.White,
         teal700
-    )
-
+    ) // 下雪
     val StormBg = BgColors(
         Color.Black,
         Color.White,
         Color.DarkGray
-    )
+    ) // 雷暴
 }
 
-/**
- * used in central area
- */
+// 图标组成信息对象，存储不同天气元素的组合信息
 object WeatherComposedInfo {
 
-    val IconSize = 200.dp // ComposedIcon size
+    // 图标大小
+    val IconSize = 200.dp // 图标大小
 
+    // 不同天气类型的图标组成信息
     val SunnyComposed = ComposeInfo(
         sun = IconInfo(1f),
         cloud = IconInfo(0.8f, Offset(-0.1f, 0.1f), 0f),
@@ -183,10 +172,8 @@ object WeatherComposedInfo {
         lightRain = IconInfo(0.4f, Offset(0.225f, 0.3f), 0f),
         snow = IconInfo(0.5f, Offset(0.1f, 0.3f), alpha = 0f),
         thunder = IconInfo(0.45f, Offset(0.29f, 0.6f), alpha = 0f)
-
     )
-
-    val MostlyClearComposed = ComposeInfo(
+    val MostlyClearComposed = ComposeInfo( // 大部分晴朗
         sun = IconInfo(0.85f, Offset(0.1f, 0f)),
         cloud = IconInfo(0.5f, Offset(-0.1f, 0.1f), 0f),
         lightCloud = IconInfo(0.4f, Offset(0.175f, 0.375f), 1f),
@@ -194,10 +181,8 @@ object WeatherComposedInfo {
         lightRain = IconInfo(0.4f, Offset(0.225f, 0.3f), 0f),
         snow = IconInfo(0.5f, Offset(0.1f, 0.3f), alpha = 0f),
         thunder = IconInfo(0.45f, Offset(0.29f, 0.6f), alpha = 0f)
-
     )
-
-    val CloudyComposed = ComposeInfo(
+    val CloudyComposed = ComposeInfo( // 多云
         sun = IconInfo(0.1f, Offset(0.75f, 0.2f), alpha = 0f),
         cloud = IconInfo(0.8f, Offset(0.1f, 0.1f)),
         lightCloud = IconInfo(0.5f, Offset(0.05f, 0.125f)),
@@ -205,10 +190,8 @@ object WeatherComposedInfo {
         lightRain = IconInfo(0.4f, Offset(0.225f, 0.3f), alpha = 0f),
         snow = IconInfo(0.5f, Offset(0.1f, 0.3f), alpha = 0f),
         thunder = IconInfo(0.45f, Offset(0.29f, 0.6f), alpha = 0f)
-
     )
-
-    val CloudyRainComposed = ComposeInfo(
+    val CloudyRainComposed = ComposeInfo( // 阵雨
         sun = IconInfo(0.6f, Offset(0.4f, 0f)),
         cloud = IconInfo(0.8f, Offset(0.1f, 0.1f)),
         lightCloud = IconInfo(0.5f, Offset(-0.15f, 0.125f), 0f),
@@ -216,10 +199,8 @@ object WeatherComposedInfo {
         lightRain = IconInfo(0.4f, Offset(0.225f, 0.3f), 1f),
         snow = IconInfo(0.5f, Offset(0.1f, 0.3f), alpha = 0f),
         thunder = IconInfo(0.45f, Offset(0.29f, 0.6f), alpha = 0f)
-
     )
-
-    val HeavyRainComposed = ComposeInfo(
+    val HeavyRainComposed = ComposeInfo( // 大雨
         sun = IconInfo(0.1f, Offset(0.75f, 0.2f), alpha = 0f),
         cloud = IconInfo(0.8f, Offset(0.1f, 0.1f)),
         lightCloud = IconInfo(0.5f, Offset(0.05f, 0.125f)),
@@ -227,10 +208,8 @@ object WeatherComposedInfo {
         lightRain = IconInfo(0.4f, Offset(0.225f, 0.3f), 0f),
         snow = IconInfo(0.5f, Offset(0.1f, 0.3f), alpha = 0f),
         thunder = IconInfo(0.45f, Offset(0.29f, 0.6f), alpha = 0f)
-
     )
-
-    val SnowyComposed = ComposeInfo(
+    val SnowyComposed = ComposeInfo( // 下雪
         sun = IconInfo(0.1f, Offset(0.75f, 0.2f), alpha = 0f),
         cloud = IconInfo(0.8f, Offset(0.1f, 0.1f)),
         lightCloud = IconInfo(0.5f, Offset(-0.15f, 0.35f), 0f),
@@ -238,10 +217,8 @@ object WeatherComposedInfo {
         lightRain = IconInfo(0.4f, Offset(0.225f, 0.3f), 0f),
         snow = IconInfo(0.5f, Offset(0.1f, 0.3f), alpha = 1f),
         thunder = IconInfo(0.45f, Offset(0.29f, 0.6f), alpha = 0f)
-
     )
-
-    val ThunderStormComposed = ComposeInfo(
+    val ThunderStormComposed = ComposeInfo( // 雷暴
         sun = IconInfo(0.1f, Offset(0.75f, 0.2f), alpha = 0f),
         cloud = IconInfo(0.9f, Offset(0.06f, 0.05f)),
         lightCloud = IconInfo(0.5f, Offset(-0.05f, 0.125f), 0f),
@@ -249,117 +226,111 @@ object WeatherComposedInfo {
         lightRain = IconInfo(0.4f, Offset(0.225f, 0.3f), 0f),
         snow = IconInfo(0.5f, Offset(0.1f, 0.3f), alpha = 0f),
         thunder = IconInfo(0.5f, Offset(0.27f, 0.6f), alpha = 1f)
-
     )
 }
 
-/**
- * used in chart or navigation bar
- */
+// 天气静态图标
 object WeatherIcon {
-    val SunnyIcon = @Composable {
-        Sun(Modifier.size(40.dp))
+    val SunnyIcon = @Composable { // 晴天
+        Sun(Modifier.size(40.dp)) // 绘制太阳图标
     }
 
-    val MostlyClearIcon = @Composable {
+    val MostlyClearIcon = @Composable { // 大部分晴朗
         Box(Modifier.size(40.dp)) {
             Sun(
                 Modifier
                     .size(40.dp)
                     .offset(3.dp)
-            )
+            ) // 绘制太阳图标
             Cloud(
                 Modifier
                     .size(16.dp)
                     .offset(8.dp, 18.dp)
-            )
+            ) // 绘制云图标
         }
     }
 
-    val CloudyIcon = @Composable {
+    val CloudyIcon = @Composable { // 多云
         Cloud(
             Modifier
                 .size(40.dp)
                 .padding(3.dp)
-        )
+        ) // 绘制云图标
     }
 
-    val RainIcon = @Composable {
+    val RainIcon = @Composable { // 下雨
         Box(Modifier.size(40.dp)) {
             Rains(
                 Modifier
                     .size(25.dp)
                     .offset(5.dp, 8.dp),
                 lightRain = true
-            )
+            ) // 绘制雨图标
             Cloud(
                 Modifier
                     .size(30.dp)
                     .align(Alignment.TopCenter)
-            )
+            ) // 绘制云图标
         }
     }
 
-    val HeavyRainIcon = @Composable {
+    val HeavyRainIcon = @Composable { // 大雨
         Box(Modifier.size(40.dp)) {
             Rains(
                 Modifier
                     .size(25.dp)
                     .offset(5.dp, 8.dp),
-            )
+            ) // 绘制雨图标
             Cloud(
                 Modifier
                     .size(30.dp)
                     .align(Alignment.TopCenter)
-            )
+            ) // 绘制云图标
         }
     }
 
-    val SnowyIcon = @Composable {
+    val SnowyIcon = @Composable { // 下雪
         Box(Modifier.size(40.dp)) {
             Snow(
                 Modifier
                     .size(20.dp)
                     .offset(3.dp, 8.dp),
-            )
+            ) // 绘制雪图标
             Cloud(
                 Modifier
                     .size(30.dp)
                     .align(Alignment.TopCenter)
-            )
+            ) // 绘制云图标
         }
     }
 
-    val ThunderStormIcon = @Composable {
+    val ThunderStormIcon = @Composable { // 雷暴
         Box(Modifier.size(40.dp)) {
-
             Cloud(
                 Modifier
                     .size(30.dp)
                     .align(Alignment.TopCenter)
-            )
+            ) // 绘制云图标
             Thunder(
                 Modifier
                     .size(20.dp)
                     .offset(10.dp, 18.dp),
-            )
+            ) // 绘制雷图标
         }
     }
 }
 
-/**
- * used in navigation bar for selected item
- */
+// 天气动态图标
 object WeatherAnimatableIcon {
-    val SunnyAnimatableIcon = @Composable {
+    val SunnyAnimatableIcon = @Composable { // 晴天动态图标
         AnimatableSun(
             Modifier
                 .size(40.dp)
                 .padding(2.dp)
-        )
+        ) // 动画太阳
     }
 
-    val MostlyClearAnimatableIcon = @Composable {
+    val MostlyClearAnimatableIcon = @Composable { // 大部分晴朗动态图标
         Box(
             Modifier
                 .size(40.dp)
@@ -368,41 +339,41 @@ object WeatherAnimatableIcon {
                 Modifier
                     .size(40.dp)
                     .offset(3.dp)
-            )
+            ) // 动画太阳
             Cloud(
                 Modifier
-                    .size(16.dp)
+                    .size(20.dp)
                     .offset(8.dp, 18.dp)
-            )
+            ) // 绘制云
         }
     }
 
-    val CloudyAnimatableIcon = @Composable {
+    val CloudyAnimatableIcon = @Composable { // 多云动态图标
         AnimatableCloud(
             Modifier
                 .size(40.dp)
                 .padding(3.dp),
-            800
+            800 // 动画时长
         )
     }
 
-    val RainAnimatableIcon = @Composable {
+    val RainAnimatableIcon = @Composable { // 下雨动态图标
         Box(Modifier.size(40.dp)) {
             AnimatableRains(
                 Modifier
                     .size(25.dp)
                     .offset(5.dp, 8.dp),
-                true
+                true // 表示轻雨
             )
             Cloud(
                 Modifier
                     .size(30.dp)
                     .align(Alignment.TopCenter)
-            )
+            ) // 绘制云
         }
     }
 
-    val HeavyRainAnimatableIcon = @Composable {
+    val HeavyRainAnimatableIcon = @Composable { // 大雨动态图标
         Box(Modifier.size(40.dp)) {
             AnimatableRains(
                 Modifier
@@ -413,77 +384,105 @@ object WeatherAnimatableIcon {
                 Modifier
                     .size(30.dp)
                     .align(Alignment.TopCenter)
-            )
+            ) // 绘制云
         }
     }
 
-    val SnowAnimatableIcon = @Composable {
+    val SnowAnimatableIcon = @Composable { // 下雪动态图标
         Box(Modifier.size(40.dp)) {
             AnimatableSnow(
                 Modifier
                     .size(20.dp)
                     .offset(3.dp, 8.dp),
             )
+            AnimatableRains(
+                Modifier
+                    .size(25.dp)
+                    .offset(5.dp, 8.dp)
+            )
             Cloud(
                 Modifier
                     .size(30.dp)
                     .align(Alignment.TopCenter)
-            )
+            ) // 绘制云
         }
     }
 
-    val ThunderStormAnimatableIcon = @Composable {
+    val ThunderStormAnimatableIcon = @Composable { // 雷暴动态图标
         Box(Modifier.size(40.dp)) {
+            AnimatableThunder(
+                Modifier
+                    .size(20.dp)
+                    .offset(10.dp, 20.dp),
+                300 // 动画时长
+            )
+            AnimatableThunder(
+                Modifier
+                    .size(15.dp)
+                    .offset(5.dp, 20.dp),
+                250 // 动画时长
+            )
+            AnimatableThunder(
+                Modifier
+                    .size(15.dp)
+                    .offset(20.dp, 20.dp),
+                300 // 动画时长
+            )
+            AnimatableRains(
+                Modifier
+                    .size(25.dp)
+                    .offset(5.dp, 8.dp)
+            )
             Cloud(
                 Modifier
                     .size(30.dp)
                     .align(Alignment.TopCenter)
-            )
-            AnimatableThunder(
-                Modifier
-                    .size(20.dp)
-                    .offset(10.dp, 18.dp),
-                300
-            )
+            ) // 绘制云
+
+
+
+
         }
     }
 }
 
+// 预览静态图标
 @Preview(heightDp = 300)
 @Composable
 fun PreviewIcon() {
     Column {
-        Row(Modifier.weight(1f)) {
+        Row(Modifier.weight(1f)) { // 晴天
             SunnyIcon()
             SunnyAnimatableIcon()
         }
-        Row(Modifier.weight(1f)) {
+        Row(Modifier.weight(1f)) { // 大部分晴朗
             MostlyClearIcon()
             MostlyClearAnimatableIcon()
         }
-        Row(Modifier.weight(1f)) {
+        Row(Modifier.weight(1f)) { // 多云
             CloudyIcon()
             CloudyAnimatableIcon()
         }
-        Row(Modifier.weight(1f)) {
+        Row(Modifier.weight(1f)) { // 下雨
             RainIcon()
             RainAnimatableIcon()
         }
-        Row(Modifier.weight(1f)) {
+        Row(Modifier.weight(1f)) { // 大雨
             HeavyRainIcon()
             HeavyRainAnimatableIcon()
         }
-        Row(Modifier.weight(1f)) {
+        Row(Modifier.weight(1f)) { // 下雪
             SnowyIcon()
             SnowAnimatableIcon()
         }
-        Row(Modifier.weight(1f)) {
+        Row(Modifier.weight(1f)) { // 雷暴
             ThunderStormIcon()
             ThunderStormAnimatableIcon()
         }
     }
 }
 
+// 预览组合图标
 @Preview(widthDp = 960, heightDp = 640)
 @Composable
 fun PreviewComposedIcon() {
@@ -498,7 +497,7 @@ fun PreviewComposedIcon() {
             .background(teal700)
             .padding(5.dp)
 
-        Row(Modifier.align(Alignment.CenterHorizontally)) {
+        Row(Modifier.align(Alignment.CenterHorizontally)) { // 第一组图标
             ComposedIcon(
                 modifier, SunnyComposed
             )
@@ -512,7 +511,7 @@ fun PreviewComposedIcon() {
                 modifier, ThunderStormComposed
             )
         }
-        Row(Modifier.align(Alignment.CenterHorizontally)) {
+        Row(Modifier.align(Alignment.CenterHorizontally)) { // 第二组图标
             ComposedIcon(
                 modifier, HeavyRainComposed
             )
