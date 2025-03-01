@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 package com.sunnyweather.android.data
-
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -26,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -409,39 +414,62 @@ object WeatherAnimatableIcon {
         }
     }
 
-    val ThunderStormAnimatableIcon = @Composable { // 雷暴动态图标
-        Box(Modifier.size(40.dp)) {
-            AnimatableThunder(
-                Modifier
-                    .size(20.dp)
-                    .offset(10.dp, 20.dp),
-                300 // 动画时长
-            )
-            AnimatableThunder(
-                Modifier
-                    .size(15.dp)
-                    .offset(5.dp, 20.dp),
-                250 // 动画时长
-            )
-            AnimatableThunder(
-                Modifier
-                    .size(15.dp)
-                    .offset(20.dp, 20.dp),
-                300 // 动画时长
-            )
-            AnimatableRains(
-                Modifier
-                    .size(25.dp)
-                    .offset(5.dp, 8.dp)
-            )
-            Cloud(
-                Modifier
-                    .size(30.dp)
-                    .align(Alignment.TopCenter)
-            ) // 绘制云
-            
+    val ThunderStormAnimatableIcon = @Composable (){ // 雷暴动态图标
+            // 使用 BoxWithConstraints 获取当前 Box 的可变尺寸
+        Box(
+            modifier = Modifier.size(200.dp)  // 主对齐控制[2](@ref)
+                .padding(end = 7.dp, bottom = 16.dp)
+        ){
+            BoxWithConstraints{
+                val boxWidth = constraints.maxWidth.toFloat()
+                val boxHeight = constraints.maxHeight.toFloat()
+
+                // 计算缩放比例
+                val scaleFactorX = boxWidth / 100f // 假设原来的宽度是 400，你可以根据实际情况调整
+                val scaleFactorY = boxHeight / 100f // 假设原来的高度是 400
+
+                // 使用默认缩放比例
+                val scale = minOf(scaleFactorX, scaleFactorY)
+
+                Box(
+                    modifier = Modifier.align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
+                        .padding(end = 7.dp, bottom = 16.dp)
+                        .scale(scale)
+                ) {
+                    // 原有的组件布局
+                    AnimatableThunder(
+                        Modifier
+                            .size(20.dp)
+                            .offset(10.dp, 20.dp),
+                        300 // 动画时长
+                    )
+                    AnimatableThunder(
+                        Modifier
+                            .size(15.dp)
+                            .offset(5.dp, 20.dp),
+                        250 // 动画时长
+                    )
+                    AnimatableThunder(
+                        Modifier
+                            .size(15.dp)
+                            .offset(20.dp, 20.dp),
+                        300 // 动画时长
+                    )
+                    AnimatableRains(
+                        Modifier
+                            .size(25.dp)
+                            .offset(5.dp, 8.dp)
+                    )
+                    Cloud(
+                        Modifier
+                            .size(30.dp)
+                            .align(Alignment.TopCenter).offset(5.dp, 1.dp)
+                    ) // 绘制云
+                }
+            }
         }
-    }
+
+        }
 }
 
 // 预览静态图标

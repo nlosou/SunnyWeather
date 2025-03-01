@@ -48,6 +48,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
+import com.sunnyweather.android.data.Weather
 import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.Anime.AnimatableSun
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
@@ -139,11 +140,16 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
                 ) { contentPadding ->
                 // 主内容区域
                 Box(modifier = Modifier.padding(contentPadding)) {
-                    AnimatableSun(
+                    /*
+                     AnimatableSun(
                         modifier = Modifier.size(200.dp)
                             .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
                             .padding(end = 7.dp, bottom = 16.dp)
-                    )   // 右侧留白)
+                    )
+                     */
+
+                    Weather.Storm.animatableIcon()
+                    // 右侧留白)
                     ConstraintLayout(
                         modifier = Modifier.fillMaxWidth().offset(y = -offset)
                     ) {
