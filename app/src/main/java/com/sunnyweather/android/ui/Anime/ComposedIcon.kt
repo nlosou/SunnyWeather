@@ -33,7 +33,7 @@ import com.sunnyweather.android.ui.Anime.AnimatableThunder
  * show current weather's animation on top of [WeatherView]
  */
 @Composable
-fun ComposedIcon(modifier: Modifier = Modifier, composeInfo: ComposeInfo) {
+fun ComposedIcon(modifier: Modifier = Modifier, composeInfo: ComposeInfo){
 
     val (sun, cloud, lightCloud, rains, lightRain, snow, thunder) = composeInfo
     Box(modifier = modifier.size(IconSize)) {
