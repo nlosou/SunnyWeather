@@ -1,6 +1,5 @@
 package com.sunnyweather.android.ui.layout
 
-import android.content.Intent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -46,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
@@ -55,6 +56,7 @@ import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.Hour_Situation
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.WeatherType
 import com.sunnyweather.android.ui.theme.WeatherWallpaper
 import com.sunnyweather.android.ui.weather.WeatherViewModel
@@ -62,7 +64,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting(WeatherViewModel:WeatherViewModel) {
+fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mainViewModel: PlaceViewModel) {
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     DisposableEffect(lifecycleOwner) {
@@ -124,8 +126,7 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
                         title = { },
                         actions = {
                             IconButton(onClick = {
-                                val intent=Intent(context,fragment_place::class.java)
-                                context.startActivity(intent)
+                                navController.navigate("greeting2")
                             }) {
                                 Icon(Icons.Filled.Add, contentDescription = "")
                             }
@@ -162,7 +163,11 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
                             Modifier.padding(16.dp).constrainAs(Easy_Weather) {
                                 top.linkTo(parent.top)
 
-                            }, fusedLocationClient = fusedLocationClient,WeatherViewModel )
+                            },
+                            fusedLocationClient = fusedLocationClient,
+                            WeatherViewModel,
+                            mainViewModel
+                            )
                         Card(
                             modifier = Modifier.background(Color.Transparent)
                                 .constrainAs(hour_situation) {
@@ -244,7 +249,9 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
 @Composable
 fun GreetingPreview5() {
     val WeatherViewModel= remember { WeatherViewModel() }
+    val mainViewModel= remember { PlaceViewModel() }
+    val navController = rememberNavController()
     SunnyWeatherTheme {
-        Greeting(WeatherViewModel)
+        Greeting(navController,WeatherViewModel,mainViewModel)
     }
 }

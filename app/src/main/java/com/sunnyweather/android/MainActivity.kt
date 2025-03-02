@@ -1,10 +1,14 @@
 package com.sunnyweather.android
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.sunnyweather.android.ui.layout.Greeting
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.layout.Greeting2
@@ -19,8 +23,49 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SunnyWeatherTheme {
-                Greeting(WeatherViewModel)
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "greeting"  // 设置初始目的地
+                ) {
+                    composable("greeting") {  // 主页面
+                        Greeting(navController,WeatherViewModel,mainViewModel)
+                    }
+                    composable("greeting2") {  // 跳转页面
+                        Greeting2(navController,mainViewModel,WeatherViewModel)
+                    }
+                }
             }
+        }
+        "MainActivity".log("onCreate")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        "MainActivity".log("onStart")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        "MainActivity".log("onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        "MainActivity".log("onStop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        "MainActivity".log("onDestroy")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            // 执行操作
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error in onResume: ${e.message}")
         }
     }
 }

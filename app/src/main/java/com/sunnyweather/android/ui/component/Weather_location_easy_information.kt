@@ -43,8 +43,10 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.logic.GMS.LocationUpdates
+import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.myiconpack.Leaf
+import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 
@@ -53,7 +55,8 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 fun Weather_location_easy_information(
     modifier: Modifier,
     fusedLocationClient: FusedLocationProviderClient,
-    WeatherViewModel: WeatherViewModel
+    WeatherViewModel: WeatherViewModel,
+    mainViewModel: PlaceViewModel
 ) {
     val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -96,11 +99,22 @@ fun Weather_location_easy_information(
 
         Box{
             Column() {
-                Text("地址",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                )
-            )
+                if(mainViewModel._placeList.isNotEmpty())
+                {
+                    Text(
+                        mainViewModel._placeList[0].formatted_address,
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                        )
+                    )
+                }else{
+                    Text("地址",
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                        )
+                    )
+                }
+
                 AnimatedVisibility(
                     visible = !isLocationEnabled, // 控制是否显示
                     enter = fadeIn(), // 渐显动画
@@ -140,13 +154,27 @@ fun Weather_location_easy_information(
 
         }
         Icon(Icons.Filled.List, contentDescription = "")
-        TemperatureDisplay(WeatherViewModel.temp.value)
+        if (WeatherViewModel.temp.value.isNotEmpty()) {
+            TemperatureDisplay(WeatherViewModel.temp.value[0].result.realtime.temperature.toInt()?:0)
+        } else {
+            TemperatureDisplay(0) // 或者显示一个默认值
+        }
+        //TemperatureDisplay(22)
         Row {
-            Text("天气")
-            Spacer(modifier = Modifier.padding(5.dp))
-            Text("最高气温")
-            Spacer(modifier = Modifier.padding(5.dp))
-            Text("最低气温")
+            if (WeatherViewModel.temp.value.isNotEmpty()){
+                Text(WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).info)
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text("最高${WeatherViewModel.temp.value[0].result.daily.temperature[0].max}°")
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text("最低${WeatherViewModel.temp.value[0].result.daily.temperature[0].min}°")
+            }else{
+                Text("天气")
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text("最高气温")
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text("最低气温")
+            }
+
         }
         Button(onClick = {
 
@@ -171,6 +199,6 @@ fun Weather_location_easy_information(
 @Composable
 fun GreetingPreview6() {
     SunnyWeatherTheme {
-       // Weather_location_easy_information( Modifier,FusedLocationProviderClient)
+        // Weather_location_easy_information( Modifier,FusedLocationProviderClient)
     }
 }

@@ -67,7 +67,7 @@ class PlaceViewModel :ViewModel(){
                         // 清空旧数据并添加新数据
                         _placeList.clear()
                         _placeList.addAll(it)
-                        "placeList".log("${_placeList.toList()}")
+                        "placeList".log("${_placeList}")
                     },
                     onFailure = {
                         "WeatherFlow".log(it.toString())

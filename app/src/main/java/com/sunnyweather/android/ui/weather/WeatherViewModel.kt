@@ -22,7 +22,7 @@ class WeatherViewModel:ViewModel() {
     var locationLat=""
     val placeName=""
     val isRefreshRequested = mutableStateOf(false)
-    var temp= mutableStateOf(0)
+    var temp = mutableStateOf<List<RealtimeResponse>>(emptyList())
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->
@@ -34,7 +34,8 @@ class WeatherViewModel:ViewModel() {
                     item->
                     "WeatherFlow_onSuccess".log(item.toString())
                     "WeatherFlow_onSuccess_type".log(item::class.simpleName.toString())
-                    temp.value=item[0].result.realtime.temperature.toInt()
+                    temp.value = item ?: emptyList() // 使用默认值
+                    "WeatherFlow_onSuccess".log(temp.value[0].result.daily.temperature[1].max.toString())
                 }.onFailure {
                     "WeatherFlow".log(it.toString())
                     if (it is HttpException) {

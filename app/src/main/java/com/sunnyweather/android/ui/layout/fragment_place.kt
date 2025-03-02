@@ -41,6 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.model.Place
 import com.sunnyweather.android.ui.component.SearchBar
@@ -51,23 +53,10 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 import kotlinx.coroutines.launch
 
 
-class fragment_place : ComponentActivity() {
-    private val mainViewModel: PlaceViewModel by viewModels()
-    private val WeatherViewModel:WeatherViewModel by viewModels()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            SunnyWeatherTheme {
-                Greeting2(mainViewModel,WeatherViewModel)
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting2(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
+fun Greeting2(navController: NavController, mainViewModel: PlaceViewModel, WeatherViewModel:WeatherViewModel) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
 
@@ -79,6 +68,7 @@ fun Greeting2(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
                         // 这里可以处理结果，或者日志记录
                         "placeFlow.collect".log("result: $result")
                         // 你也可以在这里调用其他函数，例如更新状态等
+
                     }
                 }
             }
@@ -156,7 +146,8 @@ fun Greeting2(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
 fun GreetingPreview2() {
     val mainViewModel = remember { PlaceViewModel() }
     val WeatherViewModel= remember { WeatherViewModel() }
+    val navController = rememberNavController()
     SunnyWeatherTheme {
-        Greeting2(mainViewModel,WeatherViewModel)
+        Greeting2(navController,mainViewModel,WeatherViewModel)
     }
 }
