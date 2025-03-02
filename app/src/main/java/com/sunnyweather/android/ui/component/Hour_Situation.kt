@@ -54,7 +54,9 @@ import androidx.compose.ui.graphics.toArgb
 import android.graphics.Path
 import android.graphics.Paint
 import android.graphics.Shader
+import androidx.compose.runtime.CompositionLocalProvider
 import com.sunnyweather.android.data.DateToDisplay
+import com.sunnyweather.android.data.TemperatureUnit
 import com.sunnyweather.android.data.WeatherDataProvider
 import com.sunnyweather.android.data.displayName
 import com.sunnyweather.android.log
@@ -90,50 +92,55 @@ fun HourlyWeatherChart(
     modifier: Modifier = Modifier,
     dailyWeather: DailyWeather
 ) {
-    LazyRow(
-        modifier
-            .height(100.dp)
-            .wrapContentWidth()
-    ) {
-        item {
-            Box(
-                Modifier
-                    .fillMaxHeight()
-                    .width(900.dp)
-            ) {
+    CompositionLocalProvider(
+        LocalTemUnit provides TemperatureUnit.Centigrade // 提供默认温度单位
+    ){
+        LazyRow(
+            modifier
+                .height(100.dp)
+                .wrapContentWidth()
+        ) {
+            item {
+                Box(
+                    Modifier
+                        .fillMaxHeight()
+                        .width(900.dp)
+                ) {
 
-                Row(Modifier.fillMaxSize()) {
-                    dailyWeather.hourly.forEachIndexed { index, it ->
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .alpha(0.6f)
-                                .align(Alignment.Bottom)
-                        ) {
-                            Box(
+                    Row(Modifier.fillMaxSize()) {
+                        dailyWeather.hourly.forEachIndexed { index, it ->
+                            Column(
                                 modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .scale(0.6f)
+                                    .weight(1f)
+                                    .alpha(0.6f)
+                                    .align(Alignment.Bottom)
                             ) {
-                                it.weather.icon()
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                        .scale(0.6f)
+                                ) {
+                                    it.weather.icon()
+                                }
+                                Text(
+                                    if (index < 12) "${(index + 1)} AM"
+                                    else "${(index - 11)} PM",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Light,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                        .clearAndSetSemantics { }
+                                )
                             }
-                            Text(
-                                if (index < 12) "${(index + 1)} AM"
-                                else "${(index - 11)} PM",
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.Light,
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .clearAndSetSemantics { }
-                            )
                         }
                     }
-                }
 
-                LineChart(Modifier.fillMaxSize(), dailyWeather)
+                    LineChart(Modifier.fillMaxSize(), dailyWeather)
+                }
             }
         }
     }
+
 }
 
 @Composable
