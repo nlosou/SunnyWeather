@@ -53,11 +53,13 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.data.WeatherAnimatableIcon
+import com.sunnyweather.android.data.WeatherDataProvider
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.Anime.AnimatableSun
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.Hour_Situation
+import com.sunnyweather.android.ui.component.HourlyWeatherChart
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.place.PlaceViewModel
@@ -209,12 +211,20 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                 .alpha(if (isExpanded) 0.1f else 1f),
                             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                         ) {
-                            LazyRow() {
-                                items(24) { items ->
-                                    Hour_Situation(Modifier)
-                                }
+                            Box() {
+                                // 获取模拟的 DailyWeather 数据
+                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                                HourlyWeatherChart(
+                                    modifier = Modifier.fillMaxSize(),
+                                    dailyWeather = dailyWeather
+                                )
                             }
                         }
+                        /*
+
+
+
                         BoxWithConstraints(
                             modifier = Modifier
                                 .constrainAs(BoxWith) {
@@ -267,7 +277,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
 
                             }
                         }
-
+                        */
                     }
 
                 }
