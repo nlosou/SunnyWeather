@@ -1,5 +1,6 @@
 package com.sunnyweather.android.ui.layout
 
+import android.content.Intent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -48,9 +49,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
-import com.sunnyweather.android.data.Weather
+import com.sunnyweather.android.data.WeatherAnimatableIcon
 import com.sunnyweather.android.log
-import com.sunnyweather.android.ui.Anime.AnimatableSun
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.Hour_Situation
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
@@ -124,7 +124,8 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
                         title = { },
                         actions = {
                             IconButton(onClick = {
-
+                                val intent=Intent(context,fragment_place::class.java)
+                                context.startActivity(intent)
                             }) {
                                 Icon(Icons.Filled.Add, contentDescription = "")
                             }
@@ -148,7 +149,10 @@ fun Greeting(WeatherViewModel:WeatherViewModel) {
                     )
                      */
 
-                    Weather.Storm.animatableIcon()
+                    WeatherAnimatableIcon.ThunderStormAnimatableIcon(Modifier.size(300.dp)
+                        .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
+                        .padding(end = 7.dp, bottom = 16.dp) // 主对齐控制[2](@ref)
+                        )
                     // 右侧留白)
                     ConstraintLayout(
                         modifier = Modifier.fillMaxWidth().offset(y = -offset)

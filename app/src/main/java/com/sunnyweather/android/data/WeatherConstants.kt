@@ -116,7 +116,7 @@ enum class Weather(
     ), // 下雪
     Storm(
         "Thundery storm",
-        ThunderStormComposed, ThunderStormIcon, ThunderStormAnimatableIcon, StormBg
+        ThunderStormComposed, ThunderStormIcon, {ThunderStormAnimatableIcon()}, StormBg
     ) // 雷暴
 }
 
@@ -414,13 +414,13 @@ object WeatherAnimatableIcon {
         }
     }
 
-    val ThunderStormAnimatableIcon = @Composable (){ // 雷暴动态图标
-            // 使用 BoxWithConstraints 获取当前 Box 的可变尺寸
+    @Composable
+    fun ThunderStormAnimatableIcon(modifier: Modifier = Modifier) {
+        // 使用 BoxWithConstraints 获取当前 Box 的可变尺寸
         Box(
-            modifier = Modifier.size(200.dp)  // 主对齐控制[2](@ref)
-                .padding(end = 7.dp, bottom = 16.dp)
-        ){
-            BoxWithConstraints{
+            modifier = modifier
+        ) {
+            BoxWithConstraints {
                 val boxWidth = constraints.maxWidth.toFloat()
                 val boxHeight = constraints.maxHeight.toFloat()
 
@@ -432,8 +432,7 @@ object WeatherAnimatableIcon {
                 val scale = minOf(scaleFactorX, scaleFactorY)
 
                 Box(
-                    modifier = Modifier.align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
-                        .padding(end = 7.dp, bottom = 16.dp)
+                    modifier = Modifier
                         .scale(scale)
                 ) {
                     // 原有的组件布局
@@ -468,8 +467,7 @@ object WeatherAnimatableIcon {
                 }
             }
         }
-
-        }
+    }
 }
 
 // 预览静态图标
