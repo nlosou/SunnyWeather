@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -52,6 +54,8 @@ import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.data.WeatherAnimatableIcon
 import com.sunnyweather.android.log
+import com.sunnyweather.android.logic.model.WeatherCodeConverter
+import com.sunnyweather.android.ui.Anime.AnimatableSun
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.Hour_Situation
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
@@ -72,7 +76,12 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
             if (event == Lifecycle.Event.ON_START) {
                 scope.launch {
                     WeatherViewModel.WeatherFlow.collect { result ->
-                        "WeatherFlow.collect".log("result: ${result.onSuccess { item->item.size }}}")
+                        try {
+                            // 处理结果
+                            "WeatherFlow.collect".log("result: ${result.onSuccess { it.size }}")
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -82,6 +91,24 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+    /*
+    DisposableEffect(lifecycleOwner) {
+        val job = lifecycleOwner.lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                WeatherViewModel.WeatherFlow.collect { result ->
+                    try {
+                        // 处理结果
+                        "WeatherFlow.collect".log("result: ${result.onSuccess { it.size }}")
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+        onDispose { job.cancel() }
+    }
+     */
+
 
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -109,14 +136,13 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         }
                         // 触发下拉刷新时，设置 isRefreshRequested 为 true
                         if (verticalChange > 50) { // 自定义触发条件
-                            WeatherViewModel.isRefreshRequested.value=true
+                            WeatherViewModel.isRefreshRequested.value = true
                             "detectVerticalDragGestures".log("start")
                         }
                     }
                 }
         )
         {
-
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
@@ -143,52 +169,60 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 // 主内容区域
                 Box(modifier = Modifier.padding(contentPadding)) {
                     /*
-                     AnimatableSun(
-                        modifier = Modifier.size(200.dp)
-                            .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
-                            .padding(end = 7.dp, bottom = 16.dp)
-                    )
-                     */
-
-                    WeatherAnimatableIcon.ThunderStormAnimatableIcon(Modifier.size(300.dp)
+                     WeatherAnimatableIcon.ThunderStormAnimatableIcon(Modifier.size(300.dp)
                         .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
                         .padding(end = 7.dp, bottom = 16.dp) // 主对齐控制[2](@ref)
-                        )
+                    )
+                     */
+                    if (WeatherViewModel.temp.value.isNotEmpty() &&
+                        WeatherViewModel.temp.value[0].result?.realtime?.skycon != null){
+                        WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
+                    }else{
+
+                    }
+
+
                     // 右侧留白)
                     ConstraintLayout(
-                        modifier = Modifier.fillMaxWidth().offset(y = -offset)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset(y = -offset)
                     ) {
                         val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
                         Weather_location_easy_information(
-                            Modifier.padding(16.dp).constrainAs(Easy_Weather) {
-                                top.linkTo(parent.top)
+                            Modifier
+                                .padding(16.dp)
+                                .constrainAs(Easy_Weather) {
+                                    top.linkTo(parent.top)
 
-                            },
+                                },
                             fusedLocationClient = fusedLocationClient,
                             WeatherViewModel,
                             mainViewModel
-                            )
+                        )
                         Card(
-                            modifier = Modifier.background(Color.Transparent)
+                            modifier = Modifier
+                                .background(Color.Transparent)
                                 .constrainAs(hour_situation) {
                                     top.linkTo(Easy_Weather.bottom, margin = 50.dp)
-                                }.alpha(if (isExpanded) 0.1f else 1f),
+                                }
+                                .alpha(if (isExpanded) 0.1f else 1f),
                             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                         ) {
                             LazyRow() {
                                 items(24) { items ->
                                     Hour_Situation(Modifier)
                                 }
-
                             }
-
                         }
                         BoxWithConstraints(
-                            modifier = Modifier.constrainAs(BoxWith) {
-                                top.linkTo(hour_situation.bottom, margin = 10.dp)
-                                start.linkTo(parent.start) // 确保水平位置正确
-                                end.linkTo(parent.end)
-                            }.fillMaxSize()
+                            modifier = Modifier
+                                .constrainAs(BoxWith) {
+                                    top.linkTo(hour_situation.bottom, margin = 10.dp)
+                                    start.linkTo(parent.start) // 确保水平位置正确
+                                    end.linkTo(parent.end)
+                                }
+                                .fillMaxSize()
                         ) {
                             Box(
                                 modifier = Modifier
@@ -198,9 +232,12 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                             )
                         }
 
-                        Card (Modifier.constrainAs(future_caed) {
-                            bottom.linkTo(parent.bottom)
-                        }.padding(3.dp),
+                        Card (
+                            Modifier
+                                .constrainAs(future_caed) {
+                                    bottom.linkTo(parent.bottom)
+                                }
+                                .padding(3.dp),
                             colors = CardDefaults.cardColors(containerColor = Color.LightGray.copy(alpha = 0.5f))){
                             LazyRow() {
                                 items(15) { item ->

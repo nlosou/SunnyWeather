@@ -27,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
+import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.GMS.LocationUpdates
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.MyIconPack
@@ -161,17 +161,23 @@ fun Weather_location_easy_information(
         }
         //TemperatureDisplay(22)
         Row {
+
             if (WeatherViewModel.temp.value.isNotEmpty()){
+                "天气".log(WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).info)
                 Text(WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).info)
-                Spacer(modifier = Modifier.padding(5.dp))
-                Text("最高${WeatherViewModel.temp.value[0].result.daily.temperature[0].max}°")
-                Spacer(modifier = Modifier.padding(5.dp))
-                Text("最低${WeatherViewModel.temp.value[0].result.daily.temperature[0].min}°")
             }else{
                 Text("天气")
-                Spacer(modifier = Modifier.padding(5.dp))
+            }
+            Spacer(modifier = Modifier.padding(5.dp))
+            if (WeatherViewModel.temp.value.isNotEmpty()){
+                Text("最高${WeatherViewModel.temp.value[0].result.daily.temperature[0].max}°")
+            }else{
                 Text("最高气温")
-                Spacer(modifier = Modifier.padding(5.dp))
+            }
+            Spacer(modifier = Modifier.padding(5.dp))
+            if (WeatherViewModel.temp.value.isNotEmpty()){
+                Text("最低${WeatherViewModel.temp.value[0].result.daily.temperature[0].min}°")
+            }else{
                 Text("最低气温")
             }
 

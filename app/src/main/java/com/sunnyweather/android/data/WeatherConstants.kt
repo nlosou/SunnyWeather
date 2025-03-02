@@ -554,6 +554,6 @@ fun bg()
 {
     Box(modifier = Modifier.fillMaxSize())
     {
-}
+    }
 
 }

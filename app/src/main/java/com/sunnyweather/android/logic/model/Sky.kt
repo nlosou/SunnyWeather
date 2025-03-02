@@ -44,8 +44,7 @@ object WeatherCodeConverter {
         "SAND" to Sky("沙尘", CloudyIcon, CloudyAnimatableIcon, CloudyBg),
         "WIND" to Sky("大风", CloudyIcon, CloudyAnimatableIcon, CloudyBg)
     )
-
     fun getSky(skycon: String): Sky {
-        return sky[skycon]?: sky["CLEAR_DAY"]!!
+        return sky[skycon] ?: Sky("未知", SunnyIcon, SunnyAnimatableIcon, SunnyBg)
     }
 }
