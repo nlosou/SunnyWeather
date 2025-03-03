@@ -16,6 +16,8 @@
 package com.sunnyweather.android.data
 
 import android.os.Build
+import androidx.activity.viewModels
+import com.sunnyweather.android.ui.weather.WeatherViewModel
 import java.time.LocalDate
 
 /**
@@ -23,30 +25,30 @@ import java.time.LocalDate
  */
 private val hourlyWeather = listOf(
     listOf(
-        HourlyWeather(-10, Weather.Snowy),
-        HourlyWeather(-5, Weather.Snowy),
-        HourlyWeather(-3, Weather.Snowy),
-        HourlyWeather(-2, Weather.Snowy),
-        HourlyWeather(-2, Weather.Sunny),
-        HourlyWeather(-1, Weather.Snowy),
-        HourlyWeather(-2, Weather.Snowy),
-        HourlyWeather(-1, Weather.Snowy),
-        HourlyWeather(2, Weather.Snowy),
-        HourlyWeather(4, Weather.Snowy),
-        HourlyWeather(5, Weather.MostlyClear),
-        HourlyWeather(6, Weather.Snowy),
-        HourlyWeather(5, Weather.Snowy),
-        HourlyWeather(2, Weather.Snowy),
-        HourlyWeather(2, Weather.Snowy),
-        HourlyWeather(1, Weather.Snowy),
         HourlyWeather(0, Weather.Snowy),
         HourlyWeather(0, Weather.Snowy),
-        HourlyWeather(-2, Weather.Snowy),
-        HourlyWeather(-4, Weather.Snowy),
-        HourlyWeather(-7, Weather.Snowy),
-        HourlyWeather(-8, Weather.Snowy),
-        HourlyWeather(-10, Weather.MostlyClear),
-        HourlyWeather(-10, Weather.MostlyClear),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Sunny),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.MostlyClear),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.Snowy),
+        HourlyWeather(0, Weather.MostlyClear),
+        HourlyWeather(0, Weather.MostlyClear),
     ),
     listOf(
         HourlyWeather(6, Weather.Sunny),
