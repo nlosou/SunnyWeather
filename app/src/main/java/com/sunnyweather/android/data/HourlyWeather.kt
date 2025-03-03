@@ -15,7 +15,13 @@
  */
 package com.sunnyweather.android.data
 
+import com.sunnyweather.android.logic.model.Sky
+
 data class HourlyWeather(
     val temperature: Int,
     val weather: Weather
+)
+data class HourlyWeather2(
+    val temperature: Int,
+    val weather: Sky
 )

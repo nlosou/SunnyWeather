@@ -56,6 +56,7 @@ import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.data.WeatherAnimatableIcon
 import com.sunnyweather.android.data.WeatherDataProvider
+//import com.sunnyweather.android.data.WeatherDataProvider2
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.Anime.AnimatableSun
@@ -220,12 +221,18 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                         ) {
                             // 获取模拟的 DailyWeather 数据
-                            val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                            "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-                            HourlyWeatherChart(
-                                modifier = Modifier.fillMaxSize(),
-                                dailyWeather = dailyWeather
-                            )
+                            if (WeatherViewModel.hourly.value.isNotEmpty()){
+                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                                HourlyWeatherChart(
+                                    modifier = Modifier.fillMaxSize(),
+                                    dailyWeather = dailyWeather
+                                )
+                            }else{
+
+                            }
+
+
 
                         }
                         Card (

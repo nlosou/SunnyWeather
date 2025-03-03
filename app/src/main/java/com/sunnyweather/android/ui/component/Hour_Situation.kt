@@ -59,6 +59,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.sunnyweather.android.data.DateToDisplay
 import com.sunnyweather.android.data.TemperatureUnit
 import com.sunnyweather.android.data.WeatherDataProvider
+//import com.sunnyweather.android.data.WeatherDataProvider2
 import com.sunnyweather.android.data.displayName
 import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.Anime.theme.FontType
@@ -333,12 +334,15 @@ fun LineChart(
 @Composable
 fun PreviewHourlyWeatherChart() {
     SunnyWeatherTheme {
-            // 获取模拟的 DailyWeather 数据
-            val dailyWeather = WeatherDataProvider.dailyWeather.first()
+        /*
+        // 获取模拟的 DailyWeather 数据
+            val dailyWeather = WeatherDataProvider2.dailyWeather.first()
             "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
             HourlyWeatherChart(
                 modifier = Modifier.fillMaxSize(),
                 dailyWeather = dailyWeather
             )
+         */
+
     }
 }

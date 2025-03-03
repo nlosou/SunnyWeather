@@ -16,8 +16,6 @@
 package com.sunnyweather.android.data
 
 import android.os.Build
-import androidx.activity.viewModels
-import com.sunnyweather.android.ui.weather.WeatherViewModel
 import java.time.LocalDate
 
 /**
@@ -211,6 +209,43 @@ private val hourlyWeather = listOf(
 
 object WeatherDataProvider {
 
+    private val _weather = { it: Int ->
+        when (it) {
+            0 -> Weather.Snowy
+            1 -> Weather.MostlyClear
+            2 -> Weather.Cloudy
+            3 -> Weather.CloudyRain
+            4 -> Weather.HeavyRain
+            5 -> Weather.Storm
+            else -> Weather.Sunny
+        }
+    }
+
+    val dailyWeather: List<DailyWeather>
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val curDate = LocalDate.now()
+            (0..6).map {
+                val date = curDate.plusDays(it.toLong())
+                DailyWeather(
+                    isToday = it == 0,
+                    DateToDisplay(date),
+                    hourly = Hourly_data.hourlyWeather,
+                    weather = _weather(it)
+                )
+            }.toList()
+        } else {
+            (0..6).map {
+                DailyWeather(
+                    date = DateToDisplay(),
+                    hourly = Hourly_data.hourlyWeather,
+                    weather = _weather(it)
+                )
+            }.toList()
+        }
+}
+/*
+object WeatherDataProvider2 {
+
     // mock the average weather of day
     val _weather = { it: Int ->
         when (it) {
@@ -244,3 +279,6 @@ object WeatherDataProvider {
             )
         }.toList()
 }
+
+ */
+

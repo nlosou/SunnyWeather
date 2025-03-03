@@ -25,7 +25,7 @@ import kotlin.math.roundToInt
 data class DailyWeather(
     val isToday: Boolean = false,
     val date: DateToDisplay,
-    val hourly: List<HourlyWeather>,
+    val hourly: List<HourlyWeather2>,
     @Deprecated("use weather() replace", replaceWith = ReplaceWith("weather()"))
     val weather: Weather
 )
