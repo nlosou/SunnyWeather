@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -178,12 +180,18 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                      */
                     if (WeatherViewModel.temp.value.isNotEmpty() &&
                         WeatherViewModel.temp.value[0].result?.realtime?.skycon != null){
-                        WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
+                        Box( // Box 布局，用于显示天气图标
+                            modifier = Modifier
+                                .align(Alignment.Center) // 图标水平居中
+                                .scale(6f)
+                                .offset(x=15.dp,y=-50.dp)// 图标缩放为 60%
+                        ){
+                            WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
+                        }
+
                     }else{
 
                     }
-
-
                     // 右侧留白)
                     ConstraintLayout(
                         modifier = Modifier
@@ -206,49 +214,27 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                             modifier = Modifier
                                 .background(Color.Transparent)
                                 .constrainAs(hour_situation) {
-                                    top.linkTo(Easy_Weather.bottom, margin = 50.dp)
+                                    top.linkTo(Easy_Weather.bottom, margin = 30.dp)
                                 }
                                 .alpha(if (isExpanded) 0.1f else 1f),
                             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                         ) {
-                            Box() {
-                                // 获取模拟的 DailyWeather 数据
-                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-                                HourlyWeatherChart(
-                                    modifier = Modifier.fillMaxSize(),
-                                    dailyWeather = dailyWeather
-                                )
-                            }
-                        }
-                        /*
-
-
-
-                        BoxWithConstraints(
-                            modifier = Modifier
-                                .constrainAs(BoxWith) {
-                                    top.linkTo(hour_situation.bottom, margin = 10.dp)
-                                    start.linkTo(parent.start) // 确保水平位置正确
-                                    end.linkTo(parent.end)
-                                }
-                                .fillMaxSize()
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .width(maxWidth)
-                                    .height(1.dp)
-                                    .background(Color.LightGray.copy(alpha = 1f))
+                            // 获取模拟的 DailyWeather 数据
+                            val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                            "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                            HourlyWeatherChart(
+                                modifier = Modifier.fillMaxSize(),
+                                dailyWeather = dailyWeather
                             )
-                        }
 
+                        }
                         Card (
                             Modifier
                                 .constrainAs(future_caed) {
                                     bottom.linkTo(parent.bottom)
                                 }
-                                .padding(3.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.LightGray.copy(alpha = 0.5f))){
+                                .padding(3.dp).offset(y=-10.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)){
                             LazyRow() {
                                 items(15) { item ->
                                     Future_Weather_Cards()
@@ -277,7 +263,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
 
                             }
                         }
-                        */
                     }
 
                 }

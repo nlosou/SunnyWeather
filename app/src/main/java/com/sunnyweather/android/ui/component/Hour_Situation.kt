@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.toArgb
 import android.graphics.Path
 import android.graphics.Paint
 import android.graphics.Shader
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.CompositionLocalProvider
 import com.sunnyweather.android.data.DateToDisplay
 import com.sunnyweather.android.data.TemperatureUnit
@@ -126,15 +127,19 @@ fun HourlyWeatherChart(
     ) {
         LazyRow( // 使用 LazyRow 实现水平滚动列表
             modifier
-                .height(100.dp) // 设置高度为 100dp
+                .height(200.dp) // 设置高度为 100dp
                 .wrapContentWidth() // 宽度根据内容自动调整
         ) {
             item { // 在 LazyRow 中添加一个内容项
                 Box( // Box 布局，用于包含内容
                     Modifier
-                        .fillMaxHeight() // 填充最大高度
+                        .height(150.dp)// 填充最大高度
                         .width(900.dp) // 设置宽度为 900dp
                 ) {
+                    LineChart( // 调用 LineChart 组件绘制折线图
+                        Modifier.fillMaxSize(), // 填充整个 Box 的大小
+                        dailyWeather // 传递每日天气数据
+                    )
                     Row(Modifier.fillMaxSize()) { // 使用 Row 布局，内容水平排列
                         dailyWeather.hourly.forEachIndexed { index, it -> // 遍历每小时天气数据
                             Column( // 使用 Column 布局，内容垂直排列
@@ -146,27 +151,28 @@ fun HourlyWeatherChart(
                                 Box( // Box 布局，用于显示天气图标
                                     modifier = Modifier
                                         .align(Alignment.CenterHorizontally) // 图标水平居中
-                                        .scale(0.6f) // 图标缩放为 60%
+                                        .scale(0.9f) // 图标缩放为 60%
                                 ) {
                                     it.weather.icon() // 显示天气图标
                                 }
                                 Text( // 显示时间文本
                                     if (index < 12) "${index + 1} AM" // 根据索引生成 AM 或 PM 时间
                                     else "${index - 11} PM",
-                                    fontSize = 9.sp, // 设置字体大小为 9sp
-                                    fontWeight = FontWeight.Light, // 设置字体为轻体
+                                    fontSize = 10.sp, // 设置字体大小为 9sp
+                                    fontWeight = FontWeight.Black, // 设置字体为轻体
                                     modifier = Modifier
                                         .align(Alignment.CenterHorizontally) // 文本水平居中
                                         .clearAndSetSemantics { } // 清除语义信息
+                                )
+                                Divider(
+                                    color = Color.Gray, // 设置分割线的颜色
+                                    thickness = 1.dp // 设置分割线的厚度
                                 )
                             }
                         }
                     }
 
-                    LineChart( // 调用 LineChart 组件绘制折线图
-                        Modifier.fillMaxSize(), // 填充整个 Box 的大小
-                        dailyWeather // 传递每日天气数据
-                    )
+
                 }
             }
         }
@@ -294,19 +300,19 @@ fun LineChart(
                 PointMode.Points, // 使用点模式绘制
                 points, // 温度点列表
                 androidx.compose.ui.graphics.Paint().apply {
-                    strokeWidth = 8f // 线条宽度为 8dp
+                    strokeWidth = 12f // 线条宽度为 8dp
                     strokeCap = StrokeCap.Round // 线条末端为圆角
                     color = Color.Black.copy(0.6f) // 线条颜色为半透明黑色
                 }
             )
 
             // 绘制温度值文本
-            var textSize = 10.sp.toPx() // 文本大小为 10sp
+            var textSize = 14.sp.toPx() // 文本大小为 10sp
             val textPaint = Paint().apply {
                 color = Color.Black.toArgb() // 文本颜色为黑色
                 textSize = textSize // 设置文本大小
                 alpha = 90 // 文本透明度为 90%
-                typeface = FontType.typeface // 设置字体
+               // typeface = FontType.fontFamily // 设置字体
             }
 
             dailyWeather.hourly.asSequence().zip(points.asSequence()) // 将天气数据和温度点配对
@@ -323,24 +329,10 @@ fun LineChart(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview10() {
-    SunnyWeatherTheme {
-        Box(
-        modifier = Modifier.fillMaxSize()
-        ){
-            Hour_Situation(Modifier)
-        }
-
-    }
-}
-
-@Preview(showBackground = true)
+@Preview(showBackground = false)
 @Composable
 fun PreviewHourlyWeatherChart() {
     SunnyWeatherTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
             // 获取模拟的 DailyWeather 数据
             val dailyWeather = WeatherDataProvider.dailyWeather.first()
             "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
@@ -348,6 +340,5 @@ fun PreviewHourlyWeatherChart() {
                 modifier = Modifier.fillMaxSize(),
                 dailyWeather = dailyWeather
             )
-        }
     }
 }
