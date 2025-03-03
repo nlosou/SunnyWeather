@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
@@ -226,14 +227,12 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                 "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
                                 HourlyWeatherChart(
                                     modifier = Modifier.fillMaxSize(),
-                                    dailyWeather = dailyWeather
+                                    dailyWeather = dailyWeather,
+                                    WeatherViewModel
                                 )
                             }else{
 
                             }
-
-
-
                         }
                         Card (
                             Modifier
@@ -241,34 +240,18 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                     bottom.linkTo(parent.bottom)
                                 }
                                 .padding(3.dp).offset(y=-10.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)){
-                            LazyRow() {
-                                items(15) { item ->
-                                    Future_Weather_Cards()
-                                    // 在每个 Future_Weather_Cards 之后添加一个 Divider，除了最后一个
-                                    if (item < 14) {
-                                        Box(
-                                            modifier = Modifier
-                                                .height(250.dp) // 分割线高度
-                                                .width(1.dp) // 分割线宽度
-                                                .background(
-                                                    brush = Brush.verticalGradient(
-                                                        colors = listOf(
-                                                            Color.LightGray.copy(alpha = 0.3f),
-                                                            Color.LightGray,
-                                                            Color.LightGray.copy(alpha = 0.3f)
-                                                        )
-                                                    )
-                                                )
-                                                .padding(horizontal = 1.dp) // 左右内边距
-                                        )
-                                    }
-
-
-                                }
-
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                            shape = RoundedCornerShape(0.dp)
+                            ){
+                            if (WeatherViewModel.daily.value.isNotEmpty()){
+                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                Future_Weather_Cards(WeatherViewModel,
+                                     dailyWeather
+                                )
+                            }else{
 
                             }
+
                         }
                     }
 

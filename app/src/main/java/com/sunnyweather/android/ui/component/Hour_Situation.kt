@@ -63,6 +63,9 @@ import com.sunnyweather.android.data.WeatherDataProvider
 import com.sunnyweather.android.data.displayName
 import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.Anime.theme.FontType
+import com.sunnyweather.android.ui.weather.WeatherViewModel
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 
 /**
@@ -120,7 +123,8 @@ fun Hour_Situation(modifier: Modifier) {
 @Composable
 fun HourlyWeatherChart(
     modifier: Modifier = Modifier, // 默认的 Modifier
-    dailyWeather: DailyWeather // 每日天气数据
+    dailyWeather: DailyWeather, // 每日天气数据
+    WeatherViewModel:WeatherViewModel
 ) {
     // 使用 CompositionLocalProvider 提供一个温度单位的默认值
     CompositionLocalProvider(
@@ -156,15 +160,22 @@ fun HourlyWeatherChart(
                                 ) {
                                     it.weather.icon() // 显示天气图标
                                 }
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
+                                val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.hourly.value[index].datetime, formatter)
+                                val time = offsetDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
                                 Text( // 显示时间文本
+                                    /*
                                     if (index < 12) "${index + 1} AM" // 根据索引生成 AM 或 PM 时间
                                     else "${index - 11} PM",
-                                    fontSize = 10.sp, // 设置字体大小为 9sp
+                                     */
+                                    time,
+                                    fontSize = 11.sp, // 设置字体大小为 9sp
                                     fontWeight = FontWeight.Black, // 设置字体为轻体
                                     modifier = Modifier
                                         .align(Alignment.CenterHorizontally) // 文本水平居中
                                         .clearAndSetSemantics { } // 清除语义信息
                                 )
+                                "dailyWeather".log(index.toString())
                                 Divider(
                                     color = Color.Gray, // 设置分割线的颜色
                                     thickness = 1.dp // 设置分割线的厚度

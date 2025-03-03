@@ -1,18 +1,25 @@
 package com.sunnyweather.android.ui.component
 
+import android.graphics.Paint
+import android.graphics.Path
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -21,47 +28,293 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PointMode
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sunnyweather.android.data.DailyWeather
+import com.sunnyweather.android.data.LocalTemUnit
+import com.sunnyweather.android.data.displayName
+import com.sunnyweather.android.log
+import com.sunnyweather.android.logic.dayOfWeekChinese
+import com.sunnyweather.android.logic.model.RealtimeResponse
+import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.Anime.AnimatableSun
 import com.sunnyweather.android.ui.Anime.Sun
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.Point
+import com.sunnyweather.android.ui.weather.WeatherViewModel
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 @Composable
-fun Future_Weather_Cards( ) {
-    Surface(color = Color.Transparent
-    ) {
-        Column (horizontalAlignment = Alignment.CenterHorizontally){
-            Text("今天")
-            Text("2月27日")
-            AnimatableSun(modifier = Modifier.size(50.dp))
-            Spacer(modifier = Modifier.padding(25.dp))
-            Box {
+fun Future_Weather_Cards( WeatherViewModel:WeatherViewModel,dailyWeather: DailyWeather) {
+    LazyRow() {
+        items(7) { item ->
+            Surface(color = Color.Transparent
+            ) {
                 Column (horizontalAlignment = Alignment.CenterHorizontally){
-                    Icon(MyIconPack.Point, contentDescription = "",modifier = Modifier.size(10.dp),)
-                    Text("25°")
+                    if(item==0)
+                    {
+                        Text("今天",fontWeight = FontWeight.Light,modifier = Modifier
+                            .align(Alignment.CenterHorizontally) // 文本水平居中
+                            .clearAndSetSemantics { })
+                    }
+                    else if(item==1){
+                        Text("明天",fontWeight = FontWeight.Light,modifier = Modifier
+                            .align(Alignment.CenterHorizontally) // 文本水平居中
+                            .clearAndSetSemantics { })
+                    }else{
+                        Text(
+                            dayOfWeekChinese( WeatherViewModel.daily.value[item].date),fontWeight = FontWeight.Light,modifier = Modifier
+                            .align(Alignment.CenterHorizontally) // 文本水平居中
+                            .clearAndSetSemantics { })
+                    }
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
+                    val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.daily.value[item].date, formatter)
+                    val time = offsetDateTime.format(DateTimeFormatter.ofPattern("MM月dd日"))
+                    Text(time,fontWeight = FontWeight.Light,modifier = Modifier
+                        .align(Alignment.CenterHorizontally) // 文本水平居中
+                        .clearAndSetSemantics { })
+                    WeatherCodeConverter.getSky(WeatherViewModel.daily_weather.value[item].value).icon()
+                    Spacer(modifier = Modifier.padding(25.dp))
+                    /*
+                    Box {
+                        Column (horizontalAlignment = Alignment.CenterHorizontally){
+                            Icon(MyIconPack.Point, contentDescription = "",modifier = Modifier.size(10.dp),)
+                            Text("25°")
 
+                        }
+                    }
+                     */
+                    // Temperature chart for the day
+                    Box(Modifier.fillMaxWidth()) {
+                        if (WeatherViewModel.daily.value.isNotEmpty()) {
+                            val currentDay = WeatherViewModel.daily.value.getOrNull(item)
+                            currentDay?.let {
+                                LineChart2(
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(100.dp),
+                                    metrics = listOf(it) // Use current day's metrics
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.padding(25.dp))
+                    Text("风速")
+                    Text("空气状况")
                 }
             }
-            Spacer(modifier = Modifier.padding(25.dp))
-            Text("风速")
-            Text("空气状况")
+            // 在每个 Future_Weather_Cards 之后添加一个 Divider，除了最后一个
+            if (item < 14) {
+                Box(
+                    modifier = Modifier
+                        .height(250.dp) // 分割线高度
+                        .width(1.dp) // 分割线宽度
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.LightGray.copy(alpha = 0.3f),
+                                    Color.LightGray,
+                                    Color.LightGray.copy(alpha = 0.3f)
+                                )
+                            )
+                        )
+                        .padding(horizontal = 1.dp) // 左右内边距
+                )
+            }
+
+
         }
+
+
     }
 
+
+}
+
+@Composable
+fun LineChart2(
+    modifier: Modifier, // Modifier
+    metrics: List<RealtimeResponse.Result.Daily.Metrics> // 每日温度数据
+) {
+    "metrics".log(metrics.toString())
+    val (cur, setCur) = remember { mutableStateOf<List<RealtimeResponse.Result.Daily.Metrics>?>(null) } // 用于存储当前动漫变化的天气数据
+    var trigger by remember { mutableStateOf(0f) } // 动画触发器
+
+    DisposableEffect(metrics) { // 监听 metrics 的变化
+        trigger = 1f // 当 metrics 变化时，设置动画触发器为 1f
+        onDispose { } // 动画结束后不执行任何操作
+    }
+
+    // 使用 animateFloatAsState 创建一个动画值，从 0 到 1
+    val animateFloat by animateFloatAsState(
+        targetValue = trigger, // 动画目标值
+        animationSpec = tween(1500) // 定义动画时长为 1500 毫秒
+    ) {
+        setCur(metrics) // 回调函数，设置当前天气数据
+        trigger = 0f // 重置触发器
+    }
+
+    val tempUnit = LocalTemUnit.current // 获取当前的温度单位
+    Canvas(modifier) { // 使用 Canvas 进行绘制
+
+        val increment = size.width / metrics.size // 计算每个温度点之间的宽度增量
+
+        // 计算温度范围
+        val maxTemp = metrics.safeMax { it.max ?: 0f } // 获取最高温度
+        val minTemp = metrics.safeMin { it.min ?: 0f } // 获取最低温度
+        "maxTemp".log(maxTemp.toString())
+        val dy = (maxTemp - minTemp).toFloat() // 温度范围差值
+
+        val amplifyFactor = 2.0f // 放大倍数
+
+        drawIntoCanvas { canvas -> // 使用 Canvas 进行绘制
+
+            // 当动画未完成时，裁剪绘制区域
+            if (cur != metrics) {
+                canvas.clipRect(
+                    Rect(0f, 0f, size.width * animateFloat, size.height) // 裁剪区域
+                )
+            }
+
+            val path = Path() // 创建一个路径对象，用于绘制线条
+
+            // 获取所有温度点并计算其坐标
+            val points = metrics.mapIndexed { index, metric ->
+                Offset(
+                    increment * index + increment / 2, // X 坐标
+                    (1 - ((metric.max ?: 0f) - minTemp) / dy) * (size.height * 0.3f) + size.height * 0.2f // Y 坐标
+                )
+            }
+
+            // 设置路径的起点和终点
+            path.moveTo(0f, points.first().y)
+            path.lineTo(points.first().x, points.first().y)
+
+            // 使用直线连接各个温度点
+            (0 until points.size - 1).forEach { index ->
+                val x1 = points[index].x
+                val y1 = points[index].y
+                val x2 = points[index + 1].x
+                val y2 = points[index + 1].y
+
+                path.lineTo(x2, y2)
+            }
+
+            // 绘制顺序：从最高温度到最低温度
+            val maxPoints = points.map { it.copy(y = ((1 - ((minTemp + dy) - minTemp) / dy) * (size.height * 0.3f) + size.height * 0.2f)) }
+            val minPoints = points.map { it.copy(y = ((1 - (0f / dy) * (size.height * 0.3f) + size.height * 0.2f)) ) }
+
+            // 连接路径的最后一部分
+            path.lineTo(points.last().x + increment / 2, points.last().y)
+            path.lineTo(points.last().x + increment / 2, size.height)
+            path.lineTo(0f, size.height)
+            path.lineTo(0f, points.first().y)
+
+            // 使用渐变填充路径
+            val colors = intArrayOf(
+                Color.Black.copy(alpha = 1f).toArgb(), // 起始颜色：半透明黑色
+                Color.Transparent.toArgb() // 结束颜色：透明
+            )
+
+            val shader = android.graphics.LinearGradient(
+                0f, 0f, // 起始点坐标
+                0f, 200f, // 结束点坐标
+                colors, // 渐变颜色数组
+                null, // 颜色分布位置
+                android.graphics.Shader.TileMode.CLAMP // 渐变填充方式
+            )
+
+            // 使用 Paint 绘制路径
+            canvas.nativeCanvas.drawPath(
+                path,
+                Paint().apply {
+                    this.shader = shader // 设置渐变效果
+                    style = Paint.Style.FILL // 设置绘制样式为填充
+                    isAntiAlias = true // 开启抗锯齿
+                }
+            )
+
+            // 绘制温度点
+            canvas.drawPoints(
+                PointMode.Points, // 使用点模式绘制
+                points, // 温度点列表
+                androidx.compose.ui.graphics.Paint().apply {
+                    strokeWidth = 12f // 线条宽度为 8dp
+                    strokeCap = StrokeCap.Round // 线条末端为圆角
+                    color = Color.Black.copy(0.6f) // 线条颜色为半透明黑色
+                }
+            )
+
+            // 绘制温度值文本
+            var textSize = 14.sp.toPx() // 文本大小为 10sp
+            val textPaint = Paint().apply {
+                color = Color.Black.toArgb() // 文本颜色为黑色
+                textSize = textSize // 设置文本大小
+                alpha = 90 // 文本透明度为 90%
+                // typeface = FontType.fontFamily // 设置字体
+            }
+
+            metrics.asSequence().zip(points.asSequence()) // 将天气数据和温度点配对
+                .forEachIndexed { index, pair ->
+                    val (metric, point) = pair // 获取天气数据和对应的坐标
+                    canvas.nativeCanvas.drawText(
+                        "${metric.max?.toInt()?.displayName(tempUnit)} / ${metric.min?.toInt()?.displayName(tempUnit)}", // 温度显示文本
+                        point.x - textSize / 2, // 文本 X 坐标
+                        point.y - textSize / 1.5f, // 文本 Y 坐标
+                        textPaint // 绘制文本
+                    )
+                }
+        }
+    }
+}
+
+// 扩展函数：计算列表中最大值
+fun <T> List<T>.safeMax(transform: (T) -> Float): Float {
+    return if (isEmpty()) {
+        0f
+    } else {
+        maxOfOrNull { transform(it) } ?: 0f
+    }
+}
+
+// 扩展函数：计算列表中最小值
+fun <T> List<T>.safeMin(transform: (T) -> Float): Float {
+    return if (isEmpty()) {
+        0f
+    } else {
+        minOfOrNull { transform(it) } ?: 0f
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview7() {
+    val WeatherViewModel = remember { WeatherViewModel() }
     SunnyWeatherTheme {
-        Future_Weather_Cards()
+       // Future_Weather_Cards(WeatherViewModel)
     }
 }

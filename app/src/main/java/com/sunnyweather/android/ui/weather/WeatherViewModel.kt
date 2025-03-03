@@ -25,6 +25,9 @@ class WeatherViewModel:ViewModel() {
     var temp = mutableStateOf<List<RealtimeResponse>>(emptyList())
     var hourly = mutableStateOf<List<RealtimeResponse.Result.Hourly.Temperature>>(emptyList())
     var hourly_Sky = mutableStateOf<List<RealtimeResponse.Result.Hourly.Skycon>>(emptyList())
+    var daily=mutableStateOf<List<RealtimeResponse.Result.Daily.Metrics>>(emptyList())
+    var daily_weather=mutableStateOf<List<RealtimeResponse.Result.Daily.Skycon>>(emptyList())
+    //var hourly_time=mutableStateOf<List<RealtimeResponse.Result.Hourly.Temperature>>(emptyList())
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->
@@ -39,6 +42,8 @@ class WeatherViewModel:ViewModel() {
                     temp.value = item ?: emptyList() // 使用默认值
                     hourly.value=item[0].result.hourly.temperature
                     hourly_Sky.value=item[0].result.hourly.skycon
+                    daily.value=item[0].result.daily.temperature
+                    daily_weather.value=item[0].result.daily.skycon
                     "WeatherFlow_onSuccess".log(temp.value[0].result.daily.temperature[1].max.toString())
                 }.onFailure {
                     "WeatherFlow".log(it.toString())

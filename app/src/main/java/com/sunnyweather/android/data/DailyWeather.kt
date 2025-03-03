@@ -23,11 +23,11 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 data class DailyWeather(
-    val isToday: Boolean = false,
-    val date: DateToDisplay,
-    val hourly: List<HourlyWeather2>,
-    @Deprecated("use weather() replace", replaceWith = ReplaceWith("weather()"))
-    val weather: Weather
+    val isToday: Boolean = false, // 是否是当天的天气数据
+    val date: DateToDisplay, // 用于显示日期的数据对象
+    val hourly: List<HourlyWeather2>, // 每小时的天气数据列表
+    @Deprecated("use weather() replace", replaceWith = ReplaceWith("weather()")) // 建议使用 `weather()` 方法替代
+    val weather: Weather // 当天的天气信息
 )
 
 // display name of temperature
