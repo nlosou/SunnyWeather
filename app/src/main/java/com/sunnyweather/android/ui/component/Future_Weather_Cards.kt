@@ -8,11 +8,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -35,16 +32,13 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
-import androidx.constraintlayout.compose.ConstraintLayout
 import com.sunnyweather.android.data.DailyWeather
-import com.sunnyweather.android.data.LocalTemUnit
-import com.sunnyweather.android.data.displayName
 import com.sunnyweather.android.data.displayName2
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.dayOfWeekChinese
@@ -68,8 +62,6 @@ fun Future_Weather_Cards(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp)
-
     ) {
         // 温度曲线
         LineChart2(
@@ -94,7 +86,8 @@ fun Future_Weather_Cards(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .width(cardWidth)
-                            .padding(top = 16.dp)
+                            .padding(top = 16.dp),
+
                     ) {
                         Text(
                             text = when (item) {
@@ -275,11 +268,10 @@ fun LineChart2(
             )
 
             // 绘制温度值文本
-            var textSize = 10.sp.toPx() // 文本大小为 10sp
+            val textStyle = TextStyle.Default.copy(fontSize = 15.sp)
             val textPaint = Paint().apply {
                 color = Color.Black.toArgb() // 文本颜色为黑色
-                textSize = textSize // 设置文本大小
-                alpha = 90 // 文本透明度为 90%
+                textSize = textStyle.fontSize.toPx() // 自动处理密度转换
                 typeface = FontType.typeface // 设置字体
             }
 
@@ -287,9 +279,9 @@ fun LineChart2(
                 .forEachIndexed { index, pair ->
                     val (metric, point) = pair // 获取天气数据和对应的坐标
                     canvas.nativeCanvas.drawText(
-                        "${metric.max?.toInt()?.displayName2(tempUnit)} / ${metric.min?.toInt()?.displayName2(tempUnit)}", // 温度显示文本
-                        point.x - textSize / 2, // 文本 X 坐标
-                        point.y - textSize / 1.5f, // 文本 Y 坐标
+                        "${metric.max?.toInt()?.displayName2(tempUnit)}", // 温度显示文本
+                        point.x - textStyle.fontSize.value / 2, // 文本 X 坐标
+                        point.y - textStyle.fontSize.value / 1.5f, // 文本 Y 坐标
                         textPaint // 绘制文本
                     )
                 }

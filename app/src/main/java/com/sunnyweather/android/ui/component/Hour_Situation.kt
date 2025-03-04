@@ -1,5 +1,6 @@
 package com.sunnyweather.android.ui.component
 
+import android.graphics.Color.alpha
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +59,7 @@ import com.sunnyweather.android.data.TemperatureUnit
 //import com.sunnyweather.android.data.WeatherDataProvider2
 import com.sunnyweather.android.data.displayName
 import com.sunnyweather.android.log
+import com.sunnyweather.android.ui.Anime.theme.FontType
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -314,12 +316,12 @@ fun LineChart(
             )
 
             // 绘制温度值文本
-            var textSize = 14.sp.toPx() // 文本大小为 10sp
+            val textStyle = TextStyle.Default.copy(fontSize = 12.sp)
             val textPaint = Paint().apply {
                 color = Color.Black.toArgb() // 文本颜色为黑色
-                textSize = textSize // 设置文本大小
-                alpha = 90 // 文本透明度为 90%
-               // typeface = FontType.fontFamily // 设置字体
+                textSize = textStyle.fontSize.toPx() // 自动处理密度转换
+                typeface = FontType.typeface // 设置字体
+                alpha = 70
             }
 
             dailyWeather.hourly.asSequence().zip(points.asSequence()) // 将天气数据和温度点配对
@@ -327,8 +329,8 @@ fun LineChart(
                     val (weather, point) = pair // 获取天气数据和对应的坐标
                     canvas.nativeCanvas.drawText(
                         weather.temperature.displayName(tempUnit), // 温度显示文本
-                        point.x - textSize / 2, // 文本 X 坐标
-                        point.y - textSize / 1.5f, // 文本 Y 坐标
+                        point.x - textStyle.fontSize.value / 2, // 文本 X 坐标
+                        point.y - textStyle.fontSize.value / 1.5f, // 文本 Y 坐标
                         textPaint // 绘制文本
                     )
                 }
