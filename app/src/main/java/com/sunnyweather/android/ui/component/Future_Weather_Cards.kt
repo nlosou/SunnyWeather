@@ -57,104 +57,109 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun Future_Weather_Cards(WeatherViewModel: WeatherViewModel, dailyWeather: DailyWeather) {
-    // LazyRow for daily weather cards
+fun Future_Weather_Cards(
+    WeatherViewModel: WeatherViewModel,
+    dailyWeather: DailyWeather
+) {
     val horizontalItemCount = 7
-    val cardWidth = 90.dp // 设置每个卡片的宽度
+    val cardWidth = 80.dp
     val rowWidth = horizontalItemCount * cardWidth
-    Box{
-        Box(
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp)
+
+    ) {
+        // 温度曲线
+        LineChart2(
+            modifier = Modifier
+                .width(rowWidth)
+                .height(200.dp)
+                .align(Alignment.BottomCenter), // 确保 Canvas 与 LazyRow 对齐
+            metrics = WeatherViewModel.daily.value
+        )
+
+        // 每日天气卡片
+        //Spacer(modifier = Modifier.height(200.dp)) // 确保 Canvas 空间被预留
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
-                .width(rowWidth).offset(y=130.dp) // 设置 Canvas 的宽度
+                .height(350.dp)
+                .align(Alignment.BottomCenter)
         ) {
-            if (WeatherViewModel.daily.value.isNotEmpty()) {
-                LineChart2(
-                    modifier = Modifier
-                        .width(rowWidth)
-                        .height(200.dp),
-                    metrics = WeatherViewModel.daily.value
-                )
-            }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(350.dp)
-                    .width(rowWidth) // 设置 LazyRow 的宽度
-            ) {
-                items(horizontalItemCount) { item ->
-                    Surface(
-                        color = Color.Transparent
+            items(horizontalItemCount) { item ->
+                Surface(color = Color.Transparent) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .width(cardWidth)
+                            .padding(top = 16.dp)
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.width(cardWidth) // 每个子项的宽度
-                        ) {
-                            // 日历卡片的内容
-                            when (item) {
-                                0 -> Text("今天", fontWeight = FontWeight.Light)
-                                1 -> Text("明天", fontWeight = FontWeight.Light)
-                                else -> Text(
-                                    dayOfWeekChinese(WeatherViewModel.daily.value[item].date),
-                                    fontWeight = FontWeight.Light
+                        Text(
+                            text = when (item) {
+                                0 -> "今天"
+                                1 -> "明天"
+                                else -> dayOfWeekChinese(
+                                    WeatherViewModel.daily.value[item].date
                                 )
-                            }
+                            },
+                            fontWeight = FontWeight.Light
+                        )
 
-                            // 日期
-                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
-                            val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.daily.value[item].date, formatter)
-                            val time = offsetDateTime.format(DateTimeFormatter.ofPattern("MM月dd日"))
-                            Text(time, fontWeight = FontWeight.Light)
+                        Text(
+                            text = OffsetDateTime.parse(
+                                WeatherViewModel.daily.value[item].date,
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
+                            ).format(DateTimeFormatter.ofPattern("MM月dd日")),
+                            fontWeight = FontWeight.Light
+                        )
 
-                            // 天气图标
-                            WeatherCodeConverter.getSky(WeatherViewModel.daily_weather.value[item].value)
-                                .icon()
-                            Column (modifier = Modifier.offset(y=200.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
-                            }
-
-
+                        // 天气图标
+                        Box(
+                            modifier = Modifier
+                                .width(48.dp)
+                                .height(48.dp)
+                                .background(Color.Transparent)
+                        ) {
+                            WeatherCodeConverter.getSky(
+                                WeatherViewModel.daily_weather.value[item].value
+                            ).icon()
                         }
 
-                        // 垂直分割线
-                        if (item < 14) {
-                            Box(
-                                modifier = Modifier
-                                    .height(250.dp)
-                                    .width(1.dp)
-                                    .background(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color.LightGray.copy(alpha = 0.3f),
-                                                Color.LightGray,
-                                                Color.LightGray.copy(alpha = 0.3f)
-                                            )
+                        Column(
+                            modifier = Modifier.padding(top=130.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
+                            //Spacer(modifier = Modifier.width(16.dp))
+                            Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
+                        }
+                    }
+
+                    if (item < 14) {
+                        Box(
+                            modifier = Modifier
+                                .height(250.dp)
+                                .width(1.dp)
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.LightGray.copy(alpha = 0.3f),
+                                            Color.LightGray,
+                                            Color.LightGray.copy(alpha = 0.3f)
                                         )
                                     )
-                                    .padding(horizontal = 1.dp)
-                            )
-                        }
+                                )
+                                .padding(horizontal = 1.dp)
+                        )
                     }
                 }
             }
-
-            // LineChart2
-
-
-
-
         }
     }
-
 }
+
 @Composable
 fun LineChart2(
     modifier: Modifier, // Modifier
@@ -214,9 +219,8 @@ fun LineChart2(
                 )
             }
 
-            // 设置路径的起点和终点
-            path.moveTo(0f, points.first().y)
-            path.lineTo(points.first().x, points.first().y)
+            // 设置路径的起点
+            path.moveTo(points.first().x, points.first().y)
 
             // 使用直线连接各个温度点
             (0 until points.size - 1).forEach { index ->
@@ -232,17 +236,13 @@ fun LineChart2(
             val maxPoints = points.map { it.copy(y = ((1 - ((minTemp + dy) - minTemp) / dy) * (size.height * 0.3f) + size.height * 0.2f)) }
             val minPoints = points.map { it.copy(y = ((1 - (0f / dy) * (size.height * 0.3f) + size.height * 0.2f)) ) }
 
-            // 连接路径的最后一部分
-            path.lineTo(points.last().x + increment / 2, points.last().y)
-            path.lineTo(points.last().x + increment / 2, size.height)
-            path.lineTo(0f, size.height)
-            path.lineTo(0f, points.first().y)
 
             // 使用渐变填充路径
             val colors = intArrayOf(
                 Color.Black.copy(alpha = 1f).toArgb(), // 起始颜色：半透明黑色
                 Color.Transparent.toArgb() // 结束颜色：透明
             )
+            /*
 
             val shader = android.graphics.LinearGradient(
                 0f, 0f, // 起始点坐标
@@ -251,14 +251,15 @@ fun LineChart2(
                 null, // 颜色分布位置
                 android.graphics.Shader.TileMode.CLAMP // 渐变填充方式
             )
-
-            // 使用 Paint 绘制路径
+             */
+            // 使用纯黑色填充路径
             canvas.nativeCanvas.drawPath(
                 path,
                 Paint().apply {
-                    this.shader = shader // 设置渐变效果
-                    style = Paint.Style.FILL // 设置绘制样式为填充
+                    color = Color.Black.toArgb() // 设置纯黑色
+                    style = Paint.Style.STROKE // 设置绘制样式为填充
                     isAntiAlias = true // 开启抗锯齿
+                    strokeWidth=5f
                 }
             )
 
@@ -267,9 +268,9 @@ fun LineChart2(
                 PointMode.Points, // 使用点模式绘制
                 points, // 温度点列表
                 androidx.compose.ui.graphics.Paint().apply {
-                    strokeWidth = 12f // 线条宽度为 8dp
+                    strokeWidth = 15f // 点的大小
                     strokeCap = StrokeCap.Round // 线条末端为圆角
-                    color = Color.Black.copy(0.6f) // 线条颜色为半透明黑色
+                    color = Color.Black // 线条颜色为半透明黑色
                 }
             )
 
