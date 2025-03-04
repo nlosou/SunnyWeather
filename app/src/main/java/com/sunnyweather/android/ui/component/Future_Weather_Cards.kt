@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.sunnyweather.android.data.DailyWeather
 import com.sunnyweather.android.data.LocalTemUnit
@@ -59,20 +60,28 @@ import java.time.format.DateTimeFormatter
 fun Future_Weather_Cards(WeatherViewModel: WeatherViewModel, dailyWeather: DailyWeather) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().offset(y=200.dp)
     ) {
         // LazyRow for daily weather cards
+        val horizontalItemCount = 7
+        val cardWidth = 90.dp // 设置每个卡片的宽度
+        val rowWidth = horizontalItemCount * cardWidth
+
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp) // Set a fixed height for LazyRow
+                .height(200.dp)
+                .width(rowWidth) // 设置 LazyRow 的宽度
         ) {
-            items(7) { item ->
+            items(horizontalItemCount) { item ->
                 Surface(
                     color = Color.Transparent
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        // Day text (Today, Tomorrow, etc.)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.width(cardWidth) // 每个子项的宽度
+                    ) {
+                        // 日历卡片的内容
                         when (item) {
                             0 -> Text("今天", fontWeight = FontWeight.Light)
                             1 -> Text("明天", fontWeight = FontWeight.Light)
@@ -82,25 +91,25 @@ fun Future_Weather_Cards(WeatherViewModel: WeatherViewModel, dailyWeather: Daily
                             )
                         }
 
-                        // Date text
+                        // 日期
                         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
                         val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.daily.value[item].date, formatter)
                         val time = offsetDateTime.format(DateTimeFormatter.ofPattern("MM月dd日"))
                         Text(time, fontWeight = FontWeight.Light)
 
-                        // Weather icon
+                        // 天气图标
                         WeatherCodeConverter.getSky(WeatherViewModel.daily_weather.value[item].value)
                             .icon()
 
                         Spacer(modifier = Modifier.padding(25.dp))
                     }
 
-                    // Vertical divider between days
+                    // 垂直分割线
                     if (item < 14) {
                         Box(
                             modifier = Modifier
-                                .height(250.dp) // Divider height
-                                .width(1.dp) // Divider width
+                                .height(250.dp)
+                                .width(1.dp)
                                 .background(
                                     brush = Brush.verticalGradient(
                                         colors = listOf(
@@ -117,31 +126,32 @@ fun Future_Weather_Cards(WeatherViewModel: WeatherViewModel, dailyWeather: Daily
             }
         }
 
-        // Box containing the temperature chart
+        // LineChart2
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp) // Adjust vertical spacing
+                .padding(top = 16.dp)
+                .width(rowWidth) // 设置 Canvas 的宽度
         ) {
             if (WeatherViewModel.daily.value.isNotEmpty()) {
                 LineChart2(
                     modifier = Modifier
-                        .width(300.dp)
+                        .width(rowWidth)
                         .height(200.dp),
                     metrics = WeatherViewModel.daily.value
                 )
             }
         }
 
-        // Row for wind speed and air quality
+        // 风速和空气状况
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp) // Adjust vertical spacing
+                .padding(top = 16.dp)
         ) {
             Spacer(modifier = Modifier.padding(25.dp))
             Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
-            Spacer(modifier = Modifier.width(16.dp)) // Add horizontal spacing
+            Spacer(modifier = Modifier.width(16.dp))
             Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
         }
     }
@@ -151,6 +161,10 @@ fun LineChart2(
     modifier: Modifier, // Modifier
     metrics: List<RealtimeResponse.Result.Daily.Metrics> // 每日温度数据
 ) {
+    val cardWidth = 90.dp // 卡片宽度
+    val horizontalItemCount = 7
+    val canvasWidth = cardWidth * horizontalItemCount
+
 
     "LineChart2".log(metrics.toString())
     val (cur, setCur) = remember { mutableStateOf<List<RealtimeResponse.Result.Daily.Metrics>?>(null) } // 用于存储当前动漫变化的天气数据
@@ -174,15 +188,13 @@ fun LineChart2(
     "LineChart2".log("4")
     Canvas(modifier) { // 使用 Canvas 进行绘制
 
-        val increment = size.width / metrics.size // 计算每个温度点之间的宽度增量
+        val increment = size.width / metrics.size // 每个点的宽度
+        val maxTemp = metrics.safeMax { it.max ?: 0f }
+        val minTemp = metrics.safeMin { it.min ?: 0f }
+        val dy = (maxTemp - minTemp).toFloat()
 
-        // 计算温度范围
-        val maxTemp = metrics.safeMax { it.max ?: 0f } // 获取最高温度
-        val minTemp = metrics.safeMin { it.min ?: 0f } // 获取最低温度
-        "maxTemp".log(maxTemp.toString())
-        val dy = (maxTemp - minTemp).toFloat() // 温度范围差值
-
-        val amplifyFactor = 2.0f // 放大倍数
+        val amplifyFactor = 2.0f
+        val tempUnit = TemperatureUnit.CELSIUS
 
         drawIntoCanvas { canvas -> // 使用 Canvas 进行绘制
 
@@ -198,8 +210,8 @@ fun LineChart2(
             // 获取所有温度点并计算其坐标
             val points = metrics.mapIndexed { index, metric ->
                 Offset(
-                    increment * index + increment / 2, // X 坐标
-                    (1 - ((metric.max ?: 0f) - minTemp) / dy) * (size.height * 0.3f) + size.height * 0.2f // Y 坐标
+                    index * increment + increment / 2, // 水平位置：每个卡片的中心
+                    (1 - ((metric.max ?: 0f) - minTemp) / dy) * (size.height * 0.3f) + size.height * 0.2f
                 )
             }
 
