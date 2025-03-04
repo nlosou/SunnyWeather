@@ -239,7 +239,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                 .constrainAs(future_caed) {
                                     bottom.linkTo(parent.bottom)
                                 }
-                                .padding(3.dp).offset(y=-10.dp),
+                                .padding(3.dp).offset(y=50.dp),
                             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                             shape = RoundedCornerShape(0.dp)
                             ){

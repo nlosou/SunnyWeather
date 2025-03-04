@@ -58,80 +58,16 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun Future_Weather_Cards(WeatherViewModel: WeatherViewModel, dailyWeather: DailyWeather) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth().offset(y=200.dp)
-    ) {
-        // LazyRow for daily weather cards
-        val horizontalItemCount = 7
-        val cardWidth = 90.dp // 设置每个卡片的宽度
-        val rowWidth = horizontalItemCount * cardWidth
-
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .width(rowWidth) // 设置 LazyRow 的宽度
-        ) {
-            items(horizontalItemCount) { item ->
-                Surface(
-                    color = Color.Transparent
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.width(cardWidth) // 每个子项的宽度
-                    ) {
-                        // 日历卡片的内容
-                        when (item) {
-                            0 -> Text("今天", fontWeight = FontWeight.Light)
-                            1 -> Text("明天", fontWeight = FontWeight.Light)
-                            else -> Text(
-                                dayOfWeekChinese(WeatherViewModel.daily.value[item].date),
-                                fontWeight = FontWeight.Light
-                            )
-                        }
-
-                        // 日期
-                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
-                        val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.daily.value[item].date, formatter)
-                        val time = offsetDateTime.format(DateTimeFormatter.ofPattern("MM月dd日"))
-                        Text(time, fontWeight = FontWeight.Light)
-
-                        // 天气图标
-                        WeatherCodeConverter.getSky(WeatherViewModel.daily_weather.value[item].value)
-                            .icon()
-
-                        Spacer(modifier = Modifier.padding(25.dp))
-                    }
-
-                    // 垂直分割线
-                    if (item < 14) {
-                        Box(
-                            modifier = Modifier
-                                .height(250.dp)
-                                .width(1.dp)
-                                .background(
-                                    brush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color.LightGray.copy(alpha = 0.3f),
-                                            Color.LightGray,
-                                            Color.LightGray.copy(alpha = 0.3f)
-                                        )
-                                    )
-                                )
-                                .padding(horizontal = 1.dp)
-                        )
-                    }
-                }
-            }
-        }
-
-        // LineChart2
+    // LazyRow for daily weather cards
+    val horizontalItemCount = 7
+    val cardWidth = 90.dp // 设置每个卡片的宽度
+    val rowWidth = horizontalItemCount * cardWidth
+    Box{
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
-                .width(rowWidth) // 设置 Canvas 的宽度
+                .width(rowWidth).offset(y=130.dp) // 设置 Canvas 的宽度
         ) {
             if (WeatherViewModel.daily.value.isNotEmpty()) {
                 LineChart2(
@@ -142,19 +78,82 @@ fun Future_Weather_Cards(WeatherViewModel: WeatherViewModel, dailyWeather: Daily
                 )
             }
         }
-
-        // 风速和空气状况
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
         ) {
-            Spacer(modifier = Modifier.padding(25.dp))
-            Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
-            Spacer(modifier = Modifier.width(16.dp))
-            Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .width(rowWidth) // 设置 LazyRow 的宽度
+            ) {
+                items(horizontalItemCount) { item ->
+                    Surface(
+                        color = Color.Transparent
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.width(cardWidth) // 每个子项的宽度
+                        ) {
+                            // 日历卡片的内容
+                            when (item) {
+                                0 -> Text("今天", fontWeight = FontWeight.Light)
+                                1 -> Text("明天", fontWeight = FontWeight.Light)
+                                else -> Text(
+                                    dayOfWeekChinese(WeatherViewModel.daily.value[item].date),
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
+
+                            // 日期
+                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
+                            val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.daily.value[item].date, formatter)
+                            val time = offsetDateTime.format(DateTimeFormatter.ofPattern("MM月dd日"))
+                            Text(time, fontWeight = FontWeight.Light)
+
+                            // 天气图标
+                            WeatherCodeConverter.getSky(WeatherViewModel.daily_weather.value[item].value)
+                                .icon()
+                            Column (modifier = Modifier.offset(y=200.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
+                            }
+
+
+                        }
+
+                        // 垂直分割线
+                        if (item < 14) {
+                            Box(
+                                modifier = Modifier
+                                    .height(250.dp)
+                                    .width(1.dp)
+                                    .background(
+                                        brush = Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color.LightGray.copy(alpha = 0.3f),
+                                                Color.LightGray,
+                                                Color.LightGray.copy(alpha = 0.3f)
+                                            )
+                                        )
+                                    )
+                                    .padding(horizontal = 1.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // LineChart2
+
+
+
+
         }
     }
+
 }
 @Composable
 fun LineChart2(
