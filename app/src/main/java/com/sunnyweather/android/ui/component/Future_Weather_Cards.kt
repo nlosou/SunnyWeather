@@ -1,30 +1,21 @@
 package com.sunnyweather.android.ui.component
-
+import androidx.core.text.util.LocalePreferences.TemperatureUnit
 import android.graphics.Paint
 import android.graphics.Path
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,122 +36,123 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.sunnyweather.android.data.DailyWeather
 import com.sunnyweather.android.data.LocalTemUnit
 import com.sunnyweather.android.data.displayName
+import com.sunnyweather.android.data.displayName2
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.dayOfWeekChinese
 import com.sunnyweather.android.logic.model.RealtimeResponse
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
-import com.sunnyweather.android.ui.Anime.AnimatableSun
-import com.sunnyweather.android.ui.Anime.Sun
-import com.sunnyweather.android.ui.MyIconPack
+import com.sunnyweather.android.ui.Anime.theme.FontType
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
-import com.sunnyweather.android.ui.myiconpack.Point
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.abs
 
 @Composable
-fun Future_Weather_Cards( WeatherViewModel:WeatherViewModel,dailyWeather: DailyWeather) {
-    LazyRow() {
-        items(7) { item ->
-            Surface(color = Color.Transparent
-            ) {
-                Column (horizontalAlignment = Alignment.CenterHorizontally){
-                    if(item==0)
-                    {
-                        Text("今天",fontWeight = FontWeight.Light,modifier = Modifier
-                            .align(Alignment.CenterHorizontally) // 文本水平居中
-                            .clearAndSetSemantics { })
-                    }
-                    else if(item==1){
-                        Text("明天",fontWeight = FontWeight.Light,modifier = Modifier
-                            .align(Alignment.CenterHorizontally) // 文本水平居中
-                            .clearAndSetSemantics { })
-                    }else{
-                        Text(
-                            dayOfWeekChinese( WeatherViewModel.daily.value[item].date),fontWeight = FontWeight.Light,modifier = Modifier
-                            .align(Alignment.CenterHorizontally) // 文本水平居中
-                            .clearAndSetSemantics { })
-                    }
-                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
-                    val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.daily.value[item].date, formatter)
-                    val time = offsetDateTime.format(DateTimeFormatter.ofPattern("MM月dd日"))
-                    Text(time,fontWeight = FontWeight.Light,modifier = Modifier
-                        .align(Alignment.CenterHorizontally) // 文本水平居中
-                        .clearAndSetSemantics { })
-                    WeatherCodeConverter.getSky(WeatherViewModel.daily_weather.value[item].value).icon()
-                    Spacer(modifier = Modifier.padding(25.dp))
-                    /*
-                    Box {
-                        Column (horizontalAlignment = Alignment.CenterHorizontally){
-                            Icon(MyIconPack.Point, contentDescription = "",modifier = Modifier.size(10.dp),)
-                            Text("25°")
-
+fun Future_Weather_Cards(WeatherViewModel: WeatherViewModel, dailyWeather: DailyWeather) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        // LazyRow for daily weather cards
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp) // Set a fixed height for LazyRow
+        ) {
+            items(7) { item ->
+                Surface(
+                    color = Color.Transparent
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        // Day text (Today, Tomorrow, etc.)
+                        when (item) {
+                            0 -> Text("今天", fontWeight = FontWeight.Light)
+                            1 -> Text("明天", fontWeight = FontWeight.Light)
+                            else -> Text(
+                                dayOfWeekChinese(WeatherViewModel.daily.value[item].date),
+                                fontWeight = FontWeight.Light
+                            )
                         }
+
+                        // Date text
+                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
+                        val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.daily.value[item].date, formatter)
+                        val time = offsetDateTime.format(DateTimeFormatter.ofPattern("MM月dd日"))
+                        Text(time, fontWeight = FontWeight.Light)
+
+                        // Weather icon
+                        WeatherCodeConverter.getSky(WeatherViewModel.daily_weather.value[item].value)
+                            .icon()
+
+                        Spacer(modifier = Modifier.padding(25.dp))
                     }
-                     */
-                    // Temperature chart for the day
-                    Box(Modifier.fillMaxWidth()) {
-                        if (WeatherViewModel.daily.value.isNotEmpty()) {
-                            val currentDay = WeatherViewModel.daily.value.getOrNull(item)
-                            currentDay?.let {
-                                LineChart2(
-                                    modifier = Modifier
-                                        .width(150.dp)
-                                        .height(100.dp),
-                                    metrics = listOf(it) // Use current day's metrics
+
+                    // Vertical divider between days
+                    if (item < 14) {
+                        Box(
+                            modifier = Modifier
+                                .height(250.dp) // Divider height
+                                .width(1.dp) // Divider width
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.LightGray.copy(alpha = 0.3f),
+                                            Color.LightGray,
+                                            Color.LightGray.copy(alpha = 0.3f)
+                                        )
+                                    )
                                 )
-                            }
-                        }
+                                .padding(horizontal = 1.dp)
+                        )
                     }
-
-                    Spacer(modifier = Modifier.padding(25.dp))
-                    Text("风速")
-                    Text("空气状况")
                 }
             }
-            // 在每个 Future_Weather_Cards 之后添加一个 Divider，除了最后一个
-            if (item < 14) {
-                Box(
-                    modifier = Modifier
-                        .height(250.dp) // 分割线高度
-                        .width(1.dp) // 分割线宽度
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.LightGray.copy(alpha = 0.3f),
-                                    Color.LightGray,
-                                    Color.LightGray.copy(alpha = 0.3f)
-                                )
-                            )
-                        )
-                        .padding(horizontal = 1.dp) // 左右内边距
-                )
-            }
-
-
         }
 
+        // Box containing the temperature chart
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp) // Adjust vertical spacing
+        ) {
+            if (WeatherViewModel.daily.value.isNotEmpty()) {
+                LineChart2(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(200.dp),
+                    metrics = WeatherViewModel.daily.value
+                )
+            }
+        }
 
+        // Row for wind speed and air quality
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp) // Adjust vertical spacing
+        ) {
+            Spacer(modifier = Modifier.padding(25.dp))
+            Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
+            Spacer(modifier = Modifier.width(16.dp)) // Add horizontal spacing
+            Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
+        }
     }
-
-
 }
-
 @Composable
 fun LineChart2(
     modifier: Modifier, // Modifier
     metrics: List<RealtimeResponse.Result.Daily.Metrics> // 每日温度数据
 ) {
-    "metrics".log(metrics.toString())
+
+    "LineChart2".log(metrics.toString())
     val (cur, setCur) = remember { mutableStateOf<List<RealtimeResponse.Result.Daily.Metrics>?>(null) } // 用于存储当前动漫变化的天气数据
     var trigger by remember { mutableStateOf(0f) } // 动画触发器
 
@@ -168,7 +160,7 @@ fun LineChart2(
         trigger = 1f // 当 metrics 变化时，设置动画触发器为 1f
         onDispose { } // 动画结束后不执行任何操作
     }
-
+    "LineChart2".log("2")
     // 使用 animateFloatAsState 创建一个动画值，从 0 到 1
     val animateFloat by animateFloatAsState(
         targetValue = trigger, // 动画目标值
@@ -177,8 +169,9 @@ fun LineChart2(
         setCur(metrics) // 回调函数，设置当前天气数据
         trigger = 0f // 重置触发器
     }
-
-    val tempUnit = LocalTemUnit.current // 获取当前的温度单位
+    "LineChart2".log("3")
+    val tempUnit = TemperatureUnit.CELSIUS// 获取当前的温度单位
+    "LineChart2".log("4")
     Canvas(modifier) { // 使用 Canvas 进行绘制
 
         val increment = size.width / metrics.size // 计算每个温度点之间的宽度增量
@@ -270,19 +263,19 @@ fun LineChart2(
             )
 
             // 绘制温度值文本
-            var textSize = 14.sp.toPx() // 文本大小为 10sp
+            var textSize = 10.sp.toPx() // 文本大小为 10sp
             val textPaint = Paint().apply {
                 color = Color.Black.toArgb() // 文本颜色为黑色
                 textSize = textSize // 设置文本大小
                 alpha = 90 // 文本透明度为 90%
-                // typeface = FontType.fontFamily // 设置字体
+                typeface = FontType.typeface // 设置字体
             }
 
             metrics.asSequence().zip(points.asSequence()) // 将天气数据和温度点配对
                 .forEachIndexed { index, pair ->
                     val (metric, point) = pair // 获取天气数据和对应的坐标
                     canvas.nativeCanvas.drawText(
-                        "${metric.max?.toInt()?.displayName(tempUnit)} / ${metric.min?.toInt()?.displayName(tempUnit)}", // 温度显示文本
+                        "${metric.max?.toInt()?.displayName2(tempUnit)} / ${metric.min?.toInt()?.displayName2(tempUnit)}", // 温度显示文本
                         point.x - textSize / 2, // 文本 X 坐标
                         point.y - textSize / 1.5f, // 文本 Y 坐标
                         textPaint // 绘制文本

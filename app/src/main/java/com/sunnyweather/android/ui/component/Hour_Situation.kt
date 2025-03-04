@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,7 +41,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.LinearGradient
 import com.sunnyweather.android.data.LocalTemUnit
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import kotlin.math.abs
@@ -53,16 +51,13 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import android.graphics.Path
 import android.graphics.Paint
-import android.graphics.Shader
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.CompositionLocalProvider
-import com.sunnyweather.android.data.DateToDisplay
+import androidx.core.text.util.LocalePreferences
 import com.sunnyweather.android.data.TemperatureUnit
-import com.sunnyweather.android.data.WeatherDataProvider
 //import com.sunnyweather.android.data.WeatherDataProvider2
 import com.sunnyweather.android.data.displayName
 import com.sunnyweather.android.log
-import com.sunnyweather.android.ui.Anime.theme.FontType
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter

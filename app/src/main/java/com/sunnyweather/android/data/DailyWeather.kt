@@ -16,6 +16,7 @@
 package com.sunnyweather.android.data
 
 import android.os.Build
+import com.sunnyweather.android.log
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.TextStyle
@@ -34,6 +35,10 @@ data class DailyWeather(
 fun Int.displayName(temperatureUnit: TemperatureUnit) =
     if (temperatureUnit == TemperatureUnit.Centigrade) this.toString()
     else (this * 1.8f + 32).roundToInt().toString()
+
+
+fun Int.displayName2(temperatureUnit: String) =
+     this.toString()
 
 /**
  * if is today -> cur hourly weather
