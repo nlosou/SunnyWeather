@@ -1,12 +1,10 @@
-package com.sunnyweather.android.ui.layout
-
-
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,278 +13,223 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.sunnyweather.android.R
 import com.sunnyweather.android.ui.MyIconPack
-import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.Car
 import com.sunnyweather.android.ui.myiconpack.Clothes
 import com.sunnyweather.android.ui.myiconpack.Cosmetic
 import com.sunnyweather.android.ui.myiconpack.Drugs
 import com.sunnyweather.android.ui.myiconpack.Sport
 import com.sunnyweather.android.ui.myiconpack.Umbrella
-
+import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 
 @Composable
-fun Weather_other_info( modifier:Modifier) {
-    ConstraintLayout(modifier) {
-        val (Rainfall_forecast,Ultraviolet,humidity,somatosensory,Wind,sun,atmospheric_pressure,life) = remember { createRefs() }
-        Card(modifier= Modifier
-            .constrainAs(Rainfall_forecast) {
-                top.linkTo(parent.top)
-            }
-            .padding(10.dp)) {
-            Row(modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly) {
-                Column {
-                    Text("降水预测",style = TextStyle(
+fun Weather_other_info(modifier: Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(10.dp)
+    ) {
+        // 降水预测
+        /*
+
+         WeatherCard(
+            title = "降水预测",
+            content = "2小时内无降雨",
+            subContent = "放心出行吧",
+            iconId = R.drawable.screenshot_20250228_163310
+        )
+
+         */
+
+
+        // 紫外线和湿度
+        Row(modifier = Modifier.fillMaxWidth()) {
+            WeatherCard(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1.8f), // 设置宽高相等
+                title = "紫外线",
+                content = "中"
+            )
+            Spacer(modifier=Modifier.padding(5.dp))
+            WeatherCard(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1.8f), // 设置宽高相等
+                title = "湿度",
+                content = "42%"
+            )
+        }
+
+        // 体感和风
+        Row(modifier = Modifier.fillMaxWidth()) {
+            WeatherCard(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1.8f), // 设置宽高相等
+                title = "体感",
+                content = "15°"
+            )
+            Spacer(modifier=Modifier.padding(5.dp))
+            WeatherCard(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1.8f), // 设置宽高相等
+                title = "西南风",
+                content = "2级"
+            )
+        }
+        // 生活指数
+        LifeIndexSection()
+    }
+}
+
+@Composable
+fun WeatherCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    content: String,
+    subContent: String? = null,
+    iconId: Int? = null
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp),
+        shape = RoundedCornerShape(8.dp),
+
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(
+                    text = title,
+                    style = TextStyle(
                         fontSize = 15.sp,
-                    ))
-                    Text("2小时内无降雨",style = TextStyle(
+                    )
+                )
+                Text(
+                    text = content,
+                    style = TextStyle(
                         fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold  // 添加加粗效果
-                    ))
-                    Spacer(modifier=Modifier.padding(25.dp))
-                    Text("放心出行吧",style = TextStyle(
-                    fontSize = 15.sp,))
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                subContent?.let {
+                    Spacer(modifier = Modifier.padding(4.dp))
+                    Text(
+                        text = subContent,
+                        style = TextStyle(
+                            fontSize = 15.sp,
+                        )
+                    )
                 }
+            }
+
+            iconId?.let {
                 Image(
-                    painter = painterResource(id = R.drawable.screenshot_20250228_163310),  // 替换为你的 PNG 图片资源ID
+                    painter = painterResource(id = iconId),
                     contentDescription = "Description of the PNG Image",
                     modifier = Modifier
                         .size(130.dp)
                         .clip(RoundedCornerShape(35.dp))
-                        .align(Alignment.CenterVertically)// 设置图片大
                 )
-
             }
-        }
-
-        Card(modifier = Modifier.constrainAs(Ultraviolet) {
-            top.linkTo(Rainfall_forecast.bottom)
-        }.fillMaxWidth(0.5f).padding(10.dp, top = 1.dp)) {
-            Row(modifier = Modifier.padding(20.dp)) {
-                Column {
-                    Text(
-                        "紫外线", style = TextStyle(
-                            fontSize = 15.sp,
-                        )
-                    )
-                    Text(
-                        "中", style = TextStyle(
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.Bold  // 添加加粗效果
-                        )
-                    )
-                }
-            }
-        }
-        Card(modifier = Modifier.constrainAs(humidity) {
-            top.linkTo(Rainfall_forecast.bottom)
-            start.linkTo(Ultraviolet.end)
-        }.fillMaxWidth(0.5f).padding(10.dp, top = 1.dp, end = 10.dp)) {
-            Row(modifier = Modifier.padding(20.dp)) {
-                Column {
-                    Text(
-                        "湿度", style = TextStyle(
-                            fontSize = 15.sp,
-                        )
-                    )
-                    Spacer(modifier = Modifier.padding(3.4.dp))
-                    Text(
-                        "42%", style = TextStyle(
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.Bold  // 添加加粗效果
-                        )
-                    )
-                }
-            }
-        }
-        Card(modifier = Modifier.constrainAs(somatosensory) {
-            top.linkTo(Ultraviolet.bottom)
-        }.fillMaxWidth(0.5f).padding(10.dp, top = 10.dp)) {
-            Row(modifier = Modifier.padding(20.dp)) {
-                Column {
-                    Text(
-                        "体感", style = TextStyle(
-                            fontSize = 15.sp,
-                        )
-                    )
-                    Spacer(modifier = Modifier.padding(3.4.dp))
-                    Text(
-                        "15°", style = TextStyle(
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.Bold  // 添加加粗效果
-                        )
-                    )
-                }
-            }
-        }
-        Card(modifier = Modifier.constrainAs(Wind) {
-            top.linkTo(humidity.bottom)
-            start.linkTo(Ultraviolet.end)
-        }.fillMaxWidth(0.5f).padding(10.dp, top = 10.dp,end = 10.dp)) {
-            Row(modifier = Modifier.padding(20.dp)) {
-                Column {
-                    Text(
-                        "西南风", style = TextStyle(
-                            fontSize = 15.sp,
-                        )
-                    )
-                    Spacer(modifier = Modifier.padding(3.4.dp))
-                    Text(
-                        "2级", style = TextStyle(
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.Bold  // 添加加粗效果
-                        )
-                    )
-                }
-            }
-        }
-        Card(modifier = Modifier.constrainAs(sun) {
-            top.linkTo(somatosensory.bottom)
-        }.fillMaxWidth(0.5f).padding(10.dp, top = 10.dp)) {
-            Row(modifier = Modifier.padding(20.dp)) {
-                Column {
-                    Text(
-                        "体感", style = TextStyle(
-                            fontSize = 15.sp,
-                        )
-                    )
-                    Spacer(modifier = Modifier.padding(3.4.dp))
-                    Text(
-                        "15°", style = TextStyle(
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.Bold  // 添加加粗效果
-                        )
-                    )
-                }
-            }
-        }
-        Card(modifier = Modifier.constrainAs(atmospheric_pressure) {
-            top.linkTo(Wind.bottom)
-            start.linkTo(Ultraviolet.end)
-        }.fillMaxWidth(0.5f).padding(10.dp, top = 10.dp,end = 10.dp)) {
-            Row(modifier = Modifier.padding(20.dp)) {
-                Column {
-                    Text(
-                        "西南风", style = TextStyle(
-                            fontSize = 15.sp,
-                        )
-                    )
-                    Spacer(modifier = Modifier.padding(3.4.dp))
-                    Text(
-                        "2级", style = TextStyle(
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.Bold  // 添加加粗效果
-                        )
-                    )
-                }
-            }
-        }
-        Card(
-            modifier = Modifier
-                .constrainAs(life) {
-                    top.linkTo(atmospheric_pressure.bottom)
-                    start.linkTo(parent.start)  // 链接到父布局左侧
-                    end.linkTo(parent.end)      // 链接到父布局右侧
-                    bottom.linkTo(parent.bottom)// 链接到父布局底部
-                    width = Dimension.fillToConstraints // 宽度适配
-                    height = Dimension.fillToConstraints // 高度适配
-                }
-                .fillMaxSize(1f) // 确保填充所有可用空间
-                .padding(10.dp)
-        ) {
-            // 内容部分
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly  // 均匀分配空间
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)  // 每个 Column 占据相等的权重
-                            .padding(10.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(30.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center) {
-                            Icon(MyIconPack.Clothes, contentDescription = "")
-                            Text("适宜厚外套", style = TextStyle(fontSize = 20.sp))
-                        }
-                        Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center){
-                            Icon(MyIconPack.Car, contentDescription = "")
-                            Text("不易洗车", style = TextStyle(fontSize = 20.sp))
-                        }
-
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)  // 每个 Column 占据相等的权重
-                            .padding(10.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(30.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center){
-                            Icon(MyIconPack.Cosmetic, contentDescription = "")
-                            Text("注意防晒", style = TextStyle(fontSize = 20.sp))
-                        }
-                        Column(
-                            modifier = Modifier.padding(30.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center){
-                            Icon(MyIconPack.Umbrella, contentDescription = "")
-                            Text("不用带伞", style = TextStyle(fontSize = 20.sp))
-                        }
-
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)  // 每个 Column 占据相等的权重
-                            .padding(10.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(30.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center) {
-                            Icon(MyIconPack.Sport, contentDescription = "")
-                            Text("宜室内运动", style = TextStyle(fontSize = 20.sp))
-                        }
-                        Column(
-                            modifier = Modifier.padding(30.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center) {
-                            Icon(MyIconPack.Drugs, contentDescription = "")
-                            Text("易感冒", style = TextStyle(fontSize = 20.sp))
-                        }
-
-                    }
-                }
-            }
-
         }
     }
 }
+
+@Composable
+fun LifeIndexSection() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            LifeIndexRow(
+                items = listOf(
+                    LifeIndexItem(MyIconPack.Clothes, "适宜厚外套"),
+                    LifeIndexItem(MyIconPack.Car, "不易洗车")
+                )
+            )
+            LifeIndexRow(
+                items = listOf(
+                    LifeIndexItem(MyIconPack.Cosmetic, "注意防晒"),
+                    LifeIndexItem(MyIconPack.Umbrella, "不用带伞")
+                )
+            )
+            LifeIndexRow(
+                items = listOf(
+                    LifeIndexItem(MyIconPack.Sport, "宜室内运动"),
+                    LifeIndexItem(MyIconPack.Drugs, "易感冒")
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun LifeIndexRow(items: List<LifeIndexItem>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        items.forEach { item ->
+            LifeIndexItemView(item)
+        }
+    }
+}
+
+@Composable
+fun LifeIndexItemView(item: LifeIndexItem) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = item.icon,
+            contentDescription = ""
+        )
+        Text(
+            text = item.text,
+            style = TextStyle(
+                fontSize = 20.sp
+            )
+        )
+    }
+}
+
+data class LifeIndexItem(val icon: ImageVector, val text: String)
 
 @Preview(showBackground = true)
 @Composable

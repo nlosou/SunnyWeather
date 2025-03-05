@@ -1,8 +1,6 @@
 package com.sunnyweather.android.ui.layout
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
+import Weather_other_info
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -49,6 +47,7 @@ import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.data.WeatherDataProvider
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
+import com.sunnyweather.android.ui.Anime.animateOffsetAndAlpha
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.HourlyWeatherChart
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
@@ -84,34 +83,11 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-    /*
-    DisposableEffect(lifecycleOwner) {
-        val job = lifecycleOwner.lifecycleScope.launch {
-            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                WeatherViewModel.WeatherFlow.collect { result ->
-                    try {
-                        // 处理结果
-                        "WeatherFlow.collect".log("result: ${result.onSuccess { it.size }}")
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-            }
-        }
-        onDispose { job.cancel() }
-    }
-     */
-
-
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    var isExpanded by remember { mutableStateOf(false) }
-    val offset by animateDpAsState(targetValue = if (isExpanded) 250.dp else 0.dp, animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = ""
-    )
-    val valinscriptionarea by animateDpAsState(targetValue = if (isExpanded) 600.dp else 0.dp, animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = ""
-    )
+
+    // 获取动画值
+    val (offset, alpha) = animateOffsetAndAlpha(WeatherViewModel.isExpanded.value)
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -123,10 +99,11 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 .pointerInput(Unit) {
                     detectVerticalDragGestures { _, verticalChange ->
                         if (verticalChange < 0) {
-                            isExpanded = true
+                            WeatherViewModel.isExpanded.value = true
                         } else if (verticalChange > 0) {
-                            isExpanded = false
+                            WeatherViewModel.isExpanded.value = false
                         }
+                        "WeatherViewModel.isExpanded.value".log(WeatherViewModel.isExpanded.value.toString())
                         // 触发下拉刷新时，设置 isRefreshRequested 为 true
                         if (verticalChange > 50) { // 自定义触发条件
                             WeatherViewModel.isRefreshRequested.value = true
@@ -142,7 +119,8 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 topBar = {
                     TopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-                        title = { },
+                        title = {if (WeatherViewModel.isExpanded.value) mainViewModel._placeList[0].formatted_address
+                                else ""},
                         actions = {
                             IconButton(onClick = {
                                 navController.navigate("greeting2")
@@ -160,18 +138,9 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
 
                 ) { contentPadding ->
                 // 主内容区域
-                if (isExpanded){
-                    Weather_other_info(Modifier.padding(contentPadding))
-                }else{
-                    Box(modifier = Modifier.padding(contentPadding)) {
-                        /*
-                         WeatherAnimatableIcon.ThunderStormAnimatableIcon(Modifier.size(300.dp)
-                            .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
-                            .padding(end = 7.dp, bottom = 16.dp) // 主对齐控制[2](@ref)
-                        )
-                         */
-                        if (WeatherViewModel.temp.value.isNotEmpty() &&
-                            WeatherViewModel.temp.value[0].result?.realtime?.skycon != null){
+                Weather_other_info(Modifier.padding(contentPadding) .alpha(alpha))
+                    Box(modifier = Modifier.padding(contentPadding).alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)) {
+                        if (WeatherViewModel.temp.value.isNotEmpty()){
                             Box( // Box 布局，用于显示天气图标
                                 modifier = Modifier
                                     .align(Alignment.Center) // 图标水平居中
@@ -180,9 +149,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                             ){
                                 WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
                             }
-
                         }else{
-
                         }
                         // 右侧留白)
                         ConstraintLayout(
@@ -208,7 +175,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                     .constrainAs(hour_situation) {
                                         top.linkTo(Easy_Weather.bottom, margin = 30.dp)
                                     }
-                                    .alpha(if (isExpanded) 0.1f else 1f),
+                                    .alpha(if (WeatherViewModel.isExpanded.value) 0.1f else 1f),
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                             ) {
                                 // 获取模拟的 DailyWeather 数据
@@ -246,8 +213,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         }
 
                     }
-                }
-
             }
         }
     }

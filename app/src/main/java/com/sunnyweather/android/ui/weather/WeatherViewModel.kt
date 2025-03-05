@@ -1,6 +1,9 @@
 package com.sunnyweather.android.ui.weather
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sunnyweather.android.log
@@ -21,6 +24,7 @@ class WeatherViewModel:ViewModel() {
     var locationLng=""
     var locationLat=""
     val placeName=""
+    var isExpanded = mutableStateOf(false)
     val isRefreshRequested = mutableStateOf(false)
     var temp = mutableStateOf<List<RealtimeResponse>>(emptyList())
     var hourly = mutableStateOf<List<RealtimeResponse.Result.Hourly.Temperature>>(emptyList())
