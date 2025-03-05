@@ -18,12 +18,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -170,24 +172,22 @@ fun Weather_location_easy_information(
             }
             Spacer(modifier = Modifier.padding(5.dp))
             if (WeatherViewModel.temp.value.isNotEmpty()){
-                Text("最高${WeatherViewModel.temp.value[0].result.daily.temperature[0].max}°")
+                Text("最高${WeatherViewModel.temp.value[0].result.daily.temperature[0].max?.toInt()}°")
             }else{
                 Text("最高气温")
             }
             Spacer(modifier = Modifier.padding(5.dp))
             if (WeatherViewModel.temp.value.isNotEmpty()){
-                Text("最低${WeatherViewModel.temp.value[0].result.daily.temperature[0].min}°")
+                Text("最低${WeatherViewModel.temp.value[0].result.daily.temperature[0].min?.toInt()}°")
             }else{
                 Text("最低气温")
             }
 
         }
-        Button(onClick = {
-
-        },
-            colors = ButtonDefaults.buttonColors(Color.LightGray)
+        Surface(shape = RoundedCornerShape(8.dp),
+            color = Color.LightGray.copy(0.5f)
         ) {
-            Row {
+            Row() {
                 Icon(MyIconPack.Leaf, contentDescription = "")
                 Spacer(modifier = Modifier.padding(2.dp))
                 Text("空气质量")

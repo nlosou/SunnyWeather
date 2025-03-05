@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,7 +25,7 @@ fun TemperatureDisplay(temperature: Int) {
 
 
     // 显示温度
-    Text(
+    Text(modifier = Modifier.offset(x=-7.dp),
         text = "$temperature°",
         fontSize = 150.sp, // 字体大小
 

@@ -6,22 +6,16 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,21 +41,15 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
-import com.sunnyweather.android.data.WeatherAnimatableIcon
 import com.sunnyweather.android.data.WeatherDataProvider
-//import com.sunnyweather.android.data.WeatherDataProvider2
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
-import com.sunnyweather.android.ui.Anime.AnimatableSun
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
-import com.sunnyweather.android.ui.component.Hour_Situation
 import com.sunnyweather.android.ui.component.HourlyWeatherChart
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
@@ -173,91 +160,92 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
 
                 ) { contentPadding ->
                 // 主内容区域
-                Box(modifier = Modifier.padding(contentPadding)) {
-                    /*
-                     WeatherAnimatableIcon.ThunderStormAnimatableIcon(Modifier.size(300.dp)
-                        .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
-                        .padding(end = 7.dp, bottom = 16.dp) // 主对齐控制[2](@ref)
-                    )
-                     */
-                    if (WeatherViewModel.temp.value.isNotEmpty() &&
-                        WeatherViewModel.temp.value[0].result?.realtime?.skycon != null){
-                        Box( // Box 布局，用于显示天气图标
-                            modifier = Modifier
-                                .align(Alignment.Center) // 图标水平居中
-                                .scale(6f)
-                                .offset(x=15.dp,y=-50.dp)// 图标缩放为 60%
-                        ){
-                            WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
-                        }
-
-                    }else{
-
-                    }
-                    // 右侧留白)
-                    ConstraintLayout(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .offset(y = -offset)
-                    ) {
-                        val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
-                        Weather_location_easy_information(
-                            Modifier
-                                .padding(16.dp)
-                                .constrainAs(Easy_Weather) {
-                                    top.linkTo(parent.top)
-
-                                },
-                            fusedLocationClient = fusedLocationClient,
-                            WeatherViewModel,
-                            mainViewModel
-                        )
-                        Card(
-                            modifier = Modifier
-                                .background(Color.Transparent)
-                                .constrainAs(hour_situation) {
-                                    top.linkTo(Easy_Weather.bottom, margin = 30.dp)
-                                }
-                                .alpha(if (isExpanded) 0.1f else 1f),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-                        ) {
-                            // 获取模拟的 DailyWeather 数据
-                            if (WeatherViewModel.hourly.value.isNotEmpty()){
-                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-                                HourlyWeatherChart(
-                                    modifier = Modifier.fillMaxSize(),
-                                    dailyWeather = dailyWeather,
-                                    WeatherViewModel
-                                )
-                            }else{
-
-                            }
-                        }
-                        Card (
-                            Modifier
-                                .constrainAs(future_caed) {
-                                    bottom.linkTo(parent.bottom)
-                                }
-                                .padding(3.dp).offset(y=50.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                            shape = RoundedCornerShape(0.dp)
-                            ){
-                            if (WeatherViewModel.daily.value.isNotEmpty()){
-                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                Future_Weather_Cards(WeatherViewModel,
-                                     dailyWeather
-                                )
-                            }else{
-
-                            }
-
-                        }
-                    }
-
-                }
                 if (isExpanded){
                     Weather_other_info(Modifier.padding(contentPadding))
+                }else{
+                    Box(modifier = Modifier.padding(contentPadding)) {
+                        /*
+                         WeatherAnimatableIcon.ThunderStormAnimatableIcon(Modifier.size(300.dp)
+                            .align(Alignment.TopEnd)  // 主对齐控制[2](@ref)
+                            .padding(end = 7.dp, bottom = 16.dp) // 主对齐控制[2](@ref)
+                        )
+                         */
+                        if (WeatherViewModel.temp.value.isNotEmpty() &&
+                            WeatherViewModel.temp.value[0].result?.realtime?.skycon != null){
+                            Box( // Box 布局，用于显示天气图标
+                                modifier = Modifier
+                                    .align(Alignment.Center) // 图标水平居中
+                                    .scale(6f)
+                                    .offset(x=15.dp,y=-50.dp)// 图标缩放为 60%
+                            ){
+                                WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
+                            }
+
+                        }else{
+
+                        }
+                        // 右侧留白)
+                        ConstraintLayout(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .offset(y = -offset)
+                        ) {
+                            val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
+                            Weather_location_easy_information(
+                                Modifier
+                                    .padding(16.dp)
+                                    .constrainAs(Easy_Weather) {
+                                        top.linkTo(parent.top)
+
+                                    },
+                                fusedLocationClient = fusedLocationClient,
+                                WeatherViewModel,
+                                mainViewModel
+                            )
+                            Card(
+                                modifier = Modifier
+                                    .background(Color.Transparent)
+                                    .constrainAs(hour_situation) {
+                                        top.linkTo(Easy_Weather.bottom, margin = 30.dp)
+                                    }
+                                    .alpha(if (isExpanded) 0.1f else 1f),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                            ) {
+                                // 获取模拟的 DailyWeather 数据
+                                if (WeatherViewModel.hourly.value.isNotEmpty()){
+                                    val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                    "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                                    HourlyWeatherChart(
+                                        modifier = Modifier.fillMaxSize(),
+                                        dailyWeather = dailyWeather,
+                                        WeatherViewModel
+                                    )
+                                }else{
+
+                                }
+                            }
+                            Card (
+                                Modifier
+                                    .constrainAs(future_caed) {
+                                        bottom.linkTo(parent.bottom)
+                                    }
+                                    .padding(3.dp).offset(y=30.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                shape = RoundedCornerShape(0.dp)
+                            ){
+                                if (WeatherViewModel.daily.value.isNotEmpty()){
+                                    val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                    Future_Weather_Cards(WeatherViewModel,
+                                        dailyWeather
+                                    )
+                                }else{
+
+                                }
+
+                            }
+                        }
+
+                    }
                 }
 
             }
