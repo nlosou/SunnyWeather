@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
@@ -63,7 +62,7 @@ import com.sunnyweather.android.ui.Anime.theme.FontType
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-
+import androidx.compose.ui.graphics.Color
 
 /**
  *    Surface：它是 Compose 中的容器，类似于 Android 的 CardView，可以设置背景、边框等。
@@ -281,16 +280,23 @@ fun LineChart(
             path.lineTo(0f, points.first().y)
 
             // 使用渐变填充路径
-            val colors = intArrayOf(
-                Color.Black.copy(alpha = 1f).toArgb(), // 起始颜色：半透明黑色
-                Color.Transparent.toArgb() // 结束颜色：透明
+            val colors = listOf(
+                Color(0xFFFF3300).copy(alpha = 0.8f),  // 高温红，完全不透明
+                Color(0xFFFFFF00).copy(alpha = 0.6f),  // 中温黄，80% 不透明
+                Color(0xFF00FF99).copy(alpha = 0.4f),  // 常温绿，60% 不透明
+                Color(0xFF0099FF).copy(alpha = 0.1f)   // 低温蓝，40% 不透明
             )
-
+            val positions = floatArrayOf(
+                0.0f,   // 对应低温位置
+                0.3f,   // 常温起始点
+                0.7f,   // 中温起始点
+                1.0f    // 高温终点
+            )
             val shader = android.graphics.LinearGradient(
                 0f, 0f, // 起始点坐标
                 0f, 200f, // 结束点坐标
-                colors, // 渐变颜色数组
-                null, // 颜色分布位置
+                colors.map { it.toArgb() }.toIntArray(), // 渐变颜色数组, // 渐变颜色数组
+                positions, // 颜色分布位置
                 android.graphics.Shader.TileMode.CLAMP // 渐变填充方式
             )
 
