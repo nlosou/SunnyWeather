@@ -9,10 +9,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,12 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -35,35 +34,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
-
+import com.sunnyweather.android.ui.myiconpack.Water
 
 @Composable
-fun UV_table() {
+fun somatosensory(name: String, modifier: Modifier = Modifier) {
     var sweeAngle by remember { mutableStateOf(162f) }
-    val colorStops = listOf(
-        0.1f to Color(rgb(62, 224, 182)), // 浅绿色
-        0.2f to Color(rgb(25, 228, 120)), // 绿色
-        0.3f to Color(rgb(227, 223, 24)), // 浅黄色
-        0.4f to Color(0xFFFFEB3B), // 黄色
-        0.5f to Color(0xFFFF9800), // 橙色
-        0.6f to Color(rgb(255, 100, 85)), // 橙红色
-        0.7f to Color(0xFFF44336), // 红色
-        0.8f to Color(rgb(241, 82, 172)), // 粉紫色
-        0.9f to Color(0xFF9C27B0), // 紫色
-        1.0f to Color(rgb(139, 102, 243)) // 蓝紫色
-    )
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.background(Color.Transparent)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(MyIconPack.Water, contentDescription = "", modifier = Modifier.size(50.dp))
             Text(
-                text = "89",
-                fontSize = 80.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-            )
-            Text(
-                text = "UV",
+                text = "舒适",
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Light,
                 color = Color.LightGray,
@@ -83,12 +66,27 @@ fun UV_table() {
                 // 定义渐变刷子
                 // 绘制进度弧
                 drawArc(
-                    brush  = Brush.sweepGradient(
-                        colorStops = colorStops.toTypedArray(),
-                        center = center,
-                    ), // 使用渐变色
+                    color = Color(rgb(11,168,254)),
                     startAngle = 45f,
-                    sweepAngle = 270f,
+                    sweepAngle = 130f,
+                    useCenter = false,
+                    topLeft = Offset(drawContext.size.width / 2f - drawContext.size.minDimension / 2 + 10.dp.toPx(), drawContext.size.height / 2f - drawContext.size.minDimension / 2 + 10.dp.toPx()),
+                    size = Size(drawContext.size.minDimension - 20.dp.toPx(), drawContext.size.minDimension - 20.dp.toPx()),
+                    style = Stroke(width = 25.dp.toPx(), cap = StrokeCap.Round)
+                )
+                drawArc(
+                    color = Color(rgb(26,219,114)),
+                    startAngle = 185f,
+                    sweepAngle = 45f,
+                    useCenter = false,
+                    topLeft = Offset(drawContext.size.width / 2f - drawContext.size.minDimension / 2 + 10.dp.toPx(), drawContext.size.height / 2f - drawContext.size.minDimension / 2 + 10.dp.toPx()),
+                    size = Size(drawContext.size.minDimension - 20.dp.toPx(), drawContext.size.minDimension - 20.dp.toPx()),
+                    style = Stroke(width = 25.dp.toPx(), cap = StrokeCap.Square)
+                )
+                drawArc(
+                    color = Color(rgb(254,156,59)),
+                    startAngle = 240f,
+                    sweepAngle = 75f,
                     useCenter = false,
                     topLeft = Offset(drawContext.size.width / 2f - drawContext.size.minDimension / 2 + 10.dp.toPx(), drawContext.size.height / 2f - drawContext.size.minDimension / 2 + 10.dp.toPx()),
                     size = Size(drawContext.size.minDimension - 20.dp.toPx(), drawContext.size.minDimension - 20.dp.toPx()),
@@ -101,8 +99,8 @@ fun UV_table() {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview12() {
+fun GreetingPreview14() {
     SunnyWeatherTheme {
-        UV_table()
+        somatosensory("Android")
     }
 }

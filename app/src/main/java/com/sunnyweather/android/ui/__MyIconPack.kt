@@ -19,6 +19,7 @@ import com.sunnyweather.android.ui.myiconpack.Sport
 import com.sunnyweather.android.ui.myiconpack.TShirt
 import com.sunnyweather.android.ui.myiconpack.Umbrella
 import com.sunnyweather.android.ui.myiconpack.UndoLine
+import com.sunnyweather.android.ui.myiconpack.Water
 import kotlin.collections.List as ____KtList
 
 public object MyIconPack
@@ -31,6 +32,6 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
       return __AllIcons!!
     }
     __AllIcons= listOf(Alarm, Car, Clothes, Cosmetic, Drugs, Image, Leaf, LetterT, MapPoint,
-        PencilLine, Point, Radioupnp, RedoLine, SnowLine, Sport, TShirt, Umbrella, UndoLine)
+        PencilLine, Point, Radioupnp, RedoLine, SnowLine, Sport, TShirt, Umbrella, UndoLine, Water)
     return __AllIcons!!
   }
