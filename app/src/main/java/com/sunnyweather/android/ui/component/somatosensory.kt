@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.Water
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun somatosensory(name: String, modifier: Modifier = Modifier) {
@@ -44,7 +46,6 @@ fun somatosensory(name: String, modifier: Modifier = Modifier) {
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.background(Color.Transparent)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(MyIconPack.Water, contentDescription = "", modifier = Modifier.size(50.dp))
             Text(
                 text = "舒适",
                 fontSize = 40.sp,
@@ -57,7 +58,6 @@ fun somatosensory(name: String, modifier: Modifier = Modifier) {
             modifier = Modifier.size(300.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Canvas(modifier = Modifier
                 .fillMaxSize().rotate(90f)) {
                 // 手动计算中心点
@@ -65,6 +65,27 @@ fun somatosensory(name: String, modifier: Modifier = Modifier) {
                 val radius = drawContext.size.minDimension / 2f - 50.dp.toPx()
                 // 定义渐变刷子
                 // 绘制进度弧
+                // 绘制背景圆
+                // 绘制指针
+                val pointerLength = radius - 30.dp.toPx()
+                val angleInRadians = sweeAngle * Math.PI / 180
+                val endPoint = Offset(
+                    center.x + pointerLength * cos(angleInRadians.toFloat()),
+                    center.y - pointerLength * sin(angleInRadians.toFloat())
+                )
+                drawCircle(
+                    color = Color.Black,
+                    center = Offset(drawContext.size.width / 2f, drawContext.size.height / 2f),
+                    radius = drawContext.size.minDimension / 2 - 135.dp.toPx(),
+                    style = Stroke(width = 10.dp.toPx())
+                )
+                drawLine(
+                    color = Color.Black,
+                    start = center,
+                    end = endPoint,
+                    strokeWidth = 8.dp.toPx(),
+                    cap = StrokeCap.Round
+                )
                 drawArc(
                     color = Color(rgb(11,168,254)),
                     startAngle = 45f,
@@ -81,7 +102,7 @@ fun somatosensory(name: String, modifier: Modifier = Modifier) {
                     useCenter = false,
                     topLeft = Offset(drawContext.size.width / 2f - drawContext.size.minDimension / 2 + 10.dp.toPx(), drawContext.size.height / 2f - drawContext.size.minDimension / 2 + 10.dp.toPx()),
                     size = Size(drawContext.size.minDimension - 20.dp.toPx(), drawContext.size.minDimension - 20.dp.toPx()),
-                    style = Stroke(width = 25.dp.toPx(), cap = StrokeCap.Square)
+                    style = Stroke(width = 25.dp.toPx(), cap = StrokeCap.Round)
                 )
                 drawArc(
                     color = Color(rgb(254,156,59)),
@@ -92,8 +113,10 @@ fun somatosensory(name: String, modifier: Modifier = Modifier) {
                     size = Size(drawContext.size.minDimension - 20.dp.toPx(), drawContext.size.minDimension - 20.dp.toPx()),
                     style = Stroke(width = 25.dp.toPx(), cap = StrokeCap.Round)
                 )
+
             }
         }
+
     }
 }
 
