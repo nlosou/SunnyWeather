@@ -16,4 +16,5 @@
     <string name="title_activity_hour_situation">Hour_Situation</string>
     <string name="title_activity_weather_other_info">Weather_other_info</string>
     <string name="title_activity_uv">UV</string>
+    <string name="title_activity_uv_table">UV_table</string>
 </resources>

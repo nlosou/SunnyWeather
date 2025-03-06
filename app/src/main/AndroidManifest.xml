@@ -19,6 +19,11 @@
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.UV_table"
+            android:exported="false"
+            android:label="@string/title_activity_uv_table"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
             android:name=".ui.component.UV"
             android:exported="false"
             android:label="@string/title_activity_uv"
