@@ -119,8 +119,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 topBar = {
                     TopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-                        title = {if (WeatherViewModel.isExpanded.value) mainViewModel._placeList[0].formatted_address
-                                else ""},
+                        title = {},
                         actions = {
                             IconButton(onClick = {
                                 navController.navigate("greeting2")
@@ -139,13 +138,17 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 ) { contentPadding ->
                 // 主内容区域
                 Weather_other_info(Modifier.padding(contentPadding) .alpha(alpha))
-                    Box(modifier = Modifier.padding(contentPadding).alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)) {
-                        if (WeatherViewModel.temp.value.isNotEmpty()){
+                Box(modifier = Modifier.padding(contentPadding).alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f))
+                {
+                    if (WeatherViewModel.temp.value.isNotEmpty()){
                             Box( // Box 布局，用于显示天气图标
                                 modifier = Modifier
                                     .align(Alignment.Center) // 图标水平居中
                                     .scale(6f)
-                                    .offset(x=15.dp,y=-50.dp)// 图标缩放为 60%
+                                    .offset(x=15.dp,y=-50.dp)
+                                    .alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)
+
+                            // 图标缩放为 60%
                             ){
                                 WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
                             }
