@@ -113,10 +113,8 @@ fun somatosensory(name: String, modifier: Modifier = Modifier) {
                     size = Size(drawContext.size.minDimension - 20.dp.toPx(), drawContext.size.minDimension - 20.dp.toPx()),
                     style = Stroke(width = 25.dp.toPx(), cap = StrokeCap.Round)
                 )
-
             }
         }
-
     }
 }
 
