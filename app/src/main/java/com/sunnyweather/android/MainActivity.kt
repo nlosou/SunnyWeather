@@ -9,7 +9,7 @@ import androidx.activity.viewModels
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sunnyweather.android.data.Hourly_data
+import com.sunnyweather.android.logic.model.data.Hourly_data
 import com.sunnyweather.android.ui.layout.Greeting
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.layout.Greeting2

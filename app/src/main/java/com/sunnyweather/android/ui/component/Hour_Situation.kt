@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.R
-import com.sunnyweather.android.data.DailyWeather
+import com.sunnyweather.android.logic.model.data.DailyWeather
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.Point
@@ -41,7 +41,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-import com.sunnyweather.android.data.LocalTemUnit
+import com.sunnyweather.android.logic.model.data.LocalTemUnit
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import kotlin.math.abs
 import androidx.compose.ui.geometry.Rect
@@ -54,9 +54,9 @@ import android.graphics.Paint
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.text.util.LocalePreferences
-import com.sunnyweather.android.data.TemperatureUnit
+import com.sunnyweather.android.logic.model.data.TemperatureUnit
 //import com.sunnyweather.android.data.WeatherDataProvider2
-import com.sunnyweather.android.data.displayName
+import com.sunnyweather.android.logic.model.data.displayName
 import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.Anime.theme.FontType
 import com.sunnyweather.android.ui.weather.WeatherViewModel

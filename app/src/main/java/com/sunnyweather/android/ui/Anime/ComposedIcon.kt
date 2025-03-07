@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import com.sunnyweather.android.data.WeatherComposedInfo.IconSize
+import com.sunnyweather.android.logic.model.data.WeatherComposedInfo.IconSize
 import com.sunnyweather.android.ui.Anime.AnimatableCloud
 import com.sunnyweather.android.ui.Anime.AnimatableRains
 import com.sunnyweather.android.ui.Anime.AnimatableSnow

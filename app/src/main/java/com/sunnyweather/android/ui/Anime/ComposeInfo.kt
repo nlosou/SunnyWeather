@@ -17,7 +17,7 @@ package com.sunnyweather.android.ui.Anime
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
-import com.sunnyweather.android.data.WeatherComposedInfo.IconSize
+import com.sunnyweather.android.logic.model.data.WeatherComposedInfo.IconSize
 
 /**
  * [ComposedIcon] 使用此信息组合图标。

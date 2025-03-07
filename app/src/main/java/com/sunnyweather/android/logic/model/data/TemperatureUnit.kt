@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sunnyweather.android.data
+package com.sunnyweather.android.logic.model.data
 
-import com.sunnyweather.android.logic.model.Sky
+import androidx.compose.runtime.compositionLocalOf
 
-data class HourlyWeather(
-    val temperature: Int,
-    val weather: Weather
-)
-data class HourlyWeather2(
-    val temperature: Int,
-    val weather: Sky
-)
+enum class TemperatureUnit(val text: String) {
+    Fahrenheit("℉"), Centigrade("℃")
+}
+
+val LocalTemUnit = compositionLocalOf<TemperatureUnit> { error("No data found!") }

@@ -48,8 +48,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
-import com.sunnyweather.android.data.DailyWeather
-import com.sunnyweather.android.data.displayName2
+import com.sunnyweather.android.logic.model.data.DailyWeather
+import com.sunnyweather.android.logic.model.data.displayName2
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.dayOfWeekChinese
 import com.sunnyweather.android.logic.model.RealtimeResponse

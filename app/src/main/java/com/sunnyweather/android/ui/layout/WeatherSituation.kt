@@ -44,7 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
-import com.sunnyweather.android.data.WeatherDataProvider
+import com.sunnyweather.android.logic.model.data.WeatherDataProvider
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.Anime.animateOffsetAndAlpha

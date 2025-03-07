@@ -1,4 +1,4 @@
-package com.sunnyweather.android.data
+package com.sunnyweather.android.logic.model.data
 
 import android.os.Build
 import androidx.activity.viewModels

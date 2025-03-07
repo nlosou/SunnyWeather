@@ -1,18 +1,18 @@
 package com.sunnyweather.android.logic.model
 
 import androidx.compose.runtime.Composable
-import com.sunnyweather.android.data.BgColors
-import com.sunnyweather.android.data.Weather
-import com.sunnyweather.android.data.WeatherAnimatableIcon.CloudyAnimatableIcon
-import com.sunnyweather.android.data.WeatherAnimatableIcon.RainAnimatableIcon
+import com.sunnyweather.android.logic.model.data.BgColors
+import com.sunnyweather.android.logic.model.data.Weather
+import com.sunnyweather.android.logic.model.data.WeatherAnimatableIcon.CloudyAnimatableIcon
+import com.sunnyweather.android.logic.model.data.WeatherAnimatableIcon.RainAnimatableIcon
 
-import com.sunnyweather.android.data.WeatherAnimatableIcon.SunnyAnimatableIcon
-import com.sunnyweather.android.data.WeatherBackground.CloudyBg
-import com.sunnyweather.android.data.WeatherBackground.RainBg
-import com.sunnyweather.android.data.WeatherBackground.SunnyBg
-import com.sunnyweather.android.data.WeatherIcon.CloudyIcon
-import com.sunnyweather.android.data.WeatherIcon.RainIcon
-import com.sunnyweather.android.data.WeatherIcon.SunnyIcon
+import com.sunnyweather.android.logic.model.data.WeatherAnimatableIcon.SunnyAnimatableIcon
+import com.sunnyweather.android.logic.model.data.WeatherBackground.CloudyBg
+import com.sunnyweather.android.logic.model.data.WeatherBackground.RainBg
+import com.sunnyweather.android.logic.model.data.WeatherBackground.SunnyBg
+import com.sunnyweather.android.logic.model.data.WeatherIcon.CloudyIcon
+import com.sunnyweather.android.logic.model.data.WeatherIcon.RainIcon
+import com.sunnyweather.android.logic.model.data.WeatherIcon.SunnyIcon
 
 class Sky(
     val info: String,

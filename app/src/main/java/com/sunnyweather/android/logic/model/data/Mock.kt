@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sunnyweather.android.data
+package com.sunnyweather.android.logic.model.data
 
 import android.os.Build
 import java.time.LocalDate
