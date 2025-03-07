@@ -1,6 +1,7 @@
 package com.sunnyweather.android.logic
 
 import com.sunnyweather.android.log
+import com.sunnyweather.android.logic.dao.PlaceDao
 import com.sunnyweather.android.logic.model.Place
 import com.sunnyweather.android.logic.model.RealtimeResponse
 import com.sunnyweather.android.logic.network.ServiceCreator
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 object Repository {
+
     fun searchPlaces(query: String): Flow<Result<List<Place>>> = flow {
         try {
             "Repository.searchPlaces".log(query)
@@ -33,7 +35,9 @@ object Repository {
             emit(Result.failure<List<Place>>(e))
         }
     }.flowOn(Dispatchers.IO)
-
+    fun savePlace(place: Place)=PlaceDao.savePalce(place)
+    fun getSavedPlace()=PlaceDao.getSavedPlace()
+    fun isPlaceSaved()=PlaceDao.isPlaceSaved()
 
     fun RealWeather(lng:String,lat:String): Flow<Result<List<RealtimeResponse>>> = flow {
         try {

@@ -1,5 +1,6 @@
 package com.sunnyweather.android
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -9,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.logic.model.data.Hourly_data
 import com.sunnyweather.android.ui.layout.Greeting
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
@@ -23,6 +25,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Hourly_data.initialize(WeatherViewModel)
+        if(mainViewModel.isPlaceSaved()){
+            val place=mainViewModel.getSavedPlace()
+            "MainActivity".log(place.toString())
+            mainViewModel.place_name.value=place.formatted_address
+            WeatherViewModel.SeacherWeather(place.lng.toString(),place.lat.toString())
+        }
         setContent {
             SunnyWeatherTheme {
                 val navController = rememberNavController()

@@ -23,8 +23,6 @@ import kotlin.math.log
 
 
 class PlaceViewModel :ViewModel(){
-
-
     private val searchQuery = MutableStateFlow<String>("")
      val _placeList = mutableStateListOf<Place>() // 可观察的列表
         val place_name= mutableStateOf("")
@@ -78,4 +76,8 @@ class PlaceViewModel :ViewModel(){
     fun setText2(value: String) {
         _text2.value = value
     }
+
+    fun savePlace(place: Place)=Repository.savePlace(place)
+    fun getSavedPlace()=Repository.getSavedPlace()
+    fun isPlaceSaved()=Repository.isPlaceSaved()
 }
