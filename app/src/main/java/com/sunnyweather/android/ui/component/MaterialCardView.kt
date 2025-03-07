@@ -23,18 +23,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sunnyweather.android.MainActivity
+import com.sunnyweather.android.log
+import com.sunnyweather.android.ui.place.PlaceViewModel
 
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.weather.WeatherViewModel
 
 
 @Composable
-fun Surface_Card(City_name:String) {
+fun Surface_Card(item:Int,placeViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
+    var place=placeViewModel._placeList[item]
         Surface(shape = RoundedCornerShape(8.dp),
             shadowElevation = 10.dp,
             modifier = Modifier.fillMaxWidth().height(100.dp).padding(horizontal = 15.dp, vertical = 7.dp),
@@ -46,11 +52,16 @@ fun Surface_Card(City_name:String) {
                         verticalAlignment = Alignment.CenterVertically // 垂直居中
                     ){
                         Box(){
-                            Text(City_name)
+                            Text(place.formatted_address)
                         }
                         Box(){
                             IconButton(onClick = {
-
+                                "Surface_Card".log(place.lat.toString()+place.lng.toString())
+                                WeatherViewModel.SeacherWeather(
+                                    place.lng.toString(),
+                                    place.lat.toString()
+                                )
+                                placeViewModel.place_name.value=place.formatted_address
                             }) {
                                 Icon(Icons.Filled.AddCircle, contentDescription = "", modifier = Modifier.size(100.dp))
                             }
@@ -63,7 +74,9 @@ fun Surface_Card(City_name:String) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview4() {
+    var placeViewModel= remember { PlaceViewModel() }
+    var WeatherViewModel= remember { WeatherViewModel() }
     SunnyWeatherTheme {
-        Surface_Card("City")
+        Surface_Card(0,placeViewModel,WeatherViewModel)
     }
 }

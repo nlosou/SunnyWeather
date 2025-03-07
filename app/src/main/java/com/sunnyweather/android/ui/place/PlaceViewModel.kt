@@ -27,35 +27,7 @@ class PlaceViewModel :ViewModel(){
 
     private val searchQuery = MutableStateFlow<String>("")
      val _placeList = mutableStateListOf<Place>() // 可观察的列表
-    //val placeList: List<Place> = _placeList
-    // 定义一个可变状态变量，用于存储第一个文本框的值
-    /*
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val placeFlow = searchQuery.flatMapLatest { query ->
-        // 假设 Repository.searchPlace(query) 返回一个 Flow<List<Place>>
-        //"flatMapLatest".log(query)
-        Repository.searchPlaces(query)
-            .onEach { result ->
-            result.onSuccess {  places->
-                "Result.Success".log("${places}")
-                _placeList.clear()
-                _placeList.addAll(places)
-                "placeList".log("${_placeList.size}")
-                }.onFailure {
-                    error ->
-                "Result.error".log("${error}")
-            }
-
-            }
-        }.catch {
-                    e ->
-                "placeFlow caught exception".log(e.toString())
-            }
-     */
-
-    /*
-
-     */
+        val place_name= mutableStateOf("")
     @OptIn(ExperimentalCoroutinesApi::class)
     val placeFlow=searchQuery.flatMapLatest {
             query ->

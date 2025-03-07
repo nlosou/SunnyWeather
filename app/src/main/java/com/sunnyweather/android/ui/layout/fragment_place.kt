@@ -126,12 +126,8 @@ fun Greeting2(navController: NavController, mainViewModel: PlaceViewModel, Weath
             ) {
 
                 items(mainViewModel._placeList.size) { item ->
-                    WeatherViewModel.SeacherWeather(
-                        mainViewModel._placeList[item].lng.toString(),
-                        mainViewModel._placeList[item].lat.toString()
-                    )
 
-                    Surface_Card(mainViewModel._placeList[item].formatted_address)
+                    Surface_Card(item,mainViewModel,WeatherViewModel)
                 }
             }
         }else{

@@ -104,7 +104,7 @@ fun Weather_location_easy_information(
                 if(mainViewModel._placeList.isNotEmpty())
                 {
                     Text(
-                        mainViewModel._placeList[0].formatted_address,
+                        mainViewModel.place_name.value,
                         style = TextStyle(
                             fontSize = 24.sp,
                         )
