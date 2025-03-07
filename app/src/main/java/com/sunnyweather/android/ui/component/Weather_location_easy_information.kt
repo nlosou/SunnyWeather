@@ -66,7 +66,6 @@ fun Weather_location_easy_information(
     val isLocationPermissionGranted = remember {
         ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
-
     // 是否开启了位置服务
     var isLocationEnabled by remember {
         mutableStateOf(
