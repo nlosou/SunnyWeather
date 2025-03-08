@@ -22,8 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -61,7 +59,6 @@ fun Weather_location_easy_information(
     mainViewModel: PlaceViewModel
 ) {
     val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
     // 是否授权了位置权限
     val isLocationPermissionGranted = remember {
         ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -74,47 +71,27 @@ fun Weather_location_easy_information(
         )
     }
 
-    // 使用 DisposableEffect 监听定位服务状态变化
-    DisposableEffect(Unit) {
-        // 创建一个位置服务状态变化的广播接收器
-        val receiver = object : android.content.BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: android.content.Intent?) {
-                if (intent?.action == android.location.LocationManager.PROVIDERS_CHANGED_ACTION) {
-                    isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-                }
-            }
-        }
-
-        // 注册广播接收器
-        val filter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
-        context.registerReceiver(receiver, filter)
-
-        onDispose {
-            // 取消注册广播接收器
-            context.unregisterReceiver(receiver)
-        }
-    }
 
     Column(modifier) {
-
         Box{
             Column() {
-                if(mainViewModel._placeList.isNotEmpty())
-                {
-                    Text(
-                        mainViewModel.place_name.value,
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                        )
+                Text(
+                    if(mainViewModel._placeList.isNotEmpty())
+                    {
+                        mainViewModel.place_name.value
+                    }
+                    else if(mainViewModel.isPlaceSaved()){
+                        mainViewModel.place_name.value
+                    }
+                    else{
+                        "地址"
+
+                    },
+                    style = TextStyle(
+                        fontSize = 24.sp,
                     )
-                }else{
-                    Text("地址",
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                        )
-                    )
-                }
+                )
+
 
                 AnimatedVisibility(
                     visible = !isLocationEnabled, // 控制是否显示

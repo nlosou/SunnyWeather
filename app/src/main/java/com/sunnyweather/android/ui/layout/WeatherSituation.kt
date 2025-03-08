@@ -103,12 +103,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         } else if (verticalChange > 0) {
                             WeatherViewModel.isExpanded.value = false
                         }
-                        "WeatherViewModel.isExpanded.value".log(WeatherViewModel.isExpanded.value.toString())
-                        // 触发下拉刷新时，设置 isRefreshRequested 为 true
-                        if (verticalChange > 50) { // 自定义触发条件
-                            WeatherViewModel.isRefreshRequested.value = true
-                            "detectVerticalDragGestures".log("start")
-                        }
                     }
                 }
         )
