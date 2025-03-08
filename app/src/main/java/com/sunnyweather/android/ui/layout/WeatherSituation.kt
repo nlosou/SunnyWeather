@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -17,13 +18,19 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,8 +38,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +50,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
@@ -56,6 +67,7 @@ import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.WeatherType
 import com.sunnyweather.android.ui.theme.WeatherWallpaper
 import com.sunnyweather.android.ui.weather.WeatherViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,8 +97,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     }
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-
-    // 获取动画值
     val (offset, alpha) = animateOffsetAndAlpha(WeatherViewModel.isExpanded.value)
     Surface(
         modifier = Modifier
@@ -132,91 +142,92 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 ) { contentPadding ->
                 // 主内容区域
                 Weather_other_info(Modifier.padding(contentPadding) .alpha(alpha))
-                Box(modifier = Modifier.padding(contentPadding).alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f))
-                {
-                    if (WeatherViewModel.temp.value.isNotEmpty()){
-                            Box( // Box 布局，用于显示天气图标
-                                modifier = Modifier
-                                    .align(Alignment.Center) // 图标水平居中
-                                    .scale(6f)
-                                    .offset(x=15.dp,y=-50.dp)
-                                    .alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)
-
-                            // 图标缩放为 60%
-                            ){
-                                WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
-                            }
-                        }else{
-                        }
-                        // 右侧留白)
-                        ConstraintLayout(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .offset(y = -offset)
-                        ) {
-                            val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
-                            Weather_location_easy_information(
-                                Modifier
-                                    .padding(16.dp)
-                                    .constrainAs(Easy_Weather) {
-                                        top.linkTo(parent.top)
-
-                                    },
-                                fusedLocationClient = fusedLocationClient,
-                                WeatherViewModel,
-                                mainViewModel
+                Box(modifier = Modifier.padding(contentPadding).alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)
                             )
-                            Card(
-                                modifier = Modifier
-                                    .background(Color.Transparent)
-                                    .constrainAs(hour_situation) {
-                                        top.linkTo(Easy_Weather.bottom, margin = 30.dp)
-                                    }
-                                    .alpha(if (WeatherViewModel.isExpanded.value) 0.1f else 1f),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-                            ) {
-                                // 获取模拟的 DailyWeather 数据
-                                if (WeatherViewModel.hourly.value.isNotEmpty()){
-                                    val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                    "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-                                    HourlyWeatherChart(
-                                        modifier = Modifier.fillMaxSize(),
-                                        dailyWeather = dailyWeather,
-                                        WeatherViewModel
-                                    )
-                                }else{
+                            {
+                                if (WeatherViewModel.temp.value.isNotEmpty()){
+                                    Box( // Box 布局，用于显示天气图标
+                                        modifier = Modifier
+                                            .align(Alignment.Center) // 图标水平居中
+                                            .scale(6f)
+                                            .offset(x=15.dp,y=-50.dp)
+                                            .alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)
 
-                                }
-                            }
-                            Card (
-                                Modifier
-                                    .constrainAs(future_caed) {
-                                        bottom.linkTo(parent.bottom)
+                                        // 图标缩放为 60%
+                                    ){
+                                        WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
                                     }
-                                    .padding(3.dp).offset(y=30.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                                shape = RoundedCornerShape(0.dp)
-                            ){
-                                if (WeatherViewModel.daily.value.isNotEmpty()){
-                                    val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                    Future_Weather_Cards(WeatherViewModel,
-                                        dailyWeather
-                                    )
                                 }else{
-
                                 }
+                                // 右侧留白)
+                                ConstraintLayout(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .offset(y = -offset)
+                                ) {
+                                    val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
+                                    Weather_location_easy_information(
+                                        Modifier
+                                            .padding(16.dp)
+                                            .constrainAs(Easy_Weather) {
+                                                top.linkTo(parent.top)
+
+                                            },
+                                        fusedLocationClient = fusedLocationClient,
+                                        WeatherViewModel,
+                                        mainViewModel
+                                    )
+                                    Card(
+                                        modifier = Modifier
+                                            .background(Color.Transparent)
+                                            .constrainAs(hour_situation) {
+                                                top.linkTo(Easy_Weather.bottom, margin = 30.dp)
+                                            }
+                                            .alpha(if (WeatherViewModel.isExpanded.value) 0.1f else 1f),
+                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                    ) {
+                                        // 获取模拟的 DailyWeather 数据
+                                        if (WeatherViewModel.hourly.value.isNotEmpty()){
+                                            val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                            "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                                            HourlyWeatherChart(
+                                                modifier = Modifier.fillMaxSize(),
+                                                dailyWeather = dailyWeather,
+                                                WeatherViewModel
+                                            )
+                                        }else{
+
+                                        }
+                                    }
+                                    Card (
+                                        Modifier
+                                            .constrainAs(future_caed) {
+                                                bottom.linkTo(parent.bottom)
+                                            }
+                                            .padding(3.dp).offset(y=30.dp),
+                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                        shape = RoundedCornerShape(0.dp)
+                                    ){
+                                        if (WeatherViewModel.daily.value.isNotEmpty()){
+                                            val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                            Future_Weather_Cards(WeatherViewModel,
+                                                dailyWeather
+                                            )
+                                        }else{
+
+                                        }
+
+                                    }
+                                }
+
 
                             }
                         }
-
                     }
+
+                }
+
             }
-        }
-    }
-
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview5() {

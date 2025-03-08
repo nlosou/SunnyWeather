@@ -44,7 +44,7 @@ dependencies {
     val nav_version = "2.8.8"
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
-
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.30.1")
     implementation(libs.androidx.core.ktx)
     implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
