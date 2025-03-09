@@ -24,12 +24,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         Hourly_data.initialize(WeatherViewModel)
         if(mainViewModel.isPlaceSaved()){
-            val place= mainViewModel.getSavedPlace()[3]
-                "MainActivity".log(place.toString())
-                mainViewModel.place_name.value=place.formatted_address
-                WeatherViewModel.SeacherWeather(place.lng.toString(),place.lat.toString())
-                WeatherViewModel.locationLat.value=place.lat.toString()
-                WeatherViewModel.locationLng.value=place.lng.toString()
+            val place= mainViewModel.getSavedPlace()[0]
+            mainViewModel.place_num.value=mainViewModel.getSavedPlace().size
+            "MainActivity".log(place.toString())
+            mainViewModel.place_name.value=place.formatted_address
+            WeatherViewModel.SeacherWeather(place.lng.toString(),place.lat.toString())
+            WeatherViewModel.locationLat.value=place.lat.toString()
+            WeatherViewModel.locationLng.value=place.lng.toString()
 
         }
         setContent {

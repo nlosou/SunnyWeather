@@ -56,6 +56,7 @@ fun Surface_Card(item:Int,placeViewModel: PlaceViewModel,WeatherViewModel:Weathe
                                 WeatherViewModel.locationLng.value=place.lng.toString()
                                 placeViewModel.place_name.value=place.formatted_address
                                 placeViewModel.savePlace(placeViewModel._placeList[item])
+                                placeViewModel.place_num.value++
                             }) {
                                 Icon(Icons.Filled.AddCircle, contentDescription = "", modifier = Modifier.size(100.dp))
                             }

@@ -25,7 +25,9 @@ import kotlin.math.log
 class PlaceViewModel :ViewModel(){
     private val searchQuery = MutableStateFlow<String>("")
      val _placeList = mutableStateListOf<Place>() // 可观察的列表
-        val place_name= mutableStateOf("")
+    val place_name= mutableStateOf("")
+    var place_num= mutableStateOf(0)
+    var place_current= mutableStateOf(0)
     @OptIn(ExperimentalCoroutinesApi::class)
     val placeFlow=searchQuery.flatMapLatest {
             query ->

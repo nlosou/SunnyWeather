@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -62,6 +63,7 @@ import com.sunnyweather.android.logic.GMS.LocationUpdates
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.myiconpack.Leaf
+import com.sunnyweather.android.ui.myiconpack.Point
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.weather.WeatherViewModel
@@ -162,7 +164,12 @@ fun Weather_location_easy_information(
             ) {
                 if (!state.isRefreshing) {
                     items(1) {
-                        Icon(Icons.AutoMirrored.Filled.List, contentDescription = "")
+                        LazyRow { items(mainViewModel.place_num.value){
+
+                            Icon(MyIconPack.Point, contentDescription = "",modifier=Modifier.size(15.dp), tint = if(mainViewModel.place_current.value==it) Color.White else Color.Black)
+                        }
+
+                        }
                     }
                 }
             }
