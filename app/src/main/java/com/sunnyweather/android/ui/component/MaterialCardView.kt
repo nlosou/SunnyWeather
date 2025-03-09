@@ -52,6 +52,8 @@ fun Surface_Card(item:Int,placeViewModel: PlaceViewModel,WeatherViewModel:Weathe
                                     place.lng.toString(),
                                     place.lat.toString()
                                 )
+                                WeatherViewModel.locationLat.value=place.lat.toString()
+                                WeatherViewModel.locationLng.value=place.lng.toString()
                                 placeViewModel.place_name.value=place.formatted_address
                                 placeViewModel.savePlace(placeViewModel._placeList[item])
                             }) {

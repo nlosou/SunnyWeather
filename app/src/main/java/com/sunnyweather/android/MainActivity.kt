@@ -1,6 +1,5 @@
 package com.sunnyweather.android
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -10,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.logic.model.data.Hourly_data
 import com.sunnyweather.android.ui.layout.Greeting
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
@@ -30,6 +28,8 @@ class MainActivity : ComponentActivity() {
             "MainActivity".log(place.toString())
             mainViewModel.place_name.value=place.formatted_address
             WeatherViewModel.SeacherWeather(place.lng.toString(),place.lat.toString())
+            WeatherViewModel.locationLat.value=place.lat.toString()
+            WeatherViewModel.locationLng.value=place.lng.toString()
         }
         setContent {
             SunnyWeatherTheme {
@@ -78,7 +78,5 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error in onResume: ${e.message}")
         }
     }
-
-
 }
 

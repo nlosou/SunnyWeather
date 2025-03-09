@@ -21,8 +21,8 @@ import retrofit2.HttpException
 
 class WeatherViewModel:ViewModel() {
     private val locationFlowData= MutableStateFlow<Location>(Location("", ""))
-    var locationLng=""
-    var locationLat=""
+    var locationLng=mutableStateOf("")
+    var locationLat=mutableStateOf("")
     val placeName=""
     var isExpanded = mutableStateOf(false)
     val isRefreshRequested = mutableStateOf(false)
