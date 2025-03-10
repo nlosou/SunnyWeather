@@ -19,4 +19,5 @@
     <string name="title_activity_uv_table">UV_table</string>
     <string name="title_activity_humidity">humidity</string>
     <string name="title_activity_somatosensory">somatosensory</string>
+    <string name="title_activity_place_manage">Place_manage</string>
 </resources>
