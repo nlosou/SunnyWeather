@@ -1,6 +1,7 @@
 package com.sunnyweather.android.ui.layout
 
 import Weather_other_info
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -89,11 +91,13 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     val (offset, alpha) = animateOffsetAndAlpha(WeatherViewModel.isExpanded.value)
+    //左右滑页
     val pagerState = rememberPagerState( 0){mainViewModel.place_num.value} // 用于管理分页状态
     // 当页面改变时，更新 ViewModel 中的当前城市
     LaunchedEffect(pagerState.currentPage) {
         mainViewModel.place_current.value=pagerState.currentPage
         WeatherViewModel.SeacherWeather(mainViewModel.getSavedPlace()[pagerState.currentPage].lng.toString(),mainViewModel.getSavedPlace()[pagerState.currentPage].lat.toString())
+        mainViewModel.place_name.value=mainViewModel.getSavedPlace()[pagerState.currentPage].formatted_address
     }
     Surface(
         modifier = Modifier
@@ -139,99 +143,98 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 ) { contentPadding ->
                 // 主内容区域
                 // 使用 HorizontalPager 实现左右滑动切换城市
+                Box(modifier = Modifier.padding(contentPadding))
+                {
+                    if (WeatherViewModel.temp.value.isNotEmpty()){
+                        Box( // Box 布局，用于显示天气图标
+                            modifier = Modifier
+                                .align(Alignment.Center) // 图标水平居中
+                                .scale(6f)
+                                .offset(x=15.dp,y=-50.dp)
+                                .alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)
 
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.padding(contentPadding),
-                    flingBehavior = PagerDefaults.flingBehavior(state = pagerState)
-                ){
-                    Box(modifier = Modifier.alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f))
-                    {
-                        if (WeatherViewModel.temp.value.isNotEmpty()){
-                            Box( // Box 布局，用于显示天气图标
+                            // 图标缩放为 60%
+                        ){
+                            WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
+                        }
+                    }else{
+                    }
+                    ConstraintLayout(
                                 modifier = Modifier
-                                    .align(Alignment.Center) // 图标水平居中
-                                    .scale(6f)
-                                    .offset(x=15.dp,y=-50.dp)
+                                    .fillMaxWidth()
+                                    .offset(y = -offset)
                                     .alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)
 
-                                // 图标缩放为 60%
-                            ){
-                                WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
-                            }
-                        }else{
-                        }
-                        // 右侧留白)
-                        ConstraintLayout(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .offset(y = -offset)
-                        ) {
-                            val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
-                            Weather_location_easy_information(
-                                Modifier
-                                    .padding(16.dp)
-                                    .constrainAs(Easy_Weather) {
-                                        top.linkTo(parent.top)
-
-                                    },
-                                fusedLocationClient = fusedLocationClient,
-                                WeatherViewModel,
-                                mainViewModel
-                            )
-                            Card(
-                                modifier = Modifier
-                                    .background(Color.Transparent)
-                                    .constrainAs(hour_situation) {
-                                        top.linkTo(Easy_Weather.bottom, margin = 30.dp)
-                                    }
-                                    .alpha(if (WeatherViewModel.isExpanded.value) 0.1f else 1f),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                             ) {
-                                // 获取模拟的 DailyWeather 数据
-                                if (WeatherViewModel.hourly.value.isNotEmpty()){
-                                    val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                    "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-                                    HourlyWeatherChart(
-                                        modifier = Modifier.fillMaxSize(),
-                                        dailyWeather = dailyWeather,
-                                        WeatherViewModel
+                                val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier.constrainAs(Easy_Weather) {
+                                        top.linkTo(parent.top)
+                                    },
+                                    flingBehavior = PagerDefaults.flingBehavior(
+                                        state = pagerState,
                                     )
-                                }else{
-
+                                ){
+                                    Weather_location_easy_information(
+                                        Modifier
+                                            .padding(16.dp)
+                                            ,
+                                        fusedLocationClient = fusedLocationClient,
+                                        WeatherViewModel,
+                                        mainViewModel
+                                    )
                                 }
-                            }
-                            Card (
-                                Modifier
-                                    .constrainAs(future_caed) {
-                                        bottom.linkTo(parent.bottom)
+
+                                Card(
+                                    modifier = Modifier
+                                        .background(Color.Transparent)
+                                        .constrainAs(hour_situation) {
+                                            top.linkTo(Easy_Weather.bottom, margin = 30.dp)
+                                        }
+                                        .alpha(if (WeatherViewModel.isExpanded.value) 0.1f else 1f),
+                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                ) {
+                                    // 获取模拟的 DailyWeather 数据
+                                    if (WeatherViewModel.hourly.value.isNotEmpty()){
+                                        val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                        "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                                        HourlyWeatherChart(
+                                            modifier = Modifier.fillMaxSize(),
+                                            dailyWeather = dailyWeather,
+                                            WeatherViewModel
+                                        )
+                                    }else{
+
                                     }
-                                    .padding(3.dp).offset(y=30.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                                shape = RoundedCornerShape(0.dp)
-                            ){
-                                if (WeatherViewModel.daily.value.isNotEmpty()){
-                                    val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                    Future_Weather_Cards(WeatherViewModel,
-                                        dailyWeather
-                                    )
-                                }else{
+                                }
+                                Card (
+                                    Modifier
+                                        .constrainAs(future_caed) {
+                                            bottom.linkTo(parent.bottom)
+                                        }
+                                        .padding(3.dp).offset(y=30.dp),
+                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                    shape = RoundedCornerShape(0.dp)
+                                ){
+                                    if (WeatherViewModel.daily.value.isNotEmpty()){
+                                        val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                        Future_Weather_Cards(WeatherViewModel,
+                                            dailyWeather
+                                        )
+                                    }else{
+
+                                    }
 
                                 }
-
                             }
                         }
-
-
                     }
+                    //Weather_other_info(Modifier.padding(contentPadding) .alpha(alpha))
+        }
+    }
+}
 
-                }
-                //Weather_other_info(Modifier.padding(contentPadding) .alpha(alpha))
-                        }
-                    }
-                }
-
-            }
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview5() {

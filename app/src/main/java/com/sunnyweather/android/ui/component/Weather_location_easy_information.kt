@@ -156,7 +156,6 @@ fun Weather_location_easy_information(
                     // 提示用户开启位置服务
                 }
             }
-
         }
         Box(Modifier.nestedScroll(state.nestedScrollConnection).clipToBounds()) {
             LazyColumn(
