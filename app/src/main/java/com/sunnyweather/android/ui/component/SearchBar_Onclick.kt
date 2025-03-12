@@ -1,6 +1,5 @@
 package com.sunnyweather.android.ui.component
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -16,41 +15,25 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import com.sunnyweather.android.log
+import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.place.PlaceViewModel
-import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.weather.WeatherViewModel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-
 
 @Composable
-fun SearchBar(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
-
-    //var text by remember { mutableStateOf("") }
+fun SearchBar_Onclick(mainViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,SearchBar_Onclick_Modifier:Modifier) {
     var text=mainViewModel.text.value
-    Box (modifier=Modifier.fillMaxSize(),
-        contentAlignment=Alignment.Center
-        ){
+    Box (SearchBar_Onclick_Modifier,
+    ){
         BasicTextField(
             value = mainViewModel.text.value,
             onValueChange = {
@@ -60,18 +43,16 @@ fun SearchBar(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
                 {
                     mainViewModel.searchPlaces(it)
                 }
-
                 mainViewModel._placeList.clear()
-
             },
             decorationBox = {
-                innerTextField ->
+                    innerTextField ->
                 Row (verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp)
-                    ){
+                ){
                     Icon(imageVector = Icons.Filled.Search, contentDescription = "")
                     Box(modifier=Modifier.padding(horizontal = 0.dp),
-                        contentAlignment=Alignment.CenterStart){
+                        contentAlignment= Alignment.CenterStart){
                         if(text.isEmpty()){
                             Text(text="搜索位置",
                                 style = TextStyle(
@@ -103,7 +84,7 @@ fun SearchBar(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
 
 
             },
-            modifier = Modifier.padding(horizontal = 10.dp)
+            modifier = Modifier
                 .background(Color(240,240,240), CircleShape)
                 .height(50.dp)
                 .fillMaxWidth()
@@ -113,10 +94,10 @@ fun SearchBar(mainViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview3() {
+fun GreetingPreview15() {
+    val mainViewModel = remember { PlaceViewModel() }
+    val WeatherViewModel= remember { WeatherViewModel() }
     SunnyWeatherTheme {
-        val mainViewModel = remember { PlaceViewModel() }
-        val WeatherViewModel= remember { WeatherViewModel() }
-        SearchBar(mainViewModel,WeatherViewModel)
+        SearchBar_Onclick(mainViewModel,WeatherViewModel,Modifier)
     }
 }

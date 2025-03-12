@@ -2,8 +2,11 @@ package com.sunnyweather.android.ui.layout
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -22,7 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.ui.component.SearchBar
+import com.sunnyweather.android.ui.component.SearchBar_Onclick
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.weather.WeatherViewModel
@@ -35,7 +41,7 @@ fun Place_manage(PlaceViewModel:PlaceViewModel,WeatherViewModel:WeatherViewModel
         topBar = {
             IconButton(onClick = {
 
-            }) {
+            }, modifier = Modifier.padding(horizontal = 17.dp)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
             }
         },
@@ -46,9 +52,17 @@ fun Place_manage(PlaceViewModel:PlaceViewModel,WeatherViewModel:WeatherViewModel
                 .fillMaxSize()
                 .padding(contentPadding)
         ) {
-            Column {
-                Text("Main content area")
-                SearchBar(PlaceViewModel,WeatherViewModel)
+            Column(){
+                Column(modifier = Modifier.padding(horizontal = 30.dp)) {
+                    Box(modifier = Modifier) {
+                        Text("城市管理",fontSize=35.sp)
+                    }
+                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
+                    SearchBar_Onclick(PlaceViewModel,WeatherViewModel,Modifier.fillMaxWidth())
+                }
+                LazyColumn {
+
+                }
             }
 
         }

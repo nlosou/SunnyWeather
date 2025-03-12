@@ -20,4 +20,6 @@
     <string name="title_activity_humidity">humidity</string>
     <string name="title_activity_somatosensory">somatosensory</string>
     <string name="title_activity_place_manage">Place_manage</string>
+    <string name="title_activity_search_bar_onclick">SearchBar_Onclick</string>
+    <string name="title_activity_city_edit">City_Edit</string>
 </resources>

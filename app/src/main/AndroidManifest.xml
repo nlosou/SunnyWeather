@@ -19,6 +19,16 @@
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.City_Edit"
+            android:exported="false"
+            android:label="@string/title_activity_city_edit"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
+            android:name=".ui.component.SearchBar_Onclick"
+            android:exported="false"
+            android:label="@string/title_activity_search_bar_onclick"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
             android:name=".ui.layout.Place_manage"
             android:exported="false"
             android:label="@string/title_activity_place_manage"
