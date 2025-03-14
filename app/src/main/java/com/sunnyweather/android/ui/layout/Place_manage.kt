@@ -1,5 +1,9 @@
 package com.sunnyweather.android.ui.layout
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -45,20 +49,27 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
         topBar = {
             TopAppBar(
                 title = {
-                    if (PlaceViewModel.show_edit.value)
-                    {
-                        IconButton(onClick = {
-                        PlaceViewModel.show_edit.value=false
-                        }) {
-                            Icon(Icons.Filled.Clear, contentDescription = "")
-                        }
-                    }else{
-                        IconButton(onClick = {
-                        }, modifier = Modifier.padding(horizontal = 0.dp)) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
-                        }
-                    }
-
+                            AnimatedVisibility(
+                                visible = PlaceViewModel.show_edit.targetState,
+                                enter = fadeIn(animationSpec = tween(durationMillis = 600)), // 进入时淡入
+                                exit = fadeOut(animationSpec = tween(durationMillis = 600)) // 退出时淡出
+                            ) {
+                                IconButton(onClick = {
+                                    PlaceViewModel.show_edit.targetState = false
+                                }) {
+                                    Icon(Icons.Filled.Clear, contentDescription = "")
+                                }
+                            }
+                            AnimatedVisibility(
+                                visible = !PlaceViewModel.show_edit.targetState,
+                                enter = fadeIn(animationSpec = tween(durationMillis = 600)), // 进入时淡入
+                                exit = fadeOut(animationSpec = tween(durationMillis = 600)) // 退出时淡出
+                            ){
+                                IconButton(onClick = {
+                                }, modifier = Modifier.padding(horizontal = 0.dp)) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                                }
+                            }
                 }
             )
 

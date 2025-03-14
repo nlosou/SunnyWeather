@@ -2,6 +2,7 @@ package com.sunnyweather.android.ui.place
 
 import android.view.animation.Transformation
 import androidx.collection.mutableIntListOf
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +29,7 @@ class PlaceViewModel :ViewModel(){
     val place_name= mutableStateOf("")
     var place_num= mutableStateOf(0)
     var place_current= mutableStateOf(0)
-    var show_edit= mutableStateOf(false)
+    var show_edit= MutableTransitionState(false)
     @OptIn(ExperimentalCoroutinesApi::class)
     val placeFlow=searchQuery.flatMapLatest {
             query ->

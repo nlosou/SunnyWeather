@@ -46,7 +46,7 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
     var horizontal=10.dp
     Box(modifier = Modifier.combinedClickable(
         onLongClick = {
-            PlaceViewModel.show_edit.value=true
+            PlaceViewModel.show_edit.targetState=true
         },
         onClick = {
 
@@ -56,7 +56,7 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
         Card(modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
         ){
-            if(PlaceViewModel.show_edit.value)
+            if(PlaceViewModel.show_edit.targetState)
             {
                 horizontal = 5.dp
             }else{
@@ -69,12 +69,11 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
                 horizontalArrangement = Arrangement.SpaceBetween){
                 // 使用 AnimatedVisibility 实现淡入效果
                 AnimatedVisibility(
-                    visible = PlaceViewModel.show_edit.value,
+                    visible = PlaceViewModel.show_edit.targetState,
                     enter = fadeIn(animationSpec = tween(durationMillis = 600)), // 进入时淡入
                     exit = fadeOut(animationSpec = tween(durationMillis = 600)) // 退出时淡出
                 ){
-                    if(PlaceViewModel.show_edit.value)
-                    {
+
                         IconButton(
                             onClick = {
 
@@ -82,11 +81,7 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
                         ) {
                             Icon(Icons.Filled.Menu, contentDescription = "")
                         }
-                    }else{
-
-                    }
                 }
-
                 Box(
                 ) {
                     Row(verticalAlignment=Alignment.CenterVertically,
