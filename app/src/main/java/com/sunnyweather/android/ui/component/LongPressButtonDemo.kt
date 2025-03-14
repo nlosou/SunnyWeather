@@ -1,5 +1,15 @@
 package com.sunnyweather.android.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -28,59 +38,19 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LongPressButtonDemo() {
-    var showNormalButtons by remember { mutableStateOf(true) }
-    var showLongPressButtons by remember { mutableStateOf(false) }
+    val visibleState = remember { MutableTransitionState(false) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.LightGray)
-            .combinedClickable(
-                onClick = {
-                    // 单击事件
-                    showNormalButtons = true
-                    showLongPressButtons = false
-                },
-                onLongClick = {
-                    // 长按事件
-                    showNormalButtons = false
-                    showLongPressButtons = true
-                }
-            )
-    ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(16.dp)
+    Column {
+        Button(onClick = { visibleState.targetState = !visibleState.targetState }) {
+            Text(text = "Toggle Visibility")
+        }
+
+        AnimatedVisibility(
+            visibleState = visibleState,
+            enter = scaleIn(), // 淡入动画
+            exit = scaleOut(),
         ) {
-            if (showNormalButtons) {
-                Button(
-                    onClick = { /* 按钮 1 的点击事件 */ },
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) {
-                    Text(text = "按钮 1", fontSize = 16.sp)
-                }
-                Button(
-                    onClick = { /* 按钮 2 的点击事件 */ },
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) {
-                    Text(text = "按钮 2", fontSize = 16.sp)
-                }
-            }
-
-            if (showLongPressButtons) {
-                Button(
-                    onClick = { /* 长按后出现的按钮 3 的点击事件 */ },
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) {
-                    Text(text = "按钮 3", fontSize = 16.sp)
-                }
-                Button(
-                    onClick = { /* 长按后出现的按钮 4 的点击事件 */ }
-                ) {
-                    Text(text = "按钮 4", fontSize = 16.sp)
-                }
-            }
+            Text(text = "Hello, World!", modifier = Modifier.padding(16.dp))
         }
     }
 }

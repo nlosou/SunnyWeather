@@ -6,6 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkOut
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -32,7 +39,6 @@ class MainActivity : ComponentActivity() {
             WeatherViewModel.SeacherWeather(place.lng.toString(),place.lat.toString())
             WeatherViewModel.locationLat.value=place.lat.toString()
             WeatherViewModel.locationLng.value=place.lng.toString()
-
         }
         setContent {
             SunnyWeatherTheme {
@@ -41,10 +47,36 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = "greeting"  // 设置初始目的地
                 ) {
-                    composable("greeting") {  // 主页面
+                    composable("greeting",
+                        enterTransition = {
+                            scaleIn(animationSpec = tween(durationMillis = 600))+ fadeIn(animationSpec = tween(durationMillis = 600))
+                        },
+                        exitTransition = {
+                            scaleOut(animationSpec = tween(durationMillis = 600))+ fadeOut(animationSpec = tween(durationMillis = 600))
+                        },
+                        popEnterTransition = {
+                            expandIn(animationSpec = tween(durationMillis = 600))+ fadeIn(animationSpec = tween(durationMillis = 600))
+                        },
+                        popExitTransition = {
+                            scaleOut(animationSpec = tween(durationMillis = 600))+ fadeOut(animationSpec = tween(durationMillis = 600))
+                        }
+                        ) {  // 主页面
                         Greeting(navController,WeatherViewModel,mainViewModel)
                     }
-                    composable("Place_manage") {  // 跳转页面
+                    composable("Place_manage",
+                        enterTransition = {
+                            scaleIn(animationSpec = tween(durationMillis = 600))+ fadeIn(animationSpec = tween(durationMillis = 600))
+                        },
+                        exitTransition = {
+                            scaleOut(animationSpec = tween(durationMillis = 600))+ fadeOut(animationSpec = tween(durationMillis = 600))
+                        },
+                        popEnterTransition = {
+                            scaleIn(animationSpec = tween(durationMillis = 600))+ fadeIn(animationSpec = tween(durationMillis = 600))
+                        },
+                        popExitTransition = {
+                            scaleOut(animationSpec = tween(durationMillis = 600))+ fadeOut(animationSpec = tween(durationMillis = 600))
+                        }
+                        ) {  // 跳转页面
                         Place_manage(navController,mainViewModel,WeatherViewModel)
                     }
                 }

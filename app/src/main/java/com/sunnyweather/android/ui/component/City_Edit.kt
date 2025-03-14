@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -37,34 +39,62 @@ import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.weather.WeatherViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,index:Int) {
         var place_list=PlaceViewModel.getSavedPlace()
-    var horizontal=10.dp
+    var start=0.dp
+    var end=0.dp
+    var  top=0.dp
+    var bottom=0.dp
+    // 用于控制浮动效果的缩放比例
+    var scale by remember { mutableStateOf(1f) }
     Box(modifier = Modifier.combinedClickable(
         onLongClick = {
             PlaceViewModel.show_edit.targetState=true
         },
         onClick = {
+            // 点击时触发浮动效果
+            scale = 0.9f
+            // 延迟一段时间后恢复原状
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(200)
+                scale = 1f
+            }
+        },
 
-        }
     ))
     {
-        Card(modifier = Modifier.fillMaxWidth(),
+        Card(modifier = Modifier.fillMaxWidth().graphicsLayer {
+            // 应用缩放效果
+            this.scaleX = scale
+            this.scaleY = scale
+        },
+
             shape = RoundedCornerShape(20.dp),
+            elevation=CardDefaults.cardElevation(0.dp)
         ){
             if(PlaceViewModel.show_edit.targetState)
             {
-                horizontal = 5.dp
+                start = 5.dp
+                end=5.dp
+                top=30.dp
+                bottom=30.dp
             }else{
-                horizontal = 15.dp
+                start = 15.dp
+                end=15.dp
+                top=30.dp
+                bottom=30.dp
             }
             Row(verticalAlignment=Alignment.CenterVertically,
                 modifier = Modifier.padding(
-                    horizontal = horizontal, vertical = 30.dp
+                    start = start, end = end, top = top, bottom = bottom
                 ).fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween){
                 // 使用 AnimatedVisibility 实现淡入效果
@@ -109,11 +139,28 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
                                 }
 
                         }
-                        Text("10",
-                            style = TextStyle(
-                                fontSize = 50.sp,
+                        Row {
+                            Text("10",
+                                style = TextStyle(
+                                    fontSize = 50.sp,
+                                )
                             )
-                        )
+                            AnimatedVisibility(
+                                visible = PlaceViewModel.show_edit.targetState,
+                                enter = fadeIn(animationSpec = tween(durationMillis = 600)), // 进入时淡入
+                                exit = fadeOut(animationSpec = tween(durationMillis = 600)) // 退出时淡出
+                            ){
+
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(Icons.Filled.CheckCircle, contentDescription = "")
+                                }
+                            }
+                        }
+
                     }
                 }
             }
