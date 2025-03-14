@@ -4,7 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,10 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.City_Edit
 import com.sunnyweather.android.ui.component.SearchBar
 import com.sunnyweather.android.ui.component.SearchBar_Onclick
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.myiconpack.ListSelect
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 
@@ -55,8 +59,8 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                 title = {
                             AnimatedVisibility(
                                 visible = PlaceViewModel.show_edit.targetState,
-                                enter = fadeIn(animationSpec = tween(durationMillis = 600)), // 进入时淡入
-                                exit = fadeOut(animationSpec = tween(durationMillis = 600)) // 退出时淡出
+                                enter = fadeIn(animationSpec = tween(durationMillis = 400)), // 进入时淡入
+                                exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
                             ) {
                                 IconButton(onClick = {
                                     PlaceViewModel.show_edit.targetState = false
@@ -66,14 +70,27 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                             }
                             AnimatedVisibility(
                                 visible = !PlaceViewModel.show_edit.targetState,
-                                enter = fadeIn(animationSpec = tween(durationMillis = 600)), // 进入时淡入
-                                exit = fadeOut(animationSpec = tween(durationMillis = 600)) // 退出时淡出
+                                enter = fadeIn(animationSpec = tween(durationMillis = 400)), // 进入时淡入
+                                exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
                             ){
                                 IconButton(onClick = {
                                 }, modifier = Modifier.padding(horizontal = 0.dp)) {
                                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
                                 }
                             }
+                },
+                actions = {
+                    AnimatedVisibility(
+                        visible = PlaceViewModel.show_edit.targetState,
+                        enter = fadeIn(animationSpec = tween(durationMillis = 400)), // 进入时淡入
+                        exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
+                    ) {
+                        IconButton(onClick = {
+
+                        }) {
+                            Icon(MyIconPack.ListSelect, contentDescription = "")
+                        }
+                    }
                 }
             )
         },
@@ -82,11 +99,11 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                 visible = PlaceViewModel.show_edit.targetState,
                 enter = slideInVertically(
                     initialOffsetY = {it},
-                    animationSpec = tween(durationMillis = 600
+                    animationSpec = tween(durationMillis = 400
                     )), // 进入时淡入
                 exit = slideOutVertically(
                     targetOffsetY={it},
-                    animationSpec = tween(durationMillis = 600
+                    animationSpec = tween(durationMillis = 400
                     )) // 退出时淡出
             ){
                 BottomAppBar(containerColor= Color.White) {
@@ -117,7 +134,19 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
         ) {
             Column(){
                 Column(modifier = Modifier.padding(horizontal = 30.dp)) {
-                    Box(modifier = Modifier) {
+
+                    AnimatedVisibility(
+                        visible = PlaceViewModel.show_edit.targetState,
+                        enter = slideInHorizontally(initialOffsetX={it}), // 进入时淡入
+                        exit = slideOutHorizontally(targetOffsetX={it}) // 退出时淡出
+                    ){
+                        Text("请选择项目",fontSize=35.sp)
+                    }
+                    AnimatedVisibility(
+                        visible = !PlaceViewModel.show_edit.targetState,
+                        enter = slideInHorizontally(initialOffsetX={it}), // 进入时淡入
+                        exit = slideOutHorizontally(targetOffsetX={it}) // 退出时淡出
+                    ){
                         Text("城市管理",fontSize=35.sp)
                     }
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
