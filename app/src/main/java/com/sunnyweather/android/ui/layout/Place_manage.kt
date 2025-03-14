@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,8 +76,38 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                             }
                 }
             )
-
         },
+        bottomBar = {
+            AnimatedVisibility(
+                visible = PlaceViewModel.show_edit.targetState,
+                enter = slideInVertically(
+                    initialOffsetY = {it},
+                    animationSpec = tween(durationMillis = 600
+                    )), // 进入时淡入
+                exit = slideOutVertically(
+                    targetOffsetY={it},
+                    animationSpec = tween(durationMillis = 600
+                    )) // 退出时淡出
+            ){
+                BottomAppBar(containerColor= Color.White) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center) {
+                        IconButton(
+                            onClick = { /* Do something */ },
+                            modifier = Modifier.padding(0.dp) // 移除内边距
+                        ) {
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = "Menu",
+                                modifier = Modifier.padding(0.dp) // 确保 Icon 没有额外的内边距
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
     ) { contentPadding ->
         // 主内容区域
         Box(

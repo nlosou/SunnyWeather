@@ -1,11 +1,14 @@
 package com.sunnyweather.android.ui.component
 
+import android.graphics.Color
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +21,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -44,7 +49,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,index:Int) {
@@ -54,18 +58,24 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
     var  top=0.dp
     var bottom=0.dp
     // 用于控制浮动效果的缩放比例
+    /*
+
+     */
     var scale by remember { mutableStateOf(1f) }
     Box(modifier = Modifier.combinedClickable(
         onLongClick = {
             PlaceViewModel.show_edit.targetState=true
         },
         onClick = {
-            // 点击时触发浮动效果
-            scale = 0.9f
-            // 延迟一段时间后恢复原状
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(200)
-                scale = 1f
+            if(PlaceViewModel.show_edit.targetState)
+            {
+                // 点击时触发浮动效果
+                scale = 0.9f
+                // 延迟一段时间后恢复原状
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(200)
+                    scale = 1f
+                }
             }
         },
 
@@ -78,7 +88,7 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
         },
 
             shape = RoundedCornerShape(20.dp),
-            elevation=CardDefaults.cardElevation(0.dp)
+            elevation = CardDefaults.cardElevation(0.dp) // 移除卡片阴影
         ){
             if(PlaceViewModel.show_edit.targetState)
             {
