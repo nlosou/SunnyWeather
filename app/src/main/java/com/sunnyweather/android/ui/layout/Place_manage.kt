@@ -45,7 +45,6 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
             TopAppBar(
                 title = {
                     IconButton(onClick = {
-
                     }, modifier = Modifier.padding(horizontal = 0.dp)) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
                     }
@@ -70,7 +69,7 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                 }
                 LazyColumn(modifier = Modifier.padding(15.dp)) {
                     items(PlaceViewModel.place_num.value){
-                        City_Edit("jjdd",Modifier)
+                        City_Edit(PlaceViewModel,WeatherViewModel,it)
                         Spacer(Modifier.padding(vertical = 6.dp))
                     }
                 }
