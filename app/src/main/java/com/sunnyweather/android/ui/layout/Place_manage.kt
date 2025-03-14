@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,10 +45,20 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
         topBar = {
             TopAppBar(
                 title = {
-                    IconButton(onClick = {
-                    }, modifier = Modifier.padding(horizontal = 0.dp)) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                    if (PlaceViewModel.show_edit.value)
+                    {
+                        IconButton(onClick = {
+                        PlaceViewModel.show_edit.value=false
+                        }) {
+                            Icon(Icons.Filled.Clear, contentDescription = "")
+                        }
+                    }else{
+                        IconButton(onClick = {
+                        }, modifier = Modifier.padding(horizontal = 0.dp)) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                        }
                     }
+
                 }
             )
 

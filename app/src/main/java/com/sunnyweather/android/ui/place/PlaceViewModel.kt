@@ -28,6 +28,7 @@ class PlaceViewModel :ViewModel(){
     val place_name= mutableStateOf("")
     var place_num= mutableStateOf(0)
     var place_current= mutableStateOf(0)
+    var show_edit= mutableStateOf(false)
     @OptIn(ExperimentalCoroutinesApi::class)
     val placeFlow=searchQuery.flatMapLatest {
             query ->
