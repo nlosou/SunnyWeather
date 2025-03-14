@@ -27,6 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.sunnyweather.android.ui.component.City_Edit
 import com.sunnyweather.android.ui.component.SearchBar
 import com.sunnyweather.android.ui.component.SearchBar_Onclick
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
@@ -36,14 +39,19 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Place_manage(PlaceViewModel:PlaceViewModel,WeatherViewModel:WeatherViewModel) {
+fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, WeatherViewModel:WeatherViewModel) {
     Scaffold(
         topBar = {
-            IconButton(onClick = {
+            TopAppBar(
+                title = {
+                    IconButton(onClick = {
 
-            }, modifier = Modifier.padding(horizontal = 17.dp)) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
-            }
+                    }, modifier = Modifier.padding(horizontal = 0.dp)) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                    }
+                }
+            )
+
         },
     ) { contentPadding ->
         // 主内容区域
@@ -60,8 +68,11 @@ fun Place_manage(PlaceViewModel:PlaceViewModel,WeatherViewModel:WeatherViewModel
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
                     SearchBar_Onclick(PlaceViewModel,WeatherViewModel,Modifier.fillMaxWidth())
                 }
-                LazyColumn {
-
+                LazyColumn(modifier = Modifier.padding(15.dp)) {
+                    items(PlaceViewModel.place_num.value){
+                        City_Edit("jjdd",Modifier)
+                        Spacer(Modifier.padding(vertical = 6.dp))
+                    }
                 }
             }
 
@@ -73,8 +84,9 @@ fun Place_manage(PlaceViewModel:PlaceViewModel,WeatherViewModel:WeatherViewModel
 @Composable
 fun GreetingPreview10() {
     SunnyWeatherTheme {
-        var a= remember { PlaceViewModel() }
-        var b= remember { WeatherViewModel() }
-        Place_manage(a,b)
+        val navController = rememberNavController()
+        val a= remember { PlaceViewModel() }
+        val b= remember { WeatherViewModel() }
+        Place_manage(navController,a,b)
     }
 }

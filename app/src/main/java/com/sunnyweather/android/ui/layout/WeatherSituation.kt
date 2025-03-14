@@ -127,7 +127,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         title = {},
                         actions = {
                             IconButton(onClick = {
-                                navController.navigate("greeting2")
+                                navController.navigate("Place_manage")
                             }) {
                                 Icon(Icons.Filled.Add, contentDescription = "")
                             }

@@ -13,6 +13,7 @@ import com.sunnyweather.android.logic.model.data.Hourly_data
 import com.sunnyweather.android.ui.layout.Greeting
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.layout.Greeting2
+import com.sunnyweather.android.ui.layout.Place_manage
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 
@@ -43,8 +44,8 @@ class MainActivity : ComponentActivity() {
                     composable("greeting") {  // 主页面
                         Greeting(navController,WeatherViewModel,mainViewModel)
                     }
-                    composable("greeting2") {  // 跳转页面
-                        Greeting2(navController,mainViewModel,WeatherViewModel)
+                    composable("Place_manage") {  // 跳转页面
+                        Place_manage(navController,mainViewModel,WeatherViewModel)
                     }
                 }
             }
