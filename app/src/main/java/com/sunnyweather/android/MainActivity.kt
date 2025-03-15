@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Hourly_data.initialize(WeatherViewModel)
-        if(mainViewModel.isPlaceSaved()){
+        if(mainViewModel.getSavedPlace().isNotEmpty()){
             val place= mainViewModel.getSavedPlace()[0]
             mainViewModel.place_num.value=mainViewModel.getSavedPlace().size
             "MainActivity".log(place.toString())
@@ -39,6 +39,9 @@ class MainActivity : ComponentActivity() {
             WeatherViewModel.SeacherWeather(place.lng.toString(),place.lat.toString())
             WeatherViewModel.locationLat.value=place.lat.toString()
             WeatherViewModel.locationLng.value=place.lng.toString()
+        }else
+        {
+            "MainActivity".log("没保存")
         }
         setContent {
             SunnyWeatherTheme {

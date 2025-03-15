@@ -89,13 +89,15 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     //左右滑页
     val pagerState = rememberPagerState( mainViewModel.place_current.value){mainViewModel.place_num.value} // 用于管理分页状态
 
-    // 当页面改变时，更新 ViewModel 中的当前城市
-    LaunchedEffect(pagerState.currentPage) {
-        mainViewModel.place_current.value=pagerState.currentPage
-        WeatherViewModel.SeacherWeather(mainViewModel.getSavedPlace()[pagerState.currentPage].lng.toString(),mainViewModel.getSavedPlace()[pagerState.currentPage].lat.toString())
-        mainViewModel.place_name.value=mainViewModel.getSavedPlace()[pagerState.currentPage].formatted_address
-    }
+    if(mainViewModel.getSavedPlace().isNotEmpty()){
 
+        // 当页面改变时，更新 ViewModel 中的当前城市
+        LaunchedEffect(pagerState.currentPage) {
+            mainViewModel.place_current.value=pagerState.currentPage
+            WeatherViewModel.SeacherWeather(mainViewModel.getSavedPlace()[pagerState.currentPage].lng.toString(),mainViewModel.getSavedPlace()[pagerState.currentPage].lat.toString())
+            mainViewModel.place_name.value=mainViewModel.getSavedPlace()[pagerState.currentPage].formatted_address
+        }
+    }
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -156,7 +158,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         }
                     }else{
                     }
-
                     ConstraintLayout(
                                 modifier = Modifier
                                     .fillMaxWidth()

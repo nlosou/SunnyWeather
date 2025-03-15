@@ -111,7 +111,7 @@ fun Weather_location_easy_information(
                 Text(
                     if (mainViewModel._placeList.isNotEmpty()) {
                         mainViewModel.place_name.value
-                    } else if (mainViewModel.isPlaceSaved()) {
+                    } else if (mainViewModel.getSavedPlace().isNotEmpty()) {
                         mainViewModel.place_name.value
                     } else {
                         "地址"
