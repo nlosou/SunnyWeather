@@ -79,6 +79,22 @@ class MainActivity : ComponentActivity() {
                         ) {  // 跳转页面
                         Place_manage(navController,mainViewModel,WeatherViewModel)
                     }
+                    composable("Search_City",
+                        enterTransition = {
+                            scaleIn(animationSpec = tween(durationMillis = 600))+ fadeIn(animationSpec = tween(durationMillis = 600))
+                        },
+                        exitTransition = {
+                            scaleOut(animationSpec = tween(durationMillis = 600))+ fadeOut(animationSpec = tween(durationMillis = 600))
+                        },
+                        popEnterTransition = {
+                            scaleIn(animationSpec = tween(durationMillis = 600))+ fadeIn(animationSpec = tween(durationMillis = 600))
+                        },
+                        popExitTransition = {
+                            scaleOut(animationSpec = tween(durationMillis = 600))+ fadeOut(animationSpec = tween(durationMillis = 600))
+                        }
+                    ) {  // 跳转页面
+                        Greeting2(navController,mainViewModel,WeatherViewModel)
+                    }
                 }
             }
         }

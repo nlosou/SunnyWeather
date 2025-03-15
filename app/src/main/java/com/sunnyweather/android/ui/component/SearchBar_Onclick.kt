@@ -37,13 +37,7 @@ fun SearchBar_Onclick(mainViewModel: PlaceViewModel, WeatherViewModel: WeatherVi
         BasicTextField(
             value = mainViewModel.text.value,
             onValueChange = {
-                mainViewModel.setText(it)
-                "onValueChange".log(it)
-                if(it.isNotEmpty())
-                {
-                    mainViewModel.searchPlaces(it)
-                }
-                mainViewModel._placeList.clear()
+
             },
             decorationBox = {
                     innerTextField ->
@@ -81,8 +75,6 @@ fun SearchBar_Onclick(mainViewModel: PlaceViewModel, WeatherViewModel: WeatherVi
                     }
 
                 }
-
-
             },
             modifier = Modifier
                 .background(Color(240,240,240), CircleShape)

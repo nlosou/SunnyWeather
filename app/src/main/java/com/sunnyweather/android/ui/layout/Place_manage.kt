@@ -7,6 +7,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.City_Edit
 import com.sunnyweather.android.ui.component.SearchBar_Onclick
@@ -48,10 +53,16 @@ import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, WeatherViewModel:WeatherViewModel) {
     val listState = rememberLazyListState()
+    val shouldShowSearchBar by remember {
+        derivedStateOf {
+            // 如果正在滚动且第一条可见项不是第0条，则隐藏SearchBar
+            listState.isScrollInProgress && listState.firstVisibleItemIndex != 0
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -140,7 +151,31 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                         Text("城市管理",fontSize=35.sp)
                     }
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
-                    SearchBar_Onclick(PlaceViewModel,WeatherViewModel,Modifier.fillMaxWidth())
+                    AnimatedVisibility(
+                        visible = !shouldShowSearchBar,
+                        enter = slideInVertically(
+                            initialOffsetY = {it},
+                            animationSpec = tween(durationMillis = 400
+                            )), // 进入时淡入
+                        exit = slideOutVertically(
+                            targetOffsetY={it},
+                            animationSpec = tween(durationMillis = 400
+                            )) // 退出时淡出
+                    ){
+                        Box(Modifier.combinedClickable(
+                            onClick = {
+                                navController.navigate("Search_City")
+                                "SearchBar_Onclick".log("start")
+                            },
+                            onLongClick = {
+
+                            }
+                        )) {
+                            SearchBar_Onclick(PlaceViewModel,WeatherViewModel,Modifier.fillMaxWidth())
+                        }
+
+                    }
+
                 }
                 LazyColumn(modifier = Modifier.padding(15.dp),
                     state = listState
