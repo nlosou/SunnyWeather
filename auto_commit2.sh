@@ -16,4 +16,4 @@ git add .
 git commit -m "Auto commit on $(date)"
 
 # 推送并关联远程分支（自动创建远程分支）
-git push -u origin $NEW_BRANCH
+git push origin $NEW_BRANCH
