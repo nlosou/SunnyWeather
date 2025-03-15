@@ -1,9 +1,10 @@
 package com.sunnyweather.android.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,25 +25,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 
 @Composable
-fun SearchBar_Onclick(mainViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,SearchBar_Onclick_Modifier:Modifier) {
+fun SearchBar_Onclick(navController:NavController,mainViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,SearchBar_Onclick_Modifier:Modifier) {
     var text=mainViewModel.text.value
-    Box (SearchBar_Onclick_Modifier,
+    Box (SearchBar_Onclick_Modifier
     ){
         BasicTextField(
             value = mainViewModel.text.value,
             onValueChange = {
-
             },
             decorationBox = {
                     innerTextField ->
                 Row (verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp)
+                    modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp).clickable(
+                        indication = null,
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        },
+                        onClick = {
+                            navController.navigate("Search_City")
+                        }
+                    )
                 ){
                     Icon(imageVector = Icons.Filled.Search, contentDescription = "")
                     Box(modifier=Modifier.padding(horizontal = 0.dp),
@@ -56,30 +65,13 @@ fun SearchBar_Onclick(mainViewModel: PlaceViewModel, WeatherViewModel: WeatherVi
                         }
                         innerTextField()
                     }
-                    if(text.isNotEmpty())
-                    {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.CenterEnd
-                        ){
-                            IconButton(onClick = {
-                                mainViewModel.setText("")
-                                text=""
-                            },
-                                modifier=Modifier.size(16.dp),
-                            ) {
-                                Icon(imageVector = Icons.Filled.Close, contentDescription = "")
-                            }
-                        }
-
-                    }
-
                 }
             },
             modifier = Modifier
                 .background(Color(240,240,240), CircleShape)
                 .height(50.dp)
                 .fillMaxWidth()
+
         )
     }
 }
@@ -89,7 +81,5 @@ fun SearchBar_Onclick(mainViewModel: PlaceViewModel, WeatherViewModel: WeatherVi
 fun GreetingPreview15() {
     val mainViewModel = remember { PlaceViewModel() }
     val WeatherViewModel= remember { WeatherViewModel() }
-    SunnyWeatherTheme {
-        SearchBar_Onclick(mainViewModel,WeatherViewModel,Modifier)
-    }
+    val navController= remember { NavController }
 }

@@ -1,6 +1,7 @@
 package com.sunnyweather.android.ui.component
 
 import android.graphics.Color
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -41,6 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.CheckCircle
@@ -53,7 +56,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,index:Int) {
+fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,index:Int) {
         var place_list=PlaceViewModel.getSavedPlace()
     var start=0.dp
     var end=0.dp
@@ -71,8 +74,6 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
             PlaceViewModel.show_edit.targetState=true
         },
         onClick = {
-            if(PlaceViewModel.show_edit.targetState)
-            {
                 // 点击时触发浮动效果
                 scale = 0.9f
                 // 延迟一段时间后恢复原状
@@ -80,6 +81,10 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
                     delay(200)
                     scale = 1f
                 }
+            "onClick".log(index.toString())
+            PlaceViewModel.place_current.value=index
+            navigation.navigate("greeting"){
+                popUpTo("greeting"){inclusive=true}
             }
         },
         indication = null,
@@ -191,8 +196,5 @@ fun GreetingPreview16() {
     SunnyWeatherTheme {
         val a= remember { PlaceViewModel() }
         val b= remember { WeatherViewModel() }
-        Box (modifier = Modifier.fillMaxSize()){
-            City_Edit(a,b,66)
-        }
     }
 }

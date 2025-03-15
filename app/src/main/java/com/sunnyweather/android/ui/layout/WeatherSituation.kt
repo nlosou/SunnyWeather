@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -73,30 +74,20 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                scope.launch {
-                    WeatherViewModel.WeatherFlow.collect { result ->
-                        try {
-                            // 处理结果
-                            "WeatherFlow.collect".log("result: ${result.onSuccess { it.size }}")
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
+        val job = scope.launch {
+            WeatherViewModel.WeatherFlow
+                .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { result ->
+                    "WeatherFlow.collect".log("result: ${result.onSuccess { it.size }}")
                 }
-            }
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
+        onDispose { job.cancel() }
     }
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     val (offset, alpha) = animateOffsetAndAlpha(WeatherViewModel.isExpanded.value)
     //左右滑页
-    val pagerState = rememberPagerState( 0){mainViewModel.place_num.value} // 用于管理分页状态
+    val pagerState = rememberPagerState( mainViewModel.place_current.value){mainViewModel.place_num.value} // 用于管理分页状态
 
     // 当页面改变时，更新 ViewModel 中的当前城市
     LaunchedEffect(pagerState.currentPage) {

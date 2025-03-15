@@ -1,27 +1,20 @@
 package com.sunnyweather.android.ui.place
 
-import android.view.animation.Transformation
-import androidx.collection.mutableIntListOf
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sunnyweather.android.log
 import com.sunnyweather.android.logic.AdcodeService
 import com.sunnyweather.android.logic.Repository
 import com.sunnyweather.android.logic.model.Place
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import retrofit2.http.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import retrofit2.HttpException
-import kotlin.math.log
-
-
 
 class PlaceViewModel :ViewModel(){
     private val searchQuery = MutableStateFlow<String>("")

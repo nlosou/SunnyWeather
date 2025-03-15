@@ -151,37 +151,13 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                         Text("城市管理",fontSize=35.sp)
                     }
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
-                    AnimatedVisibility(
-                        visible = !shouldShowSearchBar,
-                        enter = slideInVertically(
-                            initialOffsetY = {it},
-                            animationSpec = tween(durationMillis = 400
-                            )), // 进入时淡入
-                        exit = slideOutVertically(
-                            targetOffsetY={it},
-                            animationSpec = tween(durationMillis = 400
-                            )) // 退出时淡出
-                    ){
-                        Box(Modifier.combinedClickable(
-                            onClick = {
-                                navController.navigate("Search_City")
-                                "SearchBar_Onclick".log("start")
-                            },
-                            onLongClick = {
-
-                            }
-                        )) {
-                            SearchBar_Onclick(PlaceViewModel,WeatherViewModel,Modifier.fillMaxWidth())
-                        }
-
-                    }
-
+                    SearchBar_Onclick(navController,PlaceViewModel,WeatherViewModel,Modifier.fillMaxWidth())
                 }
                 LazyColumn(modifier = Modifier.padding(15.dp),
                     state = listState
                     ) {
                     items(PlaceViewModel.place_num.value){
-                        City_Edit(PlaceViewModel,WeatherViewModel,it)
+                        City_Edit(navController,PlaceViewModel,WeatherViewModel,it)
                         Spacer(Modifier.padding(vertical = 6.dp))
                     }
                 }
