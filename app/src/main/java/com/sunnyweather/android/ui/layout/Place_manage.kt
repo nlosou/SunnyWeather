@@ -135,18 +135,10 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
             Column(){
                 Column(modifier = Modifier.padding(horizontal = 30.dp)) {
 
-                    AnimatedVisibility(
-                        visible = PlaceViewModel.show_edit.targetState,
-                        enter = slideInHorizontally(initialOffsetX={it}), // 进入时淡入
-                        exit = slideOutHorizontally(targetOffsetX={it}) // 退出时淡出
-                    ){
+
+                    if(PlaceViewModel.show_edit.targetState){
                         Text("请选择项目",fontSize=35.sp)
-                    }
-                    AnimatedVisibility(
-                        visible = !PlaceViewModel.show_edit.targetState,
-                        enter = slideInHorizontally(initialOffsetX={it}), // 进入时淡入
-                        exit = slideOutHorizontally(targetOffsetX={it}) // 退出时淡出
-                    ){
+                    }else{
                         Text("城市管理",fontSize=35.sp)
                     }
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
@@ -159,7 +151,6 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                     }
                 }
             }
-
         }
     }
 }

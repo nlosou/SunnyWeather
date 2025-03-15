@@ -63,6 +63,8 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
      */
     var scale by remember { mutableStateOf(1f) }
     Box(modifier = Modifier.combinedClickable(
+        // 去除点击效果
+
         onLongClick = {
             PlaceViewModel.show_edit.targetState=true
         },
@@ -78,7 +80,10 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
                 }
             }
         },
-
+        indication = null,
+        interactionSource = remember {
+            MutableInteractionSource()
+        },
     ))
     {
         Card(modifier = Modifier.fillMaxWidth().graphicsLayer {
