@@ -1,7 +1,11 @@
 package com.sunnyweather.android.ui.layout
 
 import Weather_other_info
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -93,12 +97,14 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val (offset, alpha) = animateOffsetAndAlpha(WeatherViewModel.isExpanded.value)
     //左右滑页
     val pagerState = rememberPagerState( 0){mainViewModel.place_num.value} // 用于管理分页状态
+
     // 当页面改变时，更新 ViewModel 中的当前城市
     LaunchedEffect(pagerState.currentPage) {
         mainViewModel.place_current.value=pagerState.currentPage
         WeatherViewModel.SeacherWeather(mainViewModel.getSavedPlace()[pagerState.currentPage].lng.toString(),mainViewModel.getSavedPlace()[pagerState.currentPage].lat.toString())
         mainViewModel.place_name.value=mainViewModel.getSavedPlace()[pagerState.currentPage].formatted_address
     }
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -159,6 +165,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         }
                     }else{
                     }
+
                     ConstraintLayout(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -176,14 +183,21 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                         state = pagerState,
                                     )
                                 ){
-                                    Weather_location_easy_information(
-                                        Modifier
-                                            .padding(16.dp)
+                                    AnimatedVisibility(
+                                        visible = true,
+                                        enter = fadeIn(animationSpec = tween(durationMillis = 400)), // 进入时淡入
+                                        exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
+                                    ){
+                                        Weather_location_easy_information(
+                                            Modifier
+                                                .padding(16.dp)
                                             ,
-                                        fusedLocationClient = fusedLocationClient,
-                                        WeatherViewModel,
-                                        mainViewModel
-                                    )
+                                            fusedLocationClient = fusedLocationClient,
+                                            WeatherViewModel,
+                                            mainViewModel
+                                        )
+                                    }
+
                                 }
 
                                 Card(

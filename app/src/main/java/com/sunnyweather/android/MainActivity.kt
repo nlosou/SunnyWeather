@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                             scaleOut(animationSpec = tween(durationMillis = 600))+ fadeOut(animationSpec = tween(durationMillis = 600))
                         },
                         popEnterTransition = {
-                            expandIn(animationSpec = tween(durationMillis = 600))+ fadeIn(animationSpec = tween(durationMillis = 600))
+                            scaleIn(animationSpec = tween(durationMillis = 600)) + fadeIn(animationSpec = tween(durationMillis = 600))
                         },
                         popExitTransition = {
                             scaleOut(animationSpec = tween(durationMillis = 600))+ fadeOut(animationSpec = tween(durationMillis = 600))
