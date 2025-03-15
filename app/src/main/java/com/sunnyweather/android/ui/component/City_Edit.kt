@@ -41,7 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.myiconpack.CheckCircle
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -115,10 +117,9 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
                 // 使用 AnimatedVisibility 实现淡入效果
                 AnimatedVisibility(
                     visible = PlaceViewModel.show_edit.targetState,
-                    enter = fadeIn(animationSpec = tween(durationMillis = 600)), // 进入时淡入
-                    exit = fadeOut(animationSpec = tween(durationMillis = 600)) // 退出时淡出
+                    enter = fadeIn(animationSpec = tween(durationMillis = 400)), // 进入时淡入
+                    exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
                 ){
-
                         IconButton(
                             onClick = {
 
@@ -152,9 +153,8 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
                                         ))
                                     }
                                 }
-
                         }
-                        Row {
+                        Row (verticalAlignment=Alignment.CenterVertically){
                             Text("10",
                                 style = TextStyle(
                                     fontSize = 50.sp,
@@ -162,16 +162,15 @@ fun City_Edit(PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel
                             )
                             AnimatedVisibility(
                                 visible = PlaceViewModel.show_edit.targetState,
-                                enter = fadeIn(animationSpec = tween(durationMillis = 600)), // 进入时淡入
-                                exit = fadeOut(animationSpec = tween(durationMillis = 600)) // 退出时淡出
+                                enter = fadeIn(animationSpec = tween(durationMillis = 400)), // 进入时淡入
+                                exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
                             ){
-
                                 IconButton(
                                     onClick = {
 
                                     }
                                 ) {
-                                    Icon(Icons.Filled.CheckCircle, contentDescription = "")
+                                    Icon(MyIconPack.CheckCircle, contentDescription = "")
                                 }
                             }
                         }
