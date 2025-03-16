@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.sunnyweather.android.ui.myiconpack.Alarm
 import com.sunnyweather.android.ui.myiconpack.Car
 import com.sunnyweather.android.ui.myiconpack.CheckCircle
+import com.sunnyweather.android.ui.myiconpack.Circle
 import com.sunnyweather.android.ui.myiconpack.Clothes
 import com.sunnyweather.android.ui.myiconpack.Cosmetic
 import com.sunnyweather.android.ui.myiconpack.Drugs
@@ -36,6 +37,6 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
     }
     __AllIcons= listOf(Alarm, Car, CheckCircle, Clothes, Cosmetic, Drugs, Image, Leaf, LetterT,
         ListSelect, MapPoint, NavigationPointer, PencilLine, Point, Radioupnp, RedoLine, SnowLine,
-        Sport, TShirt, Umbrella, UndoLine, Water)
+        Sport, TShirt, Umbrella, UndoLine, Water,Circle)
     return __AllIcons!!
   }

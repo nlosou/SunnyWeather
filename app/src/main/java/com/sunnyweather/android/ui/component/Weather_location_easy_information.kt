@@ -99,8 +99,6 @@ fun Weather_location_easy_information(
     val state = rememberPullToRefreshState()
     if (state.isRefreshing) {
         LaunchedEffect(true) {
-            // fetch something
-           //delay(1500)
             WeatherViewModel.SeacherWeather("","")
             WeatherViewModel.SeacherWeather(weatherState.locationLng,weatherState.locationLat)
             "LaunchedEffect".log("start")

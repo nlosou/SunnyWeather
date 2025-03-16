@@ -11,12 +11,22 @@ import com.sunnyweather.android.logic.Repository
 import com.sunnyweather.android.logic.model.Place
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import retrofit2.HttpException
 
+data class Place_State(
+    val Select_City:MutableMap<Int,Boolean> = mutableMapOf()
+)
+
 class PlaceViewModel :ViewModel(){
+
+    private val _Place_State=MutableStateFlow(Place_State())
+    val __Place_State:StateFlow<Place_State> =_Place_State.asStateFlow()
+
     private val searchQuery = MutableStateFlow<String>("")
      val _placeList = mutableStateListOf<Place>() // 可观察的列表
     val place_name= mutableStateOf("")
@@ -77,4 +87,15 @@ class PlaceViewModel :ViewModel(){
     fun savePlace(place: Place)=Repository.savePlace(place)
     fun getSavedPlace()=Repository.getSavedPlace()
     fun isPlaceSaved()=Repository.isPlaceSaved()
+
+
+    fun toggleSelect(index: Int) {
+        val currentState = _Place_State.value.Select_City[index] ?: false
+        _Place_State.value = _Place_State.value.copy(
+            Select_City = _Place_State.value.Select_City.toMutableMap().apply {
+                this[index] = !currentState
+            }
+        )
+    }
+
 }

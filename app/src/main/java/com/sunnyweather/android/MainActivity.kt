@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Hourly_data.initialize(WeatherViewModel)
-
         setContent {
             SunnyWeatherTheme {
                 val navController = rememberNavController()
@@ -124,5 +123,6 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error in onResume: ${e.message}")
         }
     }
+
 }
 
