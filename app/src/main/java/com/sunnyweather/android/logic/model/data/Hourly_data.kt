@@ -10,7 +10,6 @@ import java.time.LocalDate
 class Hourly_data {
     companion object {
         private lateinit var weatherViewModel: WeatherViewModel
-
         fun initialize(viewModel: WeatherViewModel) {
             weatherViewModel = viewModel
         }
@@ -18,8 +17,8 @@ class Hourly_data {
         val hourlyWeather: List<HourlyWeather2>
             get() = (0..23).map { index ->
                 HourlyWeather2(
-                    temperature = weatherViewModel.hourly.value?.get(index)?.value?.toInt() ?: 0,
-                    weather = WeatherCodeConverter.getSky(weatherViewModel.hourly_Sky.value?.get(index)?.value.toString())
+                    temperature = weatherViewModel.get__hourly()[index].value.toInt() ?: 0,
+                    weather = WeatherCodeConverter.getSky(weatherViewModel.get__hourly_Sky()[index].value.toString())
                 )
             }
     }

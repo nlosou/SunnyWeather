@@ -17,6 +17,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 @Composable
 fun Surface_Card(item:Int,placeViewModel: PlaceViewModel,WeatherViewModel:WeatherViewModel) {
     var place=placeViewModel._placeList[item]
+    val weatherState by WeatherViewModel.state.collectAsState()
     Surface(shape = RoundedCornerShape(8.dp),
             shadowElevation = 10.dp,
             modifier = Modifier.fillMaxWidth().height(100.dp).padding(horizontal = 15.dp, vertical = 7.dp),
@@ -52,8 +55,8 @@ fun Surface_Card(item:Int,placeViewModel: PlaceViewModel,WeatherViewModel:Weathe
                                     place.lng.toString(),
                                     place.lat.toString()
                                 )
-                                WeatherViewModel.locationLat.value=place.lat.toString()
-                                WeatherViewModel.locationLng.value=place.lng.toString()
+                                weatherState.locationLat=place.lat.toString()
+                                weatherState.locationLng=place.lng.toString()
                                 placeViewModel.place_name.value=place.formatted_address
                                 placeViewModel.savePlace(placeViewModel._placeList[item])
                                 placeViewModel.place_num.value++

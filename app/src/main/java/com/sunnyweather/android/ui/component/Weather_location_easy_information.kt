@@ -38,6 +38,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -79,6 +80,7 @@ fun Weather_location_easy_information(
     WeatherViewModel: WeatherViewModel,
     mainViewModel: PlaceViewModel
 ) {
+    val weatherState by WeatherViewModel.state.collectAsState()
     val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     // 是否授权了位置权限
     val isLocationPermissionGranted = remember {
@@ -100,7 +102,7 @@ fun Weather_location_easy_information(
             // fetch something
            //delay(1500)
             WeatherViewModel.SeacherWeather("","")
-            WeatherViewModel.SeacherWeather(WeatherViewModel.locationLng.value,WeatherViewModel.locationLat.value)
+            WeatherViewModel.SeacherWeather(weatherState.locationLng,weatherState.locationLat)
             "LaunchedEffect".log("start")
             state.endRefresh()
         }
@@ -121,31 +123,6 @@ fun Weather_location_easy_information(
                         fontSize = 24.sp,
                     )
                 )
-                /*
-                        AnimatedVisibility(
-                            visible = !isLocationEnabled, // 控制是否显示
-                            enter = fadeIn(), // 渐显动画
-                            exit = fadeOut()  // 渐隐动画
-                        ) {
-                            Row(modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.clickable {
-                                        // 点击事件的逻辑处理
-
-                                        // 跳转到设置页面开启定位服务
-                                        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-
-                                        context.startActivity(intent)
-                                    }) {
-                                    Text("开启位置服务，获得当前位置天气",fontSize = 10.sp,)
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight,  modifier = Modifier.size(10.dp),contentDescription = "")
-                                }
-                            }
-                        }
-                         */
-
                 if (isLocationEnabled) {
                     // 显示定位信息
                     LocationUpdates(
@@ -179,29 +156,29 @@ fun Weather_location_easy_information(
         }
 
         TemperatureDisplay(
-            if (WeatherViewModel.temp.value.isNotEmpty()) {
-                WeatherViewModel.temp.value[0].result.realtime.temperature.toInt() ?: 0
+            if (weatherState.temp.isNotEmpty()) {
+                weatherState.temp[0].result.realtime.temperature.toInt() ?: 0
             } else {
                 0
             }
         )
         Row {
             Text(
-                if (WeatherViewModel.temp.value.isNotEmpty()) {
-                    WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).info
+                if (weatherState.temp.isNotEmpty()) {
+                    WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).info
                 } else {
                     "天气"
                 }
             )
             Spacer(modifier = Modifier.padding(5.dp))
-            if (WeatherViewModel.temp.value.isNotEmpty()) {
-                Text("最高${WeatherViewModel.temp.value[0].result.daily.temperature[0].max?.toInt()}°")
+            if (weatherState.temp.isNotEmpty()) {
+                Text("最高${weatherState.temp[0].result.daily.temperature[0].max?.toInt()}°")
             } else {
                 Text("最高气温")
             }
             Spacer(modifier = Modifier.padding(5.dp))
-            if (WeatherViewModel.temp.value.isNotEmpty()) {
-                Text("最低${WeatherViewModel.temp.value[0].result.daily.temperature[0].min?.toInt()}°")
+            if (weatherState.temp.isNotEmpty()) {
+                Text("最低${weatherState.temp[0].result.daily.temperature[0].min?.toInt()}°")
             } else {
                 Text("最低气温")
             }

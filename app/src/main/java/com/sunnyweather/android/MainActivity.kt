@@ -13,6 +13,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,22 +29,12 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 class MainActivity : ComponentActivity() {
      val mainViewModel: PlaceViewModel by viewModels()
     private val WeatherViewModel:WeatherViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Hourly_data.initialize(WeatherViewModel)
-        if(mainViewModel.getSavedPlace().isNotEmpty()){
-            val place= mainViewModel.getSavedPlace()[0]
-            mainViewModel.place_num.value=mainViewModel.getSavedPlace().size
-            "MainActivity".log(place.toString())
-            mainViewModel.place_name.value=place.formatted_address
-            WeatherViewModel.SeacherWeather(place.lng.toString(),place.lat.toString())
-            WeatherViewModel.locationLat.value=place.lat.toString()
-            WeatherViewModel.locationLng.value=place.lng.toString()
-        }else
-        {
-            "MainActivity".log("没保存")
-        }
+
         setContent {
             SunnyWeatherTheme {
                 val navController = rememberNavController()

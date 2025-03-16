@@ -78,21 +78,6 @@ fun Greeting2(navController: NavController, mainViewModel: PlaceViewModel, Weath
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                scope.launch {
-                    WeatherViewModel.WeatherFlow.collect { result ->
-                        "WeatherFlow.collect".log("result: $result")
-                    }
-                }
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
     Scaffold(
         topBar = {
             TopAppBar(

@@ -1,8 +1,6 @@
 package com.sunnyweather.android.ui.layout
 
-import Weather_other_info
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -32,6 +30,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -40,12 +40,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -71,6 +69,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mainViewModel: PlaceViewModel) {
+    val weatherState by WeatherViewModel.state.collectAsState()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     DisposableEffect(lifecycleOwner) {
@@ -83,9 +82,21 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
         }
         onDispose { job.cancel() }
     }
+    LaunchedEffect(Unit) {
+        if (mainViewModel.getSavedPlace().isNotEmpty()) {
+            val place = mainViewModel.getSavedPlace()[4]
+            mainViewModel.place_num.value = mainViewModel.getSavedPlace().size
+            "MainActivity".log(place.toString())
+            mainViewModel.place_name.value = place.formatted_address
+            WeatherViewModel.SeacherWeather(place.lng.toString(), place.lat.toString())
+            WeatherViewModel.fix_location(place.lat.toString(),place.lng.toString())
+        } else {
+            "MainActivity".log("没保存")
+        }
+    }
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    val (offset, alpha) = animateOffsetAndAlpha(WeatherViewModel.isExpanded.value)
+    val (offset, alpha) = animateOffsetAndAlpha(weatherState.isExpanded)
     //左右滑页
     val pagerState = rememberPagerState( mainViewModel.place_current.value){mainViewModel.place_num.value} // 用于管理分页状态
 
@@ -106,15 +117,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectVerticalDragGestures { _, verticalChange ->
-                        if (verticalChange < 0) {
-                            WeatherViewModel.isExpanded.value = true
-                        } else if (verticalChange > 0) {
-                            WeatherViewModel.isExpanded.value = false
-                        }
-                    }
-                }
         )
         {
             Scaffold(
@@ -144,17 +146,17 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 // 使用 HorizontalPager 实现左右滑动切换城市
                 Box(modifier = Modifier.padding(contentPadding))
                 {
-                    if (WeatherViewModel.temp.value.isNotEmpty()){
+                    if (weatherState.temp.isNotEmpty()){
                         Box( // Box 布局，用于显示天气图标
                             modifier = Modifier
                                 .align(Alignment.Center) // 图标水平居中
                                 .scale(6f)
                                 .offset(x=15.dp,y=-50.dp)
-                                .alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)
+                                .alpha(if (weatherState.isExpanded) 0f else 1f)
 
                             // 图标缩放为 60%
                         ){
-                            WeatherCodeConverter.getSky(WeatherViewModel.temp.value[0].result.realtime.skycon).anime_icon()
+                            WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).anime_icon()
                         }
                     }else{
                     }
@@ -162,7 +164,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .offset(y = -offset)
-                                    .alpha(if (WeatherViewModel.isExpanded.value) 0f else 1f)
+                                    .alpha(if (weatherState.isExpanded) 0f else 1f)
 
                             ) {
                                 val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
@@ -198,11 +200,11 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                         .constrainAs(hour_situation) {
                                             top.linkTo(Easy_Weather.bottom, margin = 30.dp)
                                         }
-                                        .alpha(if (WeatherViewModel.isExpanded.value) 0.1f else 1f),
+                                        .alpha(if (weatherState.isExpanded) 0.1f else 1f),
                                     colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                                 ) {
                                     // 获取模拟的 DailyWeather 数据
-                                    if (WeatherViewModel.hourly.value.isNotEmpty()){
+                                    if (weatherState.hourly.isNotEmpty()){
                                         val dailyWeather = WeatherDataProvider.dailyWeather.first()
                                         "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
                                         HourlyWeatherChart(
@@ -223,7 +225,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                     colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                     shape = RoundedCornerShape(0.dp)
                                 ){
-                                    if (WeatherViewModel.daily.value.isNotEmpty()){
+                                    if (weatherState.daily.isNotEmpty()){
                                         val dailyWeather = WeatherDataProvider.dailyWeather.first()
                                         Future_Weather_Cards(WeatherViewModel,
                                             dailyWeather
