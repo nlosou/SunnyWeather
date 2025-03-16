@@ -84,7 +84,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     }
     LaunchedEffect(Unit) {
         if (mainViewModel.getSavedPlace().isNotEmpty()) {
-            val place = mainViewModel.getSavedPlace()[4]
+            val place = mainViewModel.getSavedPlace()[0]
             mainViewModel.place_num.value = mainViewModel.getSavedPlace().size
             "MainActivity".log(place.toString())
             mainViewModel.place_name.value = place.formatted_address

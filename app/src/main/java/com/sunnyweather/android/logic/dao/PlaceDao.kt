@@ -25,5 +25,17 @@ object PlaceDao {
         return Gson().fromJson(placeJson, object : TypeToken<List<Place>>() {}.type)
     }
     fun isPlaceSaved()=sharedPreferences().contains("place")
+
+    fun deletePlaceAtIndex(index: Int) {
+        val sharedPreferences = sharedPreferences()
+        val existingPlacesJson = sharedPreferences.getString("places", "[]")
+        val existingPlaces = Gson().fromJson<List<Place>>(existingPlacesJson, object : TypeToken<List<Place>>() {}.type)
+        if (index >= 0 && index < existingPlaces.size) {
+            val updatedPlaces = existingPlaces.toMutableList().apply { removeAt(index) }
+            sharedPreferences.edit {
+                putString("places", Gson().toJson(updatedPlaces))
+            }
+        }
+    }
     private fun sharedPreferences()=SunnyWeatherApplication.context.getSharedPreferences("sunny_weather",Context.MODE_PRIVATE)
 }

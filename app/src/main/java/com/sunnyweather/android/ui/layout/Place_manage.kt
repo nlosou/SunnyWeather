@@ -31,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -56,6 +57,7 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, WeatherViewModel:WeatherViewModel) {
+    val City_list_State by PlaceViewModel.__Place_State.collectAsState()
     val listState = rememberLazyListState()
     val shouldShowSearchBar by remember {
         derivedStateOf {
@@ -122,7 +124,14 @@ fun Place_manage(navController: NavController, PlaceViewModel:PlaceViewModel, We
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center) {
                         IconButton(
-                            onClick = { /* Do something */ },
+                            onClick = {
+                                City_list_State.Select_City.onEach {
+                                    if(it.value)
+                                    {
+                                        PlaceViewModel.delete(it.key)
+                                    }
+                                }
+                            },
                             modifier = Modifier.padding(0.dp) // 移除内边距
                         ) {
                             Icon(
