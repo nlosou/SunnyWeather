@@ -10,6 +10,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -163,19 +164,16 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         }
                     }else{
                     }
-                    ConstraintLayout(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .offset(y = -offset)
-                                    .alpha(if (weatherState.isExpanded) 0f else 1f)
+                    Column (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(if (weatherState.isExpanded) 0f else 1f)
 
                     ) {
-                        val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
+                       // val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
                         HorizontalPager(
                             state = pagerState,
-                            modifier = Modifier.constrainAs(Easy_Weather) {
-                                        top.linkTo(parent.top)
-                                    },
+                            modifier = Modifier,
                             flingBehavior = PagerDefaults.flingBehavior(
                                 state = pagerState,)
                         ){ page->
@@ -195,55 +193,49 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                 )
                             }
 
-                                }
-                                //每小时天气状况
-                                Card(
-                                    modifier = Modifier
-                                        .background(Color.Transparent)
-                                        .constrainAs(hour_situation) {
-                                            top.linkTo(Easy_Weather.bottom, margin = 30.dp)
-                                        }
-                                        .alpha(if (weatherState.isExpanded) 0.1f else 1f),
-                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-                                ) {
-                                    // 获取模拟的 DailyWeather 数据
-                                    if (weatherState.hourly.isNotEmpty()){
-                                        val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                        "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-                                        HourlyWeatherChart(
-                                            modifier = Modifier.fillMaxSize(),
-                                            dailyWeather = dailyWeather,
-                                            WeatherViewModel
-                                        )
-                                    }else{
+                        }
+                        //每小时天气状况
+                        Card(
+                            modifier = Modifier
+                                .background(Color.Transparent)
+                                .alpha(if (weatherState.isExpanded) 0.1f else 1f),
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                        ) {
+                            // 获取模拟的 DailyWeather 数据
+                            if (weatherState.hourly.isNotEmpty()){
+                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                                HourlyWeatherChart(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    dailyWeather = dailyWeather,
+                                    WeatherViewModel
+                                )
+                            }else{
 
-                                    }
-                                }
-
-                            //未来几天天气
-                                Card (
-                                    Modifier
-                                        .constrainAs(future_caed) {
-                                            bottom.linkTo(parent.bottom)
-                                        }
-                                        .padding(3.dp).offset(y=30.dp),
-                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                                    shape = RoundedCornerShape(0.dp)
-                                ){
-                                    if (weatherState.daily.isNotEmpty()){
-                                        val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                        Future_Weather_Cards(WeatherViewModel,
-                                            dailyWeather
-                                        )
-                                    }else{
-
-                                    }
-
-                                }
                             }
                         }
+
+                        //未来几天天气
+                        Card (
+                            Modifier
+                                .padding(3.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                            shape = RoundedCornerShape(0.dp)
+                        ){
+                            if (weatherState.daily.isNotEmpty()){
+                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                Future_Weather_Cards(WeatherViewModel,
+                                    dailyWeather
+                                )
+                            }else{
+
+                            }
+
+                        }
                     }
-                    //Weather_other_info(Modifier.padding(contentPadding) .alpha(alpha))
+                }
+            }
+            //Weather_other_info(Modifier.padding(contentPadding) .alpha(alpha))
         }
     }
 }
