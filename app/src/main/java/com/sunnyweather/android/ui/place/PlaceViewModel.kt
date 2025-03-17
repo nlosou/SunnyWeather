@@ -26,7 +26,6 @@ class PlaceViewModel :ViewModel(){
 
     private val _Place_State=MutableStateFlow(Place_State())
     val __Place_State:StateFlow<Place_State> =_Place_State.asStateFlow()
-
     private val searchQuery = MutableStateFlow<String>("")
      val _placeList = mutableStateListOf<Place>() // 可观察的列表
     val place_name= mutableStateOf("")

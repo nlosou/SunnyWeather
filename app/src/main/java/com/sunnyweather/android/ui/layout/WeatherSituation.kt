@@ -2,8 +2,11 @@ package com.sunnyweather.android.ui.layout
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -166,34 +169,34 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                     .offset(y = -offset)
                                     .alpha(if (weatherState.isExpanded) 0f else 1f)
 
-                            ) {
-                                val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
-                                HorizontalPager(
-                                    state = pagerState,
-                                    modifier = Modifier.constrainAs(Easy_Weather) {
+                    ) {
+                        val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier.constrainAs(Easy_Weather) {
                                         top.linkTo(parent.top)
                                     },
-                                    flingBehavior = PagerDefaults.flingBehavior(
-                                        state = pagerState,
-                                    )
-                                ){
-                                    AnimatedVisibility(
-                                        visible = true,
-                                        enter = fadeIn(animationSpec = tween(durationMillis = 400)), // 进入时淡入
-                                        exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
-                                    ){
-                                        Weather_location_easy_information(
-                                            Modifier
-                                                .padding(16.dp)
-                                            ,
-                                            fusedLocationClient = fusedLocationClient,
-                                            WeatherViewModel,
-                                            mainViewModel
-                                        )
-                                    }
+                            flingBehavior = PagerDefaults.flingBehavior(
+                                state = pagerState,)
+                        ){ page->
+                            // 根据当前页面索引动态调整 visible 状态
+                            val isVisible = page == pagerState.currentPage
+                            AnimatedVisibility(
+                                visible = isVisible,
+                                enter = fadeIn(animationSpec = tween(durationMillis = 400)) + scaleIn(initialScale = 0.5f),
+                                exit = fadeOut(animationSpec = tween(durationMillis = 400)) + scaleOut(targetScale = 0.5f)
+                            ){
+                                Weather_location_easy_information(
+                                    Modifier.padding(16.dp)
+                                    ,
+                                    fusedLocationClient = fusedLocationClient,
+                                    WeatherViewModel,
+                                    mainViewModel
+                                )
+                            }
 
                                 }
-
+                                //每小时天气状况
                                 Card(
                                     modifier = Modifier
                                         .background(Color.Transparent)
@@ -216,6 +219,8 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
 
                                     }
                                 }
+
+                            //未来几天天气
                                 Card (
                                     Modifier
                                         .constrainAs(future_caed) {
