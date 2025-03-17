@@ -128,7 +128,7 @@ fun HourlyWeatherChart(
     ) {
         LazyRow( // 使用 LazyRow 实现水平滚动列表
             modifier
-                .height(200.dp) // 设置高度为 100dp
+                .height(156.dp) // 设置高度为 100dp
                 .wrapContentWidth() // 宽度根据内容自动调整
         ) {
             item { // 在 LazyRow 中添加一个内容项

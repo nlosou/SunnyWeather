@@ -90,7 +90,6 @@ fun Future_Weather_Cards(
     }
     Box {
         // 每日天气卡片
-
         LazyRow(
             modifier = Modifier.height(350.dp)
                 .wrapContentWidth(),
@@ -101,7 +100,7 @@ fun Future_Weather_Cards(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .width(cardWidth)
-                        .padding(top = 16.dp),
+                        .padding(top = 10.dp),
                 ) {
                     Text(
                         text = when (it) {
@@ -121,7 +120,6 @@ fun Future_Weather_Cards(
                         ).format(DateTimeFormatter.ofPattern("MM月dd日")),
                         fontWeight = FontWeight.Light
                     )
-
                     // 天气图标
                     Box(
                         modifier = Modifier
@@ -135,7 +133,7 @@ fun Future_Weather_Cards(
                     }
 
                     Column(
-                        modifier = Modifier.padding(top = 130.dp),
+                        modifier = Modifier.padding(top = 160.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
