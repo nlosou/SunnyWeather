@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
@@ -44,6 +45,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -76,6 +78,9 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val weatherState by WeatherViewModel.state.collectAsState()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
     DisposableEffect(lifecycleOwner) {
         val job = scope.launch {
             WeatherViewModel.WeatherFlow
@@ -185,8 +190,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                 exit = fadeOut(animationSpec = tween(durationMillis = 400)) + scaleOut(targetScale = 0.5f)
                             ){
                                 Weather_location_easy_information(
-                                    Modifier.padding(16.dp)
-                                    ,
+                                    Modifier.padding(16.dp).wrapContentHeight(),
                                     fusedLocationClient = fusedLocationClient,
                                     WeatherViewModel,
                                     mainViewModel
@@ -199,7 +203,8 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                             modifier = Modifier
                                 .background(Color.Transparent)
                                 .alpha(if (weatherState.isExpanded) 0.1f else 1f),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                            shape = RoundedCornerShape(0.dp)
                         ) {
                             // 获取模拟的 DailyWeather 数据
                             if (weatherState.hourly.isNotEmpty()){

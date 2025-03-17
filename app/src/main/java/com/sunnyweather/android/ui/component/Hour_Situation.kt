@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import android.graphics.Path
 import android.graphics.Paint
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -130,7 +131,7 @@ fun HourlyWeatherChart(
     ) {
         LazyRow( // 使用 LazyRow 实现水平滚动列表
             modifier
-                .height(156.dp) // 设置高度为 100dp
+                .wrapContentHeight() // 设置高度为 100dp
                 .wrapContentWidth() // 宽度根据内容自动调整
         ) {
             item { // 在 LazyRow 中添加一个内容项
