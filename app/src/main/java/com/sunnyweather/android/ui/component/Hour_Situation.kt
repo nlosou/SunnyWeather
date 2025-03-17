@@ -53,6 +53,7 @@ import android.graphics.Path
 import android.graphics.Paint
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.core.text.util.LocalePreferences
 import com.sunnyweather.android.logic.model.data.TemperatureUnit
 //import com.sunnyweather.android.data.WeatherDataProvider2
@@ -122,6 +123,7 @@ fun HourlyWeatherChart(
     dailyWeather: DailyWeather, // 每日天气数据
     WeatherViewModel:WeatherViewModel
 ) {
+    val weatherState by WeatherViewModel.state.collectAsState()
     // 使用 CompositionLocalProvider 提供一个温度单位的默认值
     CompositionLocalProvider(
         LocalTemUnit provides TemperatureUnit.Centigrade // 提供温度单位为摄氏度
@@ -157,7 +159,7 @@ fun HourlyWeatherChart(
                                     it.weather.icon() // 显示天气图标
                                 }
                                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
-                                val offsetDateTime = OffsetDateTime.parse(WeatherViewModel.hourly.value[index].datetime, formatter)
+                                val offsetDateTime = OffsetDateTime.parse(weatherState.hourly[index].datetime, formatter)
                                 val time = offsetDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
                                 Text( // 显示时间文本
                                     /*

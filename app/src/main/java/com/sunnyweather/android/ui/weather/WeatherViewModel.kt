@@ -13,48 +13,60 @@ import com.sunnyweather.android.logic.model.RealtimeResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 
+
+data class WeatherState(
+    val temp: List<RealtimeResponse> = emptyList(),
+    val hourly: List<RealtimeResponse.Result.Hourly.Temperature> = emptyList(),
+    val hourlySky: List<RealtimeResponse.Result.Hourly.Skycon> = emptyList(),
+    val daily: List<RealtimeResponse.Result.Daily.Metrics> = emptyList(),
+    val dailyWeather: List<RealtimeResponse.Result.Daily.Skycon> = emptyList(),
+    var locationLng:String="",
+    var locationLat:String="",
+    var isExpanded: Boolean = false,
+)
+
 class WeatherViewModel:ViewModel() {
     private val locationFlowData= MutableStateFlow<Location>(Location("", ""))
-    var locationLng=mutableStateOf("")
-    var locationLat=mutableStateOf("")
-    val placeName=""
-    var isExpanded = mutableStateOf(false)
-    val isRefreshRequested = mutableStateOf(false)
-    var temp = mutableStateOf<List<RealtimeResponse>>(emptyList())
-    var hourly = mutableStateOf<List<RealtimeResponse.Result.Hourly.Temperature>>(emptyList())
-    var hourly_Sky = mutableStateOf<List<RealtimeResponse.Result.Hourly.Skycon>>(emptyList())
-    var daily=mutableStateOf<List<RealtimeResponse.Result.Daily.Metrics>>(emptyList())
-    var daily_weather=mutableStateOf<List<RealtimeResponse.Result.Daily.Skycon>>(emptyList())
-    //var hourly_time=mutableStateOf<List<RealtimeResponse.Result.Hourly.Temperature>>(emptyList())
+    private val _state = MutableStateFlow(WeatherState())
+    val state: StateFlow<WeatherState> = _state.asStateFlow()
+    var _hourly = mutableStateOf<List<RealtimeResponse.Result.Hourly.Temperature>>(emptyList())
+    var _hourly_Sky = mutableStateOf<List<RealtimeResponse.Result.Hourly.Skycon>>(emptyList())
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->
         "WeatherFlow_location".log(query.toString())
         Repository.RealWeather(query.lng, query.lat)
             .flowOn(Dispatchers.IO)
-            .onEach {
+            .map {
                 result ->
                 result.onSuccess {
                     item->
                     "WeatherFlow_onSuccess".log(item.toString())
-                    "WeatherFlow_onSuccess_type".log(item::class.simpleName.toString())
-                    temp.value = item ?: emptyList() // 使用默认值
-                    hourly.value=item[0].result.hourly.temperature
-                    hourly_Sky.value=item[0].result.hourly.skycon
-                    daily.value=item[0].result.daily.temperature
-                    daily_weather.value=item[0].result.daily.skycon
-                    "WeatherFlow_onSuccess".log(temp.value[0].result.daily.temperature[1].max.toString())
+                    _state.value = WeatherState(
+                        temp = item ?: emptyList(),
+                        hourly = item[0].result.hourly.temperature,
+                        hourlySky = item[0].result.hourly.skycon,
+                        daily = item[0].result.daily.temperature,
+                        dailyWeather = item[0].result.daily.skycon,
+                        locationLng = query.lng,
+                        locationLat = query.lat,
+                        isExpanded = _state.value.isExpanded
+                    )
+                    _hourly.value=_state.value.hourly
+                    _hourly_Sky.value=_state.value.hourlySky
                 }.onFailure {
-                    "WeatherFlow".log(it.toString())
                     if (it is HttpException) {
                         "HTTP Exception: ".log("${it.response()?.errorBody()?.string()}")
                     } else {
@@ -66,9 +78,24 @@ class WeatherViewModel:ViewModel() {
                 "WeatherFlow_catch".log(e.toString())
             }
     }
-
+    fun fix_location(lng:String,lat:String){
+        _state.value.locationLng=lat
+        _state.value.locationLat=lat
+    }
     fun SeacherWeather(lng:String,lat:String)
     {
         locationFlowData.value = Location(lng, lat)
+    }
+
+    fun updateExpandedState(isExpanded: Boolean) {
+        _state.value = _state.value.copy(isExpanded = isExpanded)
+    }
+    fun get__hourly():List<RealtimeResponse.Result.Hourly.Temperature>
+    {
+        return state.value.hourly
+    }
+    fun get__hourly_Sky():List<RealtimeResponse.Result.Hourly.Skycon>
+    {
+        return  state.value.hourlySky
     }
 }

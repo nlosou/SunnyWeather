@@ -9,6 +9,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +50,7 @@ import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.CheckCircle
+import com.sunnyweather.android.ui.myiconpack.Circle
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -57,23 +61,30 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,index:Int) {
-        var place_list=PlaceViewModel.getSavedPlace()
+    val weatherState by PlaceViewModel.__Place_State.collectAsState()
+    var place_list=PlaceViewModel.getSavedPlace()
     var start=0.dp
     var end=0.dp
     var  top=0.dp
     var bottom=0.dp
-    // 用于控制浮动效果的缩放比例
-    /*
-
-     */
     var scale by remember { mutableStateOf(1f) }
+
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+    var isDragging by remember { mutableStateOf(false) }
+
+    var select by remember { mutableStateOf(false) }
     Box(modifier = Modifier.combinedClickable(
         // 去除点击效果
-
         onLongClick = {
             PlaceViewModel.show_edit.targetState=true
         },
         onClick = {
+                if(PlaceViewModel.show_edit.targetState)
+                {
+                    // 切换 Select_City 的值
+                    PlaceViewModel.toggleSelect(index)
+                }
                 // 点击时触发浮动效果
                 scale = 0.9f
                 // 延迟一段时间后恢复原状
@@ -83,9 +94,12 @@ fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherVi
                 }
             "onClick".log(index.toString())
             PlaceViewModel.place_current.value=index
-            navigation.navigate("greeting"){
-                popUpTo("greeting"){inclusive=true}
+            if(!PlaceViewModel.show_edit.targetState){
+                navigation.navigate("greeting"){
+                    popUpTo("greeting"){inclusive=true}
+                }
             }
+
         },
         indication = null,
         interactionSource = remember {
@@ -126,8 +140,9 @@ fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherVi
                     exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
                 ){
                         IconButton(
+                            modifier = Modifier,
                             onClick = {
-
+                             
                             }
                         ) {
                             Icon(Icons.Filled.Menu, contentDescription = "")
@@ -140,7 +155,6 @@ fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherVi
                         horizontalArrangement = Arrangement.SpaceBetween // 设置水平排列方式为两端对齐
                     ){
                         Column() {
-
                                 Column{
                                     Text(place_list[index].formatted_address,
                                         style = TextStyle(
@@ -175,7 +189,12 @@ fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherVi
 
                                     }
                                 ) {
-                                    Icon(MyIconPack.CheckCircle, contentDescription = "")
+                                    if (weatherState.Select_City[index] == true){
+                                        Icon(MyIconPack.CheckCircle, contentDescription = "")
+                                    }else{
+                                        Icon(MyIconPack.Circle, contentDescription = "")
+                                    }
+
                                 }
                             }
                         }
@@ -189,6 +208,7 @@ fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherVi
     }
 
 }
+
 
 @Preview(showBackground = true)
 @Composable

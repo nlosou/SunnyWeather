@@ -38,6 +38,7 @@ object Repository {
     fun savePlace(place: Place)=PlaceDao.savePalce(place)
     fun getSavedPlace()=PlaceDao.getSavedPlace()
     fun isPlaceSaved()=PlaceDao.isPlaceSaved()
+    fun delete(index:Int)=PlaceDao.deletePlaceAtIndex(index)
 
     fun RealWeather(lng:String,lat:String): Flow<Result<List<RealtimeResponse>>> = flow {
         try {

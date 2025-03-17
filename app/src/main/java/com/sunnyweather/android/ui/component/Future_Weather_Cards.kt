@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,6 +67,7 @@ fun Future_Weather_Cards(
     WeatherViewModel: WeatherViewModel,
     dailyWeather: DailyWeather
 ) {
+    val weatherState by WeatherViewModel.state.collectAsState()
     val horizontalItemCount = 7
     val cardWidth = 80.dp
     val rowWidth = horizontalItemCount * cardWidth
@@ -107,7 +109,7 @@ fun Future_Weather_Cards(
                             0 -> "今天"
                             1 -> "明天"
                             else -> dayOfWeekChinese(
-                                WeatherViewModel.daily.value[it].date
+                                weatherState.daily[it].date
                             )
                         },
                         fontWeight = FontWeight.Light
@@ -115,7 +117,7 @@ fun Future_Weather_Cards(
 
                     Text(
                         text = OffsetDateTime.parse(
-                            WeatherViewModel.daily.value[it].date,
+                            weatherState.daily[it].date,
                             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
                         ).format(DateTimeFormatter.ofPattern("MM月dd日")),
                         fontWeight = FontWeight.Light
@@ -128,7 +130,7 @@ fun Future_Weather_Cards(
                             .background(Color.Transparent)
                     ) {
                         WeatherCodeConverter.getSky(
-                            WeatherViewModel.daily_weather.value[it].value
+                            weatherState.dailyWeather[it].value
                         ).icon()
                     }
 
@@ -172,13 +174,13 @@ fun Future_Weather_Cards(
                         modifier = Modifier
                             .width(560.dp)
                             .height(200.dp).offset(y=70.dp),
-                        metrics = WeatherViewModel.daily.value
+                        metrics = weatherState.daily
                     )
                     LineChart3(
                         modifier = Modifier
                             .width(560.dp)
                             .height(200.dp).offset(y=150.dp),
-                        metrics = WeatherViewModel.daily.value
+                        metrics = weatherState.daily
                     )
                 }
 
