@@ -23,4 +23,5 @@
     <string name="title_activity_search_bar_onclick">SearchBar_Onclick</string>
     <string name="title_activity_city_edit">City_Edit</string>
     <string name="title_activity_ultraviolet">Ultraviolet</string>
+    <string name="title_activity_wind">Wind</string>
 </resources>

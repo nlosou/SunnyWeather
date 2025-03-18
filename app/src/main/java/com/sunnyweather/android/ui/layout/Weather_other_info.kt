@@ -37,6 +37,7 @@ import com.sunnyweather.android.R
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.FadingDivider
 import com.sunnyweather.android.ui.component.Humidity_table
+import com.sunnyweather.android.ui.component.Somatosensory
 import com.sunnyweather.android.ui.component.Ultraviolet
 import com.sunnyweather.android.ui.myiconpack.Car
 import com.sunnyweather.android.ui.myiconpack.Clothes
@@ -169,6 +170,12 @@ fun WeatherCard(
             {
                 Box(modifier = Modifier.weight(1f)){
                     Ultraviolet("")
+                }
+            }
+            else if(title=="体感")
+            {
+                Box(modifier=Modifier.weight(1f)){
+                    Somatosensory("")
                 }
             }
 
