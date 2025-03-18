@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.R
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.FadingDivider
+import com.sunnyweather.android.ui.component.Humidity_table
+import com.sunnyweather.android.ui.component.Ultraviolet
 import com.sunnyweather.android.ui.myiconpack.Car
 import com.sunnyweather.android.ui.myiconpack.Clothes
 import com.sunnyweather.android.ui.myiconpack.Cosmetic
@@ -130,6 +132,7 @@ fun WeatherCard(
                 .fillMaxHeight()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
                 modifier = Modifier.weight(1f),
@@ -157,16 +160,19 @@ fun WeatherCard(
                     )
                 }
             }
-
-            iconId?.let {
-                Image(
-                    painter = painterResource(id = iconId),
-                    contentDescription = "Description of the PNG Image",
-                    modifier = Modifier
-                        .size(130.dp)
-                        .clip(RoundedCornerShape(35.dp))
-                )
+            if(title=="湿度"){
+                Box(modifier = Modifier.weight(1f)){
+                    Humidity_table("")
+                }
             }
+            else if(title=="紫外线")
+            {
+                Box(modifier = Modifier.weight(1f)){
+                    Ultraviolet("")
+                }
+            }
+
+
         }
     }
 }

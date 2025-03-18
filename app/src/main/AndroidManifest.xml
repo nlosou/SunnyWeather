@@ -19,6 +19,16 @@
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.Somatosensory"
+            android:exported="false"
+            android:label="@string/title_activity_somatosensory"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
+            android:name=".ui.component.Ultraviolet"
+            android:exported="false"
+            android:label="@string/title_activity_ultraviolet"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
             android:name=".ui.component.City_Edit"
             android:exported="false"
             android:label="@string/title_activity_city_edit"
