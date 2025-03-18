@@ -115,7 +115,6 @@ fun Weather_location_easy_information(
                         mainViewModel.place_name.value
                     } else {
                         "地址"
-
                     },
                     style = TextStyle(
                         fontSize = 24.sp,
@@ -142,7 +141,6 @@ fun Weather_location_easy_information(
 
                             Icon(MyIconPack.Point, contentDescription = "",modifier=Modifier.size(15.dp), tint = if(mainViewModel.place_current.value==it) Color.White else Color.Black)
                         }
-
                         }
                     }
                 }
@@ -186,12 +184,25 @@ fun Weather_location_easy_information(
             shape = RoundedCornerShape(8.dp),
             color = Color.LightGray.copy(0.5f)
         ) {
-            Row() {
+            Row(verticalAlignment=Alignment.CenterVertically) {
                 Icon(MyIconPack.Leaf, contentDescription = "")
                 Spacer(modifier = Modifier.padding(2.dp))
-                Text("空气质量")
+                Text(
+                    if (weatherState.temp.isNotEmpty()) {
+                        when (weatherState.temp[0].result.realtime.air_quality.aqi.chn) {
+                            in 0..50 -> "优"
+                            in 51..100 -> "良"
+                            in 101..150->"轻度污染"
+                            in 151..200->"中度污染"
+                            in 201..300->"重度污染"
+                            else ->"严重污染"
+                        }
+                    } else {
+                        ""
+                    }
+                )
                 Spacer(modifier = Modifier.padding(2.dp))
-                Text("空气质量的数字")
+                Text(if (weatherState.temp.isNotEmpty()) weatherState.temp[0].result.realtime.air_quality.aqi.chn.toString() else{"缺少数据"})
             }
         }
     }

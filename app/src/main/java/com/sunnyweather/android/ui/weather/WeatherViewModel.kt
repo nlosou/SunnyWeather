@@ -28,6 +28,7 @@ import retrofit2.HttpException
 
 data class WeatherState(
     val temp: List<RealtimeResponse> = emptyList(),
+   // val aqi:Int=temp[0].result.realtime.air_quality.aqi.chn,
     val hourly: List<RealtimeResponse.Result.Hourly.Temperature> = emptyList(),
     val hourlySky: List<RealtimeResponse.Result.Hourly.Skycon> = emptyList(),
     val daily: List<RealtimeResponse.Result.Daily.Metrics> = emptyList(),
