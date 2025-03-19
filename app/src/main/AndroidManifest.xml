@@ -19,6 +19,11 @@
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.scaleText"
+            android:exported="false"
+            android:label="@string/title_activity_scale_text"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
             android:name=".ui.component.Wind"
             android:exported="false"
             android:label="@string/title_activity_wind"
