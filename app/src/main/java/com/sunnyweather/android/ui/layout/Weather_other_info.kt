@@ -33,6 +33,7 @@ import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.Humidity_table
 import com.sunnyweather.android.ui.component.Somatosensory
 import com.sunnyweather.android.ui.component.Ultraviolet
+import com.sunnyweather.android.ui.component.Wind
 import com.sunnyweather.android.ui.myiconpack.Car
 import com.sunnyweather.android.ui.myiconpack.Clothes
 import com.sunnyweather.android.ui.myiconpack.Cosmetic
@@ -155,22 +156,12 @@ fun WeatherCard(
                     )
                 }
             }
-            if(title=="湿度"){
-                Box(modifier = Modifier.weight(1f)){
-                    Humidity_table("")
-                }
-            }
-            else if(title=="紫外线")
+            when(title)
             {
-                Box(modifier = Modifier.weight(1f)){
-                    Ultraviolet("")
-                }
-            }
-            else if(title=="体感")
-            {
-                Box(modifier=Modifier.weight(1f)){
-                    Somatosensory("")
-                }
+                "湿度"->Box(modifier = Modifier.weight(1f)){ Humidity_table("")}
+                "紫外线"->Box(modifier = Modifier.weight(1f)){ Ultraviolet("") }
+                "体感"->Box(modifier=Modifier.weight(1f)){ Somatosensory("") }
+                "西南风"->Box(modifier=Modifier.weight(1f)){ Wind("") }
             }
 
         }

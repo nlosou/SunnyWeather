@@ -19,6 +19,16 @@
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.AtmosphericPressure"
+            android:exported="false"
+            android:label="@string/title_activity_atmospheric_pressure"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
+            android:name=".ui.component.RotatingArrow"
+            android:exported="false"
+            android:label="@string/title_activity_rotating_arrow"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
             android:name=".ui.component.scaleText"
             android:exported="false"
             android:label="@string/title_activity_scale_text"

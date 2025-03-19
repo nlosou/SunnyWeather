@@ -25,4 +25,6 @@
     <string name="title_activity_ultraviolet">Ultraviolet</string>
     <string name="title_activity_wind">Wind</string>
     <string name="title_activity_scale_text">scaleText</string>
+    <string name="title_activity_rotating_arrow">RotatingArrow</string>
+    <string name="title_activity_atmospheric_pressure">AtmosphericPressure</string>
 </resources>
