@@ -30,7 +30,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.ui.MyIconPack
+import com.sunnyweather.android.ui.component.AtmosphericPressure
 import com.sunnyweather.android.ui.component.Humidity_table
+import com.sunnyweather.android.ui.component.LifeIndexSection
 import com.sunnyweather.android.ui.component.Somatosensory
 import com.sunnyweather.android.ui.component.Ultraviolet
 import com.sunnyweather.android.ui.component.Wind
@@ -162,111 +164,12 @@ fun WeatherCard(
                 "紫外线"->Box(modifier = Modifier.weight(1f)){ Ultraviolet("") }
                 "体感"->Box(modifier=Modifier.weight(1f)){ Somatosensory("") }
                 "西南风"->Box(modifier=Modifier.weight(1f)){ Wind("") }
+                "气压"-> Box(modifier=Modifier.weight(1f)){ AtmosphericPressure("") }
             }
 
         }
     }
 }
-
-@Composable
-fun LifeIndexSection() {
-    Box {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            shape = RoundedCornerShape(20.dp)
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                LifeIndexRow(
-                    items = listOf(
-                        LifeIndexItem(MyIconPack.Clothes, "适宜厚外套"),
-                        LifeIndexItem(MyIconPack.Cosmetic, "注意防晒"),
-                        LifeIndexItem(MyIconPack.Sport, "宜室内运动")
-                    )
-                )
-                Divider(
-                    color = Color.LightGray, // 设置分割线的颜色
-                    thickness = 1.dp,
-                    // 设置分割线的厚度
-                )
-                LifeIndexRow(
-                    items = listOf(
-                        LifeIndexItem(MyIconPack.Car, "不宜洗车"),
-                        LifeIndexItem(MyIconPack.Umbrella, "不用带伞"),
-                        LifeIndexItem(MyIconPack.Drugs, "易感冒")
-                    )
-                )
-            }
-        }
-        Divider(
-            color = Color.LightGray,
-            modifier = Modifier
-                .height(300.dp)      // 垂直方向填满高度
-                .width(1.dp)      // 设置垂直分割线的宽度（即厚度）
-                .offset(x=135.dp,y=5.dp)
-        )
-        Divider(
-            color = Color.LightGray,
-            modifier = Modifier
-                .height(300.dp)      // 垂直方向填满高度
-                .width(1.dp)      // 设置垂直分割线的宽度（即厚度）
-                .offset(x=240.dp,y=5.dp)
-        )
-
-    }
-
-}
-
-@Composable
-fun LifeIndexRow(items: List<LifeIndexItem>) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        items.forEachIndexed { index, item ->
-            LifeIndexItemView(item)
-            // 如果不是最后一个元素，则添加分割线
-
-        }
-    }
-}
-
-@Composable
-fun LifeIndexItemView(item: LifeIndexItem) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = item.icon,
-            contentDescription = "",
-            modifier = Modifier.size(item.iconSize)
-        )
-        Spacer(modifier = Modifier.padding(10.dp))
-        Text(
-            text = item.text,
-            style = TextStyle(
-                fontSize = 15.sp
-            )
-        )
-    }
-}
-
-data class LifeIndexItem(
-    val icon: ImageVector,
-    val text: String,
-    val iconSize: Dp = 45.dp // 默认图标大小
-)
 
 @Preview(showBackground = true)
 @Composable

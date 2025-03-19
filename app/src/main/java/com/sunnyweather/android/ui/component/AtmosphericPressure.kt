@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,13 +52,13 @@ fun AtmosphericPressure(name: String, modifier: Modifier = Modifier) {
         // 按父容器宽度 3% 设置线条宽度
         val strokeWidthDp = parentWidth * 0.07f
         Icon(
-            MyIconPack.Water,
+            Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = "",
             modifier = Modifier.size(iconSize)
         )
 
         Text(
-            text = "舒适",
+            text = "hPa",
             modifier = Modifier.offset(y=parentHeight*0.3f),
             fontSize = textSize,
             color = Color.LightGray
@@ -70,7 +73,7 @@ fun AtmosphericPressure(name: String, modifier: Modifier = Modifier) {
             val radius = size.minDimension / 2f - strokeWidthPx
             //背景
             drawArc(
-                color = Color.LightGray,
+                color = Color(rgb(11, 168, 254)),
                 startAngle = 45f,
                 sweepAngle = 270f,
                 useCenter = false,
@@ -79,16 +82,6 @@ fun AtmosphericPressure(name: String, modifier: Modifier = Modifier) {
                 style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
             )
 
-            //进度
-            drawArc(
-                color = Color(rgb(11, 168, 254)),
-                startAngle = 45f,
-                sweepAngle = 180f,
-                useCenter = false,
-                topLeft = Offset(center.x - radius, center.y - radius),
-                size = Size(radius * 2, radius * 2),
-                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
-            )
         }
     }
 }
