@@ -1,5 +1,6 @@
 package com.sunnyweather.android.ui.layout
 
+import Weather_other_info
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -7,6 +8,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -37,6 +40,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -47,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
@@ -81,6 +86,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
+    val updateIsExpanded = remember { mutableStateOf(false) }
     DisposableEffect(lifecycleOwner) {
         val job = scope.launch {
             WeatherViewModel.WeatherFlow
@@ -91,6 +97,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
         }
         onDispose { job.cancel() }
     }
+
     LaunchedEffect(Unit) {
         if (mainViewModel.getSavedPlace().isNotEmpty()) {
             val place = mainViewModel.getSavedPlace()[0]
@@ -106,11 +113,11 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     val (offset, alpha) = animateOffsetAndAlpha(weatherState.isExpanded)
+
+
     //左右滑页
     val pagerState = rememberPagerState( mainViewModel.place_current.value){mainViewModel.place_num.value} // 用于管理分页状态
-
     if(mainViewModel.getSavedPlace().isNotEmpty()){
-
         // 当页面改变时，更新 ViewModel 中的当前城市
         LaunchedEffect(pagerState.currentPage) {
             mainViewModel.place_current.value=pagerState.currentPage
@@ -118,6 +125,8 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
             mainViewModel.place_name.value=mainViewModel.getSavedPlace()[pagerState.currentPage].formatted_address
         }
     }
+
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -149,98 +158,132 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         }
                     )
                 },
-
                 ) { contentPadding ->
-                // 主内容区域
-                // 使用 HorizontalPager 实现左右滑动切换城市
-                Box(modifier = Modifier.padding(contentPadding))
-                {
-                    if (weatherState.temp.isNotEmpty()){
-                        Box( // Box 布局，用于显示天气图标
-                            modifier = Modifier
-                                .align(Alignment.Center) // 图标水平居中
-                                .scale(6f)
-                                .offset(x=15.dp,y=-50.dp)
-                                .alpha(if (weatherState.isExpanded) 0f else 1f)
-
-                            // 图标缩放为 60%
-                        ){
-                            WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).anime_icon()
+                Box(modifier = Modifier.padding(contentPadding)
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures { change, dragAmount ->
+                            val verticalDragOffset = dragAmount
+                            // 根据垂直拖动的偏移量来控制weatherState.isExpanded的状态
+                            // 这里需要根据你的具体需求来实现
+                            if (verticalDragOffset > 0) {
+                                // 手指向上滑
+                                updateIsExpanded.value=false
+                            } else if (verticalDragOffset < 0) {
+                                // 手指向下滑
+                                updateIsExpanded.value=true
+                            }
                         }
-                    }else{
                     }
-                    Column (
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .alpha(if (weatherState.isExpanded) 0f else 1f)
+                ) {
+                    AnimatedVisibility(
+                        visible = !updateIsExpanded.value,
+                        enter = fadeIn(animationSpec = tween(durationMillis = 400)),
+                        exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                    ){
+                        Box()
+                        {
+                            //天气图标显示
+                            if (weatherState.temp.isNotEmpty()){
+                                Box( // Box 布局，用于显示天气图标
+                                    modifier = Modifier
+                                        .align(Alignment.Center) // 图标水平居中
+                                        .scale(6f)
+                                        .offset(x=15.dp,y=-50.dp)
+                                        .alpha(if (weatherState.isExpanded) 0f else 1f)
 
-                    ) {
-                       // val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier,
-                            flingBehavior = PagerDefaults.flingBehavior(
-                                state = pagerState,)
-                        ){ page->
-                            // 根据当前页面索引动态调整 visible 状态
-                            val isVisible = page == pagerState.currentPage
-                            AnimatedVisibility(
-                                visible = isVisible,
-                                enter = fadeIn(animationSpec = tween(durationMillis = 400)) + scaleIn(initialScale = 0.5f),
-                                exit = fadeOut(animationSpec = tween(durationMillis = 400)) + scaleOut(targetScale = 0.5f)
-                            ){
-                                Weather_location_easy_information(
-                                    Modifier.padding(16.dp).wrapContentHeight(),
-                                    fusedLocationClient = fusedLocationClient,
-                                    WeatherViewModel,
-                                    mainViewModel
-                                )
-                            }
-
-                        }
-                        //每小时天气状况
-                        Card(
-                            modifier = Modifier
-                                .background(Color.Transparent)
-                                .alpha(if (weatherState.isExpanded) 0.1f else 1f),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                            shape = RoundedCornerShape(0.dp)
-                        ) {
-                            // 获取模拟的 DailyWeather 数据
-                            if (weatherState.hourly.isNotEmpty()){
-                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-                                HourlyWeatherChart(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    dailyWeather = dailyWeather,
-                                    WeatherViewModel
-                                )
+                                    // 图标缩放为 60%
+                                ){
+                                    WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).anime_icon()
+                                }
                             }else{
+                            }
+                            Column (
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .alpha(if (weatherState.isExpanded) 0f else 1f)
 
+                            ) {
+                                // val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
+
+                                //天气实况
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier,
+                                    flingBehavior = PagerDefaults.flingBehavior(
+                                        state = pagerState,)
+                                ){ page->
+                                    // 根据当前页面索引动态调整 visible 状态
+                                    val isVisible = page == pagerState.currentPage
+                                    AnimatedVisibility(
+                                        visible = isVisible,
+                                        enter = fadeIn(animationSpec = tween(durationMillis = 400)) + scaleIn(initialScale = 0.5f),
+                                        exit = fadeOut(animationSpec = tween(durationMillis = 400)) + scaleOut(targetScale = 0.5f)
+                                    ){
+                                        Weather_location_easy_information(
+                                            Modifier.padding(16.dp).wrapContentHeight(),
+                                            fusedLocationClient = fusedLocationClient,
+                                            WeatherViewModel,
+                                            mainViewModel
+                                        )
+                                    }
+
+                                }
+                                //每小时天气状况
+                                Card(
+                                    modifier = Modifier
+                                        .background(Color.Transparent)
+                                        .alpha(if (weatherState.isExpanded) 0.1f else 1f),
+                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                    shape = RoundedCornerShape(0.dp)
+                                ) {
+                                    // 获取模拟的 DailyWeather 数据
+                                    if (weatherState.hourly.isNotEmpty()){
+                                        val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                        "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                                        HourlyWeatherChart(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            dailyWeather = dailyWeather,
+                                            WeatherViewModel
+                                        )
+                                    }else{
+
+                                    }
+                                }
+
+                                //未来几天天气
+                                Card (
+                                    Modifier
+                                        .padding(3.dp),
+                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                    shape = RoundedCornerShape(0.dp)
+                                ){
+                                    if (weatherState.daily.isNotEmpty()){
+                                        val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                        Future_Weather_Cards(WeatherViewModel,
+                                            dailyWeather
+                                        )
+                                    }else{
+
+                                    }
+
+                                }
                             }
                         }
-
-                        //未来几天天气
-                        Card (
-                            Modifier
-                                .padding(3.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                            shape = RoundedCornerShape(0.dp)
-                        ){
-                            if (weatherState.daily.isNotEmpty()){
-                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                Future_Weather_Cards(WeatherViewModel,
-                                    dailyWeather
-                                )
-                            }else{
-
-                            }
-
+                    }
+                    // 使用 HorizontalPager 实现左右滑动切换城市
+                    AnimatedVisibility(
+                        visible = updateIsExpanded.value,
+                        enter = fadeIn(animationSpec = tween(durationMillis = 400))+slideIn { fullBounds ->
+                            IntOffset(0, fullBounds.height)
+                        }  ,
+                        exit = fadeOut(animationSpec = tween(durationMillis = 400))+slideOut { fullBounds ->
+                            IntOffset(0, fullBounds.height)
                         }
+                    ){
+                        Weather_other_info(Modifier)
                     }
                 }
             }
-            //Weather_other_info(Modifier.padding(contentPadding) .alpha(alpha))
         }
     }
 }
