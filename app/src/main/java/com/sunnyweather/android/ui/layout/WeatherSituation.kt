@@ -80,6 +80,7 @@ import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.Anime.PagerState
 import com.sunnyweather.android.ui.Anime.animateOffsetAndAlpha
 import com.sunnyweather.android.ui.MyIconPack
+import com.sunnyweather.android.ui.component.AutoScrollText
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.HourlyWeatherChart
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
@@ -342,17 +343,15 @@ private fun TopAppBarAddress(
         Column {
             Box() {
                 Column() {
-                    Text(
-                        if (mainViewModel._placeList.isNotEmpty()) {
+                    AutoScrollText(
+                        text = if (mainViewModel._placeList.isNotEmpty()) {
                             mainViewModel.place_name.value
                         } else if (mainViewModel.getSavedPlace().isNotEmpty()) {
                             mainViewModel.place_name.value
                         } else {
                             "地址"
                         },
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                        )
+                        textSize = 24.toFloat() // 设置你的文本大小
                     )
                 }
             }
