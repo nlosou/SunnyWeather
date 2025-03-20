@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -27,9 +29,12 @@ import com.sunnyweather.android.ui.component.Somatosensory
 import com.sunnyweather.android.ui.component.Ultraviolet
 import com.sunnyweather.android.ui.component.Wind
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.weather.WeatherState
+import com.sunnyweather.android.ui.weather.WeatherViewModel
 
 @Composable
-fun Weather_other_info(modifier: Modifier) {
+fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
+    val weatherState by weatherViewModel.state.collectAsState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -38,25 +43,28 @@ fun Weather_other_info(modifier: Modifier) {
         // 紫外线和湿度
         Row(modifier = Modifier.fillMaxWidth()) {
             WeatherCard(
+                weatherState,
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
                 title = "紫外线",
-                content = "中"
+                content = weatherState.temp[0].result.realtime.life_index.ultraviolet.desc
             )
             Spacer(modifier=Modifier.padding(5.dp))
             WeatherCard(
+                weatherState,
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
                 title = "湿度",
-                content = "42%"
+                content = "${(weatherState.temp[0].result.realtime.humidity*100).toInt()}%"
             )
         }
 
         // 体感和风
         Row(modifier = Modifier.fillMaxWidth()) {
             WeatherCard(
+                weatherState,
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
@@ -65,6 +73,7 @@ fun Weather_other_info(modifier: Modifier) {
             )
             Spacer(modifier=Modifier.padding(5.dp))
             WeatherCard(
+                weatherState,
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
@@ -74,6 +83,7 @@ fun Weather_other_info(modifier: Modifier) {
         }
         Row(modifier = Modifier.fillMaxWidth()) {
             WeatherCard(
+                weatherState,
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
@@ -82,6 +92,7 @@ fun Weather_other_info(modifier: Modifier) {
             )
             Spacer(modifier=Modifier.padding(5.dp))
             WeatherCard(
+                weatherState,
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
@@ -96,6 +107,7 @@ fun Weather_other_info(modifier: Modifier) {
 
 @Composable
 fun WeatherCard(
+    weatherState:WeatherState,
     modifier: Modifier = Modifier,
     title: String,
     content: String,
@@ -144,8 +156,8 @@ fun WeatherCard(
             }
             when(title)
             {
-                "湿度"->Box(modifier = Modifier.weight(1f)){ Humidity_table("")}
-                "紫外线"->Box(modifier = Modifier.weight(1f)){ Ultraviolet("") }
+                "湿度"->Box(modifier = Modifier.weight(1f)){ Humidity_table("",Modifier,weatherState)}
+                "紫外线"->Box(modifier = Modifier.weight(1f)){ Ultraviolet("",Modifier,weatherState) }
                 "体感"->Box(modifier=Modifier.weight(1f)){ Somatosensory("") }
                 "西南风"->Box(modifier=Modifier.weight(1f)){ Wind("") }
                 "气压"-> Box(modifier=Modifier.weight(1f)){ AtmosphericPressure("") }
@@ -159,6 +171,6 @@ fun WeatherCard(
 @Composable
 fun GreetingPreview11() {
     SunnyWeatherTheme {
-        Weather_other_info(Modifier)
+        //Weather_other_info(Modifier)
     }
 }

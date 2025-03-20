@@ -18,7 +18,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
@@ -33,11 +36,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,13 +54,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -63,13 +75,16 @@ import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.logic.model.data.WeatherDataProvider
 import com.sunnyweather.android.log
+import com.sunnyweather.android.logic.GMS.LocationUpdates
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.Anime.PagerState
 import com.sunnyweather.android.ui.Anime.animateOffsetAndAlpha
+import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.Future_Weather_Cards
 import com.sunnyweather.android.ui.component.HourlyWeatherChart
 import com.sunnyweather.android.ui.component.Weather_location_easy_information
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.myiconpack.Point
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.WeatherType
 import com.sunnyweather.android.ui.theme.WeatherWallpaper
@@ -84,8 +99,19 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
+
+
+    val state = rememberPullToRefreshState()
+    if (state.isRefreshing) {
+        LaunchedEffect(true) {
+            WeatherViewModel.SeacherWeather("","")
+            WeatherViewModel.SeacherWeather(weatherState.locationLng,weatherState.locationLat)
+            "LaunchedEffect".log("start")
+            state.endRefresh()
+        }
+    }
+
+
     val updateIsExpanded = remember { mutableStateOf(false) }
     DisposableEffect(lifecycleOwner) {
         val job = scope.launch {
@@ -143,17 +169,23 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 topBar = {
                     TopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-                        title = {},
+                        title = {
+                            Box( // 使用 Box 包裹标题内容
+                                contentAlignment = Alignment.Center // 确保内容垂直居中
+                            ) {
+                                TopAppBarAddress(updateIsExpanded, mainViewModel, state)
+                            }
+                        },
                         actions = {
                             IconButton(onClick = {
                                 navController.navigate("Place_manage")
                             }) {
-                                Icon(Icons.Filled.Add, contentDescription = "")
+                                Icon(Icons.Filled.Add, contentDescription = "", modifier = Modifier.size(30.dp))
                             }
                             IconButton(onClick = {
 
                             }) {
-                                Icon(Icons.Filled.MoreVert, contentDescription = "")
+                                Icon(Icons.Filled.MoreVert, contentDescription = "",modifier = Modifier.size(30.dp))
                             }
                         }
                     )
@@ -177,8 +209,8 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 ) {
                     AnimatedVisibility(
                         visible = !updateIsExpanded.value,
-                        enter = fadeIn(animationSpec = tween(durationMillis = 400)),
-                        exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                        enter = fadeIn(animationSpec = tween(durationMillis = 400))+scaleIn(),
+                        exit = fadeOut(animationSpec = tween(durationMillis = 400))+ scaleOut()
                     ){
                         Box()
                         {
@@ -204,7 +236,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
 
                             ) {
                                 // val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
-
                                 //天气实况
                                 HorizontalPager(
                                     state = pagerState,
@@ -280,7 +311,64 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                             IntOffset(0, fullBounds.height)
                         }
                     ){
-                        Weather_other_info(Modifier)
+                        Weather_other_info(Modifier,WeatherViewModel)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun TopAppBarAddress(
+    updateIsExpanded: MutableState<Boolean>,
+    mainViewModel: PlaceViewModel,
+    state: PullToRefreshState
+) {
+    AnimatedVisibility(
+        visible = updateIsExpanded.value,
+        enter = fadeIn(animationSpec = tween(durationMillis = 400)),
+        exit = fadeOut(animationSpec = tween(durationMillis = 400))
+    ) {
+        Column {
+            Box() {
+                Column() {
+                    Text(
+                        if (mainViewModel._placeList.isNotEmpty()) {
+                            mainViewModel.place_name.value
+                        } else if (mainViewModel.getSavedPlace().isNotEmpty()) {
+                            mainViewModel.place_name.value
+                        } else {
+                            "地址"
+                        },
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                        )
+                    )
+                }
+            }
+            Box(
+                Modifier
+                    .nestedScroll(state.nestedScrollConnection)
+                    .clipToBounds()) {
+                LazyColumn(
+                    Modifier
+                ) {
+                    if (!state.isRefreshing) {
+                        items(1) {
+                            LazyRow {
+                                items(mainViewModel.place_num.value) {
+
+                                    Icon(
+                                        MyIconPack.Point,
+                                        contentDescription = "",
+                                        modifier = Modifier.size(15.dp),
+                                        tint = if (mainViewModel.place_current.value == it) Color.White else Color.Black
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

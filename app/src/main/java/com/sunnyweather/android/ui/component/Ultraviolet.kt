@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -12,10 +14,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -32,12 +39,14 @@ import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.Water
+import com.sunnyweather.android.ui.weather.WeatherState
 import kotlin.math.cos
 import kotlin.math.sin
 
 
 @Composable
-fun Ultraviolet(name: String, modifier: Modifier = Modifier) {
+fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:WeatherState) {
+    val index=weatherState.temp[0].result.realtime.life_index.ultraviolet.index
     val colorStops = listOf(
         0.1f to Color(rgb(62, 224, 182)), // 浅绿色
         0.2f to Color(rgb(25, 228, 120)), // 绿色
@@ -49,6 +58,13 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier) {
         0.8f to Color(rgb(241, 82, 172)), // 粉紫色
         0.9f to Color(0xFF9C27B0), // 紫色
         1.0f to Color(rgb(139, 102, 243)) // 蓝紫色
+    )
+    // 使用remember和mutableStateOf管理动态角度
+    var targetAngle by remember { mutableStateOf(45f) }
+    // 使用animateFloatAsState创建动画效果
+    val animatedAngle by animateFloatAsState(
+        targetValue = targetAngle,
+        animationSpec = tween(durationMillis = 1000) // 动画时长1秒
     )
     BoxWithConstraints(
         contentAlignment = Alignment.Center,
@@ -65,7 +81,7 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier) {
         // 按父容器宽度 3% 设置线条宽度
         val strokeWidthDp = parentWidth * 0.07f
         Text(
-            text = "0",
+            text = weatherState.temp[0].result.realtime.life_index.ultraviolet.index.toString(),
             fontSize=(parentWidth.value * 0.2f).sp,
             color = Color.White
         )
@@ -85,10 +101,10 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier) {
             val strokeWidthPx = strokeWidthDp.toPx()
             val radius = size.minDimension / 2f - strokeWidthPx
             // 计算动态角度（考虑Canvas的90度旋转）
-            val dynamicAngle = 45f
+            //val dynamicAngle = 45f//45到335
 
-            // 转换为数学坐标系弧度（需抵消Canvas旋转的影响）
-            val adjustedAngle = dynamicAngle // 抵消90度旋转
+            // 转换为数学坐标系弧度（）
+            val adjustedAngle = animatedAngle*(index*0.5)
             val radians = Math.toRadians(adjustedAngle.toDouble())
 
             // 计算圆心坐标
@@ -129,13 +145,26 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier) {
                 center= Offset(x,y)
             )
         }
+        // 添加一个按钮来改变dynamicAngle
+        /*
+        Button(
+            onClick = {
+                targetAngle = (targetAngle + 15) % 360
+            },
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            Text("Change Angle")
+        }
+         */
+
     }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview18() {
     SunnyWeatherTheme {
-        Ultraviolet("Android")
+       // Ultraviolet("Android")
     }
 }

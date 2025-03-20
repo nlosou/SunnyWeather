@@ -2,6 +2,8 @@ package com.sunnyweather.android.ui.component
 
 
 import android.graphics.Color.rgb
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -34,15 +36,22 @@ import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.Water
-
+import com.sunnyweather.android.ui.weather.WeatherState
 
 
 @Composable
-fun Humidity_table(name: String, modifier: Modifier = Modifier) {
+fun Humidity_table(name: String, modifier: Modifier = Modifier,weatherState: WeatherState) {
     BoxWithConstraints(
         contentAlignment = Alignment.Center,
         modifier = modifier.background(Color.Transparent)
     ) {
+        // 使用remember和mutableStateOf管理动态角度
+        var targetAngle by remember { mutableStateOf(270f) }
+        // 使用animateFloatAsState创建动画效果
+        val animatedAngle by animateFloatAsState(
+            targetValue = targetAngle,
+            animationSpec = tween(durationMillis = 1000) // 动画时长1秒
+        )
         // 获取父容器约束
         val parentWidth = maxWidth
         val parentHeight = maxHeight
@@ -53,6 +62,22 @@ fun Humidity_table(name: String, modifier: Modifier = Modifier) {
         val textSize = (parentWidth.value * 0.15f).sp
         // 按父容器宽度 3% 设置线条宽度
         val strokeWidthDp = parentWidth * 0.07f
+        val comfortIndexMap = mapOf(
+            0 to "闷热",
+            1 to "酷热",
+            2 to "很热",
+            3 to "热",
+            4 to "温暖",
+            5 to "舒适",
+            6 to "凉爽",
+            7 to "冷",
+            8 to "很冷",
+            9 to "寒冷",
+            10 to "极冷",
+            11 to "刺骨的冷",
+            12 to "湿冷",
+            13 to "干冷"
+        )
         Icon(
             MyIconPack.Water,
             contentDescription = "",
@@ -60,12 +85,27 @@ fun Humidity_table(name: String, modifier: Modifier = Modifier) {
         )
 
         Text(
-            text = "舒适",
-            modifier = Modifier.offset(y=parentHeight*0.3f),
+            text = when (weatherState.temp[0].result.realtime.life_index.comfort.index) {
+                0 -> "闷热"
+                1 -> "酷热"
+                2 -> "很热"
+                3 -> "热"
+                4 -> "温暖"
+                5 -> "舒适"
+                6 -> "凉爽"
+                7 -> "冷"
+                8 -> "很冷"
+                9 -> "寒冷"
+                10 -> "极冷"
+                11 -> "刺骨的冷"
+                12 -> "湿冷"
+                13 -> "干冷"
+                else -> ""
+            },
+            modifier = Modifier.offset(y = parentHeight * 0.3f),
             fontSize = textSize,
             color = Color.LightGray
         )
-
         Canvas(modifier = Modifier
             .fillMaxSize()
             .rotate(90f))
@@ -88,7 +128,7 @@ fun Humidity_table(name: String, modifier: Modifier = Modifier) {
             drawArc(
                 color = Color(rgb(11, 168, 254)),
                 startAngle = 45f,
-                sweepAngle = 180f,
+                sweepAngle = animatedAngle*weatherState.temp[0].result.realtime.humidity,
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
@@ -103,6 +143,6 @@ fun Humidity_table(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview13() {
     SunnyWeatherTheme {
-        Humidity_table("Android")
+       // Humidity_table("Android")
     }
 }
