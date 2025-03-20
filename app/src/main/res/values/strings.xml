@@ -28,4 +28,5 @@
     <string name="title_activity_rotating_arrow">RotatingArrow</string>
     <string name="title_activity_atmospheric_pressure">AtmosphericPressure</string>
     <string name="title_activity_life_index_section">LifeIndexSection</string>
+    <string name="title_activity_life_index_situation">LifeIndexSituation</string>
 </resources>
