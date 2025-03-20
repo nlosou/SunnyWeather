@@ -311,7 +311,15 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                             IntOffset(0, fullBounds.height)
                         }
                     ){
-                        Weather_other_info(Modifier,WeatherViewModel)
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier,
+                            flingBehavior = PagerDefaults.flingBehavior(
+                                state = pagerState,)
+                        ){
+                            Weather_other_info(Modifier,WeatherViewModel)
+                        }
+
                     }
                 }
             }

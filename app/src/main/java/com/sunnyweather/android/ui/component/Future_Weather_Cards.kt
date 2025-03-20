@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -69,8 +70,6 @@ fun Future_Weather_Cards(
 ) {
     val weatherState by WeatherViewModel.state.collectAsState()
     val horizontalItemCount = 7
-    val cardWidth = 80.dp
-    val rowWidth = horizontalItemCount * cardWidth
     val scrollState1 = rememberLazyListState()
     val scrollState2 = rememberLazyListState()
     // 同步第一个 LazyRow 的滚动到第二个
@@ -90,105 +89,110 @@ fun Future_Weather_Cards(
             }
         }
     }
-    Box {
-        // 每日天气卡片
-        LazyRow(
-            modifier = Modifier.height(350.dp)
-                .wrapContentWidth(),
-            state = scrollState1 // 使用相同的滚动状态
-        ) {
-            items(horizontalItemCount) { it ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .width(cardWidth)
-                        .padding(top = 10.dp),
-                ) {
-                    Text(
-                        text = when (it) {
-                            0 -> "今天"
-                            1 -> "明天"
-                            else -> dayOfWeekChinese(
-                                weatherState.daily[it].date
-                            )
-                        },
-                        fontWeight = FontWeight.Light
-                    )
 
-                    Text(
-                        text = OffsetDateTime.parse(
-                            weatherState.daily[it].date,
-                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
-                        ).format(DateTimeFormatter.ofPattern("MM月dd日")),
-                        fontWeight = FontWeight.Light
-                    )
-                    // 天气图标
-                    Box(
-                        modifier = Modifier
-                            .width(48.dp)
-                            .height(48.dp)
-                            .background(Color.Transparent)
-                    ) {
-                        WeatherCodeConverter.getSky(
-                            weatherState.dailyWeather[it].value
-                        ).icon()
-                    }
+        // 获取父容器约束
 
+        BoxWithConstraints{
+            val parentWidth = maxWidth
+            val parentHeight = maxHeight
+            LazyRow(
+                modifier = Modifier.height((parentHeight.value*1f).dp)
+                    .wrapContentWidth(),
+                state = scrollState1 // 使用相同的滚动状态
+            ) {
+                items(horizontalItemCount) { it ->
                     Column(
-                        modifier = Modifier.padding(top = 160.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
-                        Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
-                    }
-                }
-
-                if (it < 14) {
-                    Box(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .height(250.dp)
-                            .width(1.dp)
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.LightGray.copy(alpha = 0.3f),
-                                        Color.LightGray,
-                                        Color.LightGray.copy(alpha = 0.3f)
+                            .width((parentWidth.value*0.2).dp)
+                            .padding(top = 10.dp),
+                    ) {
+                        Text(
+                            text = when (it) {
+                                0 -> "今天"
+                                1 -> "明天"
+                                else -> dayOfWeekChinese(
+                                    weatherState.daily[it].date
+                                )
+                            },
+                            fontWeight = FontWeight.Light
+                        )
+
+                        Text(
+                            text = OffsetDateTime.parse(
+                                weatherState.daily[it].date,
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
+                            ).format(DateTimeFormatter.ofPattern("MM月dd日")),
+                            fontWeight = FontWeight.Light
+                        )
+                        // 天气图标
+                        Box(
+                            modifier = Modifier
+                                .width(48.dp)
+                                .height(48.dp)
+                                .background(Color.Transparent)
+                        ) {
+                            WeatherCodeConverter.getSky(
+                                weatherState.dailyWeather[it].value
+                            ).icon()
+                        }
+
+                        Column(
+                            modifier = Modifier.padding(top = (parentHeight.value*0.5).dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
+                            Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
+                        }
+                    }
+
+                    if (it < 14) {
+                        Box(
+                            modifier = Modifier
+                                .height(parentHeight.value.dp)
+                                .width(1.dp)
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.LightGray.copy(alpha = 0.3f),
+                                            Color.LightGray,
+                                            Color.LightGray.copy(alpha = 0.3f)
+                                        )
                                     )
                                 )
-                            )
-                            .padding(horizontal = 1.dp)
-                    )
+                                .padding(horizontal = 1.dp)
+                        )
+                    }
                 }
             }
-        }
-        LazyRow(
-            modifier = Modifier.height(350.dp)
-                .wrapContentWidth(),
-            state = scrollState2 ,// 使用滚动状态
-        ) {
-            items(1) {
-                // 温度曲线
-                Box {
-                    LineChart2(
-                        modifier = Modifier
-                            .width(560.dp)
-                            .height(200.dp).offset(y=70.dp),
-                        metrics = weatherState.daily
-                    )
-                    LineChart3(
-                        modifier = Modifier
-                            .width(560.dp)
-                            .height(200.dp).offset(y=150.dp),
-                        metrics = weatherState.daily
-                    )
+            LazyRow(
+                modifier = Modifier.height(parentHeight.value*1f.dp)
+                    .wrapContentWidth(),
+                state = scrollState2 ,// 使用滚动状态
+            ) {
+                items(1) {
+                    // 温度曲线
+                    Box {
+                        LineChart2(
+                            modifier = Modifier
+                                .width((parentWidth.value*1.43f).dp)
+                                .height(parentHeight.value.dp).offset(y=(parentHeight.value*0.15).dp),
+                            metrics = weatherState.daily
+                        )
+                        LineChart3(
+                            modifier = Modifier
+                                .width((parentWidth.value*1.43f).dp)
+                                .height(parentHeight.value.dp).offset(y=(parentHeight.value*0.35).dp),
+                            metrics = weatherState.daily
+                        )
+                    }
+
                 }
-
             }
+
+
         }
 
-
-    }
 }
 
 @Composable

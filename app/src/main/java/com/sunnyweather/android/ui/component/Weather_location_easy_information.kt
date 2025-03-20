@@ -10,8 +10,10 @@ import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -105,107 +107,116 @@ fun Weather_location_easy_information(
             state.endRefresh()
         }
     }
-    Column(modifier) {
-        Box() {
-            Column() {
-                Text(
-                    if (mainViewModel._placeList.isNotEmpty()) {
-                        mainViewModel.place_name.value
-                    } else if (mainViewModel.getSavedPlace().isNotEmpty()) {
-                        mainViewModel.place_name.value
+    BoxWithConstraints(
+    ){
+        // 获取父容器约束
+        val parentWidth = maxWidth
+        val parentHeight = maxHeight
+        val textSize=parentWidth.value*0.06f
+        Column(modifier) {
+            "parentWidth_BoxWithConstraints".log(parentWidth.value.toString())
+            Box() {
+                Column() {
+                    AutoScrollText(
+                        text = if (mainViewModel._placeList.isNotEmpty()) {
+                            mainViewModel.place_name.value
+                        } else if (mainViewModel.getSavedPlace().isNotEmpty()) {
+                            mainViewModel.place_name.value
+                        } else {
+                            "地址"
+                        },
+                        textSize = textSize // 设置你的文本大小
+                    )
+                    if (isLocationEnabled) {
+                        // 显示定位信息
+                        LocationUpdates(
+                            fusedLocationClient = fusedLocationClient,
+                            WeatherViewModel
+                        )
                     } else {
-                        "地址"
-                    },
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                    )
-                )
-                if (isLocationEnabled) {
-                    // 显示定位信息
-                    LocationUpdates(
-                        fusedLocationClient = fusedLocationClient,
-                        WeatherViewModel
-                    )
-                } else {
-                    // 提示用户开启位置服务
-                }
-            }
-        }
-        Box(Modifier.nestedScroll(state.nestedScrollConnection).clipToBounds()) {
-            LazyColumn(
-                Modifier
-            ) {
-                if (!state.isRefreshing) {
-                    items(1) {
-                        LazyRow { items(mainViewModel.place_num.value){
-
-                            Icon(MyIconPack.Point, contentDescription = "",modifier=Modifier.size(15.dp), tint = if(mainViewModel.place_current.value==it) Color.White else Color.Black)
-                        }
-                        }
+                        // 提示用户开启位置服务
                     }
                 }
             }
-            PullToRefreshContainer(
-                modifier = Modifier.align(Alignment.TopCenter),
-                state = state,
-            )
-        }
+            Box(Modifier.nestedScroll(state.nestedScrollConnection).clipToBounds()) {
+                LazyColumn(
+                    Modifier
+                ) {
+                    if (!state.isRefreshing) {
+                        items(1) {
+                            LazyRow { items(mainViewModel.place_num.value){
 
-        TemperatureDisplay(
-            if (weatherState.temp.isNotEmpty()) {
-                weatherState.temp[0].result.realtime.temperature.toInt() ?: 0
-            } else {
-                0
-            }
-        )
-        Row {
-            Text(
-                if (weatherState.temp.isNotEmpty()) {
-                    WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).info
-                } else {
-                    "天气"
+                                Icon(MyIconPack.Point, contentDescription = "",modifier=Modifier.size(15.dp), tint = if(mainViewModel.place_current.value==it) Color.White else Color.Black)
+                            }
+                            }
+                        }
+                    }
                 }
-            )
-            Spacer(modifier = Modifier.padding(5.dp))
-            if (weatherState.temp.isNotEmpty()) {
-                Text("最高${weatherState.temp[0].result.daily.temperature[0].max?.toInt()}°")
-            } else {
-                Text("最高气温")
-            }
-            Spacer(modifier = Modifier.padding(5.dp))
-            if (weatherState.temp.isNotEmpty()) {
-                Text("最低${weatherState.temp[0].result.daily.temperature[0].min?.toInt()}°")
-            } else {
-                Text("最低气温")
+                PullToRefreshContainer(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    state = state,
+                )
             }
 
-        }
-        Surface(
-            shape = RoundedCornerShape(8.dp),
-            color = Color.LightGray.copy(0.5f)
-        ) {
-            Row(verticalAlignment=Alignment.CenterVertically) {
-                Icon(MyIconPack.Leaf, contentDescription = "")
-                Spacer(modifier = Modifier.padding(2.dp))
+            TemperatureDisplay(
+                if (weatherState.temp.isNotEmpty()) {
+                    weatherState.temp[0].result.realtime.temperature.toInt() ?: 0
+                } else {
+                    0
+                },
+                (parentWidth.value*0.35f).sp
+            )
+            Row {
                 Text(
                     if (weatherState.temp.isNotEmpty()) {
-                        when (weatherState.temp[0].result.realtime.air_quality.aqi.chn) {
-                            in 0..50 -> "优"
-                            in 51..100 -> "良"
-                            in 101..150->"轻度污染"
-                            in 151..200->"中度污染"
-                            in 201..300->"重度污染"
-                            else ->"严重污染"
-                        }
+                        WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).info
                     } else {
-                        ""
+                        "天气"
                     }
                 )
-                Spacer(modifier = Modifier.padding(2.dp))
-                Text(if (weatherState.temp.isNotEmpty()) weatherState.temp[0].result.realtime.air_quality.aqi.chn.toString() else{"缺少数据"})
+                Spacer(modifier = Modifier.padding(5.dp))
+                if (weatherState.temp.isNotEmpty()) {
+                    Text("最高${weatherState.temp[0].result.daily.temperature[0].max?.toInt()}°")
+                } else {
+                    Text("最高气温")
+                }
+                Spacer(modifier = Modifier.padding(5.dp))
+                if (weatherState.temp.isNotEmpty()) {
+                    Text("最低${weatherState.temp[0].result.daily.temperature[0].min?.toInt()}°")
+                } else {
+                    Text("最低气温")
+                }
+
+            }
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = Color.LightGray.copy(0.5f)
+            ) {
+                Row(verticalAlignment=Alignment.CenterVertically) {
+                    Icon(MyIconPack.Leaf, contentDescription = "")
+                    Spacer(modifier = Modifier.padding(2.dp))
+                    Text(
+                        if (weatherState.temp.isNotEmpty()) {
+                            when (weatherState.temp[0].result.realtime.air_quality.aqi.chn) {
+                                in 0..50 -> "优"
+                                in 51..100 -> "良"
+                                in 101..150->"轻度污染"
+                                in 151..200->"中度污染"
+                                in 201..300->"重度污染"
+                                else ->"严重污染"
+                            }
+                        } else {
+                            ""
+                        }
+                    )
+                    Spacer(modifier = Modifier.padding(2.dp))
+                    Text(if (weatherState.temp.isNotEmpty()) weatherState.temp[0].result.realtime.air_quality.aqi.chn.toString() else{"缺少数据"})
+                }
             }
         }
+
     }
+
 
 }
 

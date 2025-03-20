@@ -14,20 +14,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 
 
 @Composable
-fun TemperatureDisplay(temperature: Int) {
+fun TemperatureDisplay(temperature: Int,fontSize:TextUnit) {
     // 根据温度动态调整颜色
 
 
     // 显示温度
     Text(modifier = Modifier.offset(x=-7.dp),
         text = "$temperature°",
-        fontSize = 150.sp, // 字体大小
+        fontSize = fontSize, // 字体大小
 
     )
 }
@@ -36,6 +37,6 @@ fun TemperatureDisplay(temperature: Int) {
 @Composable
 fun GreetingPreview9() {
     SunnyWeatherTheme {
-        TemperatureDisplay(9)
+        //TemperatureDisplay(9)
     }
 }

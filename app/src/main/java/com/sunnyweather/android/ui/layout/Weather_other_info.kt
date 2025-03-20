@@ -77,6 +77,7 @@ fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
         in 56.1..61.3 -> "17级"
         else -> "无数据"
     }
+
     Column(
         modifier = modifier
             .fillMaxSize()

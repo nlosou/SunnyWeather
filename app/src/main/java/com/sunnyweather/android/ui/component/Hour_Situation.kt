@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import android.graphics.Path
 import android.graphics.Paint
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.CompositionLocalProvider
@@ -66,48 +67,6 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.ui.graphics.Color
 
-/**
- *    Surface：它是 Compose 中的容器，类似于 Android 的 CardView，可以设置背景、边框等。
- *     Box 和 Column：Box 用于叠加内容，Column 用于垂直排列内容。
- *     Text 和 Icon：用于显示文本和图标。Text 通过 TextStyle 设置字体样式，Icon 使用 painterResource 加载图标资源。
- *     修饰符（Modifier）：Modifier.clearAndSetSemantics 用于清除语义信息，避免辅助功能冲突；Modifier.scale 用于缩放内容。
- *
- */
-@Composable
-fun Hour_Situation(modifier: Modifier) {
-    // Surface 是一个用于创建内容的容器，通常用于在视觉上突出显示某些内容
-    Surface(
-        modifier = Modifier // 使用传递进来的 Modifier 来设置布局的大小、位置等属性
-            .background(Color.Transparent) // 设置背景颜色为透明
-            .padding(5.dp), // 为组件内容添加 5dp 的内边距，使内容与边缘有一定距离
-        color = Color.Transparent // Surface 的背景颜色也为透明，整体不显示任何背景
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) { // 使用 Column 布局，内容水平居中
-            Box { // Box 布局，可以将内容叠加在一起
-                Column { // 使用 Column 布局，内容垂直排列
-                    Text(
-                        "25°", // 显示温度文本
-                        style = TextStyle(fontSize = 15.sp) // 设置字体大小为 15sp
-                    )
-                    Icon( // 显示一个天气图标
-                        MyIconPack.Point, // 图标的资源
-                        contentDescription = "", // 内容描述，用于辅助功能（辅助技术如屏幕阅读器）
-                        modifier = Modifier.size(10.dp) // 设置图标的大小为 10dp
-                    )
-                }
-            }
-            Icon( // 显示另一个天气图标，可能是云的形状
-                modifier = Modifier.size(20.dp), // 设置图标的大小为 20dp
-                painter = painterResource(id = R.drawable.ic_clould), // 使用 drawable 资源作为图标
-                contentDescription = "Cloud icon" // 内容描述
-            )
-            Text( // 显示时间文本
-                "1 AM", // 时间文本
-                style = TextStyle(fontSize = 13.sp) // 设置字体大小为 13sp
-            )
-        }
-    }
-}
 
 /**
  *     CompositionLocalProvider：这是一个用于在组件树中传递值的工具，类似于 React 的 Context API。LocalTemUnit 是一个 CompositionLocal，TemperatureUnit.Centigrade 是它的默认值。
@@ -126,68 +85,73 @@ fun HourlyWeatherChart(
 ) {
     val weatherState by WeatherViewModel.state.collectAsState()
     // 使用 CompositionLocalProvider 提供一个温度单位的默认值
-    CompositionLocalProvider(
-        LocalTemUnit provides TemperatureUnit.Centigrade // 提供温度单位为摄氏度
-    ) {
-        LazyRow( // 使用 LazyRow 实现水平滚动列表
-            modifier
-                .wrapContentHeight() // 设置高度为 100dp
-                .wrapContentWidth() // 宽度根据内容自动调整
+    BoxWithConstraints(
+    ){
+        // 获取父容器约束
+        val parentWidth = maxWidth
+        val parentHeight = maxHeight
+        CompositionLocalProvider(
+            LocalTemUnit provides TemperatureUnit.Centigrade // 提供温度单位为摄氏度
         ) {
-            item { // 在 LazyRow 中添加一个内容项
-                Box( // Box 布局，用于包含内容
-                    Modifier
-                        .height(150.dp)// 填充最大高度
-                        .width(900.dp) // 设置宽度为 900dp
-                ) {
-                    LineChart( // 调用 LineChart 组件绘制折线图
-                        Modifier.fillMaxSize(), // 填充整个 Box 的大小
-                        dailyWeather // 传递每日天气数据
-                    )
-                    Row(Modifier.fillMaxSize()) { // 使用 Row 布局，内容水平排列
-                        dailyWeather.hourly.forEachIndexed { index, it -> // 遍历每小时天气数据
-                            Column( // 使用 Column 布局，内容垂直排列
-                                modifier = Modifier
-                                    .weight(1f) // 每个列占相等宽度
-                                    .alpha(0.6f) // 设置透明度为 60%
-                                    .align(Alignment.Bottom) // 内容底部对齐
-                            ) {
-                                Box( // Box 布局，用于显示天气图标
+            LazyRow( // 使用 LazyRow 实现水平滚动列表
+                modifier
+                    .wrapContentHeight() // 设置高度为 100dp
+                    .wrapContentWidth() // 宽度根据内容自动调整
+            ) {
+                item { // 在 LazyRow 中添加一个内容项
+                    Box( // Box 布局，用于包含内容
+                        Modifier
+                            .height((parentHeight.value*0.3).dp)// 填充最大高度
+                            .width((parentWidth.value*2.5f).dp) // 设置宽度为 900dp
+                    ) {
+                        LineChart( // 调用 LineChart 组件绘制折线图
+                            Modifier.fillMaxSize(), // 填充整个 Box 的大小
+                            dailyWeather // 传递每日天气数据
+                        )
+                        Row(Modifier.fillMaxSize()) { // 使用 Row 布局，内容水平排列
+                            dailyWeather.hourly.forEachIndexed { index, it -> // 遍历每小时天气数据
+                                Column( // 使用 Column 布局，内容垂直排列
                                     modifier = Modifier
-                                        .align(Alignment.CenterHorizontally) // 图标水平居中
-                                        .scale(0.9f) // 图标缩放为 60%
+                                        .weight(1f) // 每个列占相等宽度
+                                        .alpha(0.6f) // 设置透明度为 60%
+                                        .align(Alignment.Bottom) // 内容底部对齐
                                 ) {
-                                    it.weather.icon() // 显示天气图标
+                                    Box( // Box 布局，用于显示天气图标
+                                        modifier = Modifier
+                                            .align(Alignment.CenterHorizontally) // 图标水平居中
+                                            .scale(0.9f) // 图标缩放为 60%
+                                    ) {
+                                        it.weather.icon() // 显示天气图标
+                                    }
+                                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
+                                    val offsetDateTime = OffsetDateTime.parse(weatherState.hourly[index].datetime, formatter)
+                                    val time = offsetDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                                    Text( // 显示时间文本
+                                        /*
+                                        if (index < 12) "${index + 1} AM" // 根据索引生成 AM 或 PM 时间
+                                        else "${index - 11} PM",
+                                         */
+                                        time,
+                                        fontSize = 11.sp, // 设置字体大小为 9sp
+                                        fontWeight = FontWeight.Black, // 设置字体为轻体
+                                        modifier = Modifier
+                                            .align(Alignment.CenterHorizontally) // 文本水平居中
+                                            .clearAndSetSemantics { } // 清除语义信息
+                                    )
+                                    "dailyWeather".log(index.toString())
+                                    Divider(
+                                        color = Color.Gray, // 设置分割线的颜色
+                                        thickness = 1.dp // 设置分割线的厚度
+                                    )
                                 }
-                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmxxx")
-                                val offsetDateTime = OffsetDateTime.parse(weatherState.hourly[index].datetime, formatter)
-                                val time = offsetDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
-                                Text( // 显示时间文本
-                                    /*
-                                    if (index < 12) "${index + 1} AM" // 根据索引生成 AM 或 PM 时间
-                                    else "${index - 11} PM",
-                                     */
-                                    time,
-                                    fontSize = 11.sp, // 设置字体大小为 9sp
-                                    fontWeight = FontWeight.Black, // 设置字体为轻体
-                                    modifier = Modifier
-                                        .align(Alignment.CenterHorizontally) // 文本水平居中
-                                        .clearAndSetSemantics { } // 清除语义信息
-                                )
-                                "dailyWeather".log(index.toString())
-                                Divider(
-                                    color = Color.Gray, // 设置分割线的颜色
-                                    thickness = 1.dp // 设置分割线的厚度
-                                )
                             }
                         }
                     }
-
-
                 }
             }
         }
     }
+
 }
 
 
@@ -344,22 +308,5 @@ fun LineChart(
                     )
                 }
         }
-    }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun PreviewHourlyWeatherChart() {
-    SunnyWeatherTheme {
-        /*
-        // 获取模拟的 DailyWeather 数据
-            val dailyWeather = WeatherDataProvider2.dailyWeather.first()
-            "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-            HourlyWeatherChart(
-                modifier = Modifier.fillMaxSize(),
-                dailyWeather = dailyWeather
-            )
-         */
-
     }
 }
