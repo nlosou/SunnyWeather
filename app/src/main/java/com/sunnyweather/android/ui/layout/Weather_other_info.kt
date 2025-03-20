@@ -26,6 +26,7 @@ import com.sunnyweather.android.ui.component.AtmosphericPressure
 import com.sunnyweather.android.ui.component.Humidity_table
 import com.sunnyweather.android.ui.component.LifeIndexSection
 import com.sunnyweather.android.ui.component.Somatosensory
+import com.sunnyweather.android.ui.component.SunriseSunset
 import com.sunnyweather.android.ui.component.Ultraviolet
 import com.sunnyweather.android.ui.component.Wind
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
@@ -35,6 +36,47 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 @Composable
 fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
     val weatherState by weatherViewModel.state.collectAsState()
+    val windDirection = when (weatherState.temp[0].result.realtime.wind.direction) {
+        in 348.76..360.0 -> "北"
+        in 0.0..11.25 -> "北"
+        in 11.26..33.75 -> "北东北"
+        in 33.76..56.25 -> "东北"
+        in 56.26..78.75 -> "东东北"
+        in 78.76..101.25 -> "东"
+        in 101.26..123.75 -> "东东南"
+        in 123.76..146.25 -> "东南"
+        in 146.26..168.75 -> "南东南"
+        in 168.76..191.25 -> "南"
+        in 191.26..213.75 -> "南西南"
+        in 213.76..236.25 -> "西南"
+        in 236.26..258.75 -> "西西南"
+        in 258.76..281.25 -> "西"
+        in 281.26..303.75 -> "西西北"
+        in 303.76..326.25 -> "西北"
+        in 326.26..348.75 -> "北西北"
+        else -> "无数据"
+    }
+    val windSpeed = when (weatherState.temp[0].result.realtime.wind.speed) {
+        in 0.0..0.3 -> "0级"
+        in 0.3..1.6 -> "1级"
+        in 1.6..3.4 -> "2级"
+        in 3.4..5.5 -> "3级"
+        in 5.5..8.0 -> "4级"
+        in 8.0..10.8 -> "5级"
+        in 10.8..13.9 -> "6级"
+        in 13.9..17.2 -> "7级"
+        in 17.2..20.8 -> "8级"
+        in 20.8..24.5 -> "9级"
+        in 24.5..28.5 -> "10级"
+        in 28.5..32.7 -> "11级"
+        in 32.7..37.0 -> "12级"
+        in 37.0..41.5 -> "13级"
+        in 41.5..46.2 -> "14级"
+        in 46.2..51.0 -> "15级"
+        in 51.0..56.1 -> "16级"
+        in 56.1..61.3 -> "17级"
+        else -> "无数据"
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -60,7 +102,6 @@ fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
                 content = "${(weatherState.temp[0].result.realtime.humidity*100).toInt()}%"
             )
         }
-
         // 体感和风
         Row(modifier = Modifier.fillMaxWidth()) {
             WeatherCard(
@@ -69,7 +110,7 @@ fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
                 title = "体感",
-                content = "15°"
+                content = "${weatherState.temp[0].result.realtime.apparent_temperature.toInt()}°"
             )
             Spacer(modifier=Modifier.padding(5.dp))
             WeatherCard(
@@ -77,8 +118,8 @@ fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
-                title = "西南风",
-                content = "2级"
+                title = windDirection+"风",
+                content = windSpeed
             )
         }
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -87,8 +128,8 @@ fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
-                title = "日落",
-                content = "15°"
+                title = "日出",
+                content = weatherState.temp[0].result.daily.astro[0].sunrise.time
             )
             Spacer(modifier=Modifier.padding(5.dp))
             WeatherCard(
@@ -97,7 +138,7 @@ fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
                     .weight(1f)
                     .aspectRatio(1.8f), // 设置宽高相等
                 title = "气压",
-                content = "2级"
+                content = ((weatherState.temp[0].result.realtime.pressure)/100).toInt().toString()
             )
         }
         // 生活指数
@@ -154,13 +195,13 @@ fun WeatherCard(
                     )
                 }
             }
-            when(title)
-            {
-                "湿度"->Box(modifier = Modifier.weight(1f)){ Humidity_table("",Modifier,weatherState)}
-                "紫外线"->Box(modifier = Modifier.weight(1f)){ Ultraviolet("",Modifier,weatherState) }
-                "体感"->Box(modifier=Modifier.weight(1f)){ Somatosensory("") }
-                "西南风"->Box(modifier=Modifier.weight(1f)){ Wind("") }
-                "气压"-> Box(modifier=Modifier.weight(1f)){ AtmosphericPressure("") }
+            when {
+                title.contains("湿度") -> Box(modifier = Modifier.weight(1f)) { Humidity_table("", Modifier, weatherState) }
+                title.contains("紫外线") -> Box(modifier = Modifier.weight(1f)) { Ultraviolet("", Modifier, weatherState) }
+                title.contains("体感") -> Box(modifier = Modifier.weight(1f)) { Somatosensory("", Modifier, weatherState) }
+                title.contains("风") -> Box(modifier = Modifier.weight(1f)) { Wind("") }
+                title.contains("气压") -> Box(modifier = Modifier.weight(1f)) { AtmosphericPressure("") }
+                title.contains("日")-> Box(modifier=Modifier.weight(1f)){SunriseSunset("")}
             }
 
         }

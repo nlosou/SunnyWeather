@@ -90,7 +90,7 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:Weather
             text = "UV",
             modifier = Modifier.offset(y=parentHeight*0.3f),
             fontSize = textSize,
-            color = Color.LightGray
+            color = Color.Gray
         )
 
         Canvas(modifier = Modifier

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.myiconpack.ArrowDown
 import com.sunnyweather.android.ui.myiconpack.Water
 
 
@@ -46,22 +47,23 @@ fun AtmosphericPressure(name: String, modifier: Modifier = Modifier) {
         val parentHeight = maxHeight
         "parentWidth".log(parentWidth.value.toString())
         // 按父容器宽度 20% 设置图标尺寸
-        val iconSize = parentWidth * 0.2f
+        val iconSize = parentWidth * 0.3f
         // 按父容器宽度 8% 设置字体大小
         val textSize = (parentWidth.value * 0.15f).sp
         // 按父容器宽度 3% 设置线条宽度
         val strokeWidthDp = parentWidth * 0.07f
         Icon(
-            Icons.AutoMirrored.Filled.ArrowForward,
+            MyIconPack.ArrowDown,
             contentDescription = "",
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier.size(iconSize),
+            tint = Color(rgb(11, 168, 254))
         )
 
         Text(
             text = "hPa",
             modifier = Modifier.offset(y=parentHeight*0.3f),
             fontSize = textSize,
-            color = Color.LightGray
+            color = Color.Gray
         )
 
         Canvas(modifier = Modifier

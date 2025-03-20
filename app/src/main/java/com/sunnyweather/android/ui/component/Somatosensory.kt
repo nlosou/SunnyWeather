@@ -1,6 +1,8 @@
 package com.sunnyweather.android.ui.component
 
 import android.graphics.Color.rgb
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -30,13 +32,14 @@ import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.Water
+import com.sunnyweather.android.ui.weather.WeatherState
 import kotlin.math.cos
 import kotlin.math.sin
 
 
 @Composable
-fun Somatosensory(name: String, modifier: Modifier = Modifier) {
-    var sweeAngle by remember { mutableStateOf(0-90f) }
+fun Somatosensory(name: String, modifier: Modifier = Modifier,weatherState: WeatherState) {
+    var sweeAngle by remember { mutableStateOf(-45f) }
     BoxWithConstraints(
         contentAlignment = Alignment.Center,
         modifier = modifier.background(Color.Transparent)
@@ -51,12 +54,17 @@ fun Somatosensory(name: String, modifier: Modifier = Modifier) {
         val textSize = (parentWidth.value * 0.15f).sp
         // 按父容器宽度 3% 设置线条宽度
         val strokeWidthDp = parentWidth * 0.07f
+        // 使用animateFloatAsState创建动画效果
+        val animatedAngle by animateFloatAsState(
+            targetValue = sweeAngle,
+            animationSpec = tween(durationMillis = 1000) // 动画时长1秒
+        )
 
         Text(
             text = "舒适",
             modifier = Modifier.offset(y=parentHeight*0.3f),
             fontSize = textSize,
-            color = Color.LightGray
+            color = Color.Gray
         )
 
         Canvas(modifier = Modifier
@@ -68,7 +76,7 @@ fun Somatosensory(name: String, modifier: Modifier = Modifier) {
             val radius = size.minDimension / 2f - strokeWidthPx
             val pointerLength = radius*0.7f
             val center = Offset(drawContext.size.width / 2f, drawContext.size.height / 2f)
-            val angleInRadians = sweeAngle * Math.PI / 180
+            val angleInRadians = (animatedAngle+90f) * Math.PI / 180
             val endPoint = Offset(
                 center.x + pointerLength * cos(angleInRadians.toFloat()),
                 center.y - pointerLength * sin(angleInRadians.toFloat())
@@ -86,6 +94,8 @@ fun Somatosensory(name: String, modifier: Modifier = Modifier) {
                 strokeWidth = strokeWidthPx*0.4f,
                 cap = StrokeCap.Round
             )
+
+            //进度
             drawArc(
                 color = Color(rgb(11, 168, 254)),
                 startAngle = 45f,
@@ -122,6 +132,6 @@ fun Somatosensory(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview19() {
     SunnyWeatherTheme {
-        Somatosensory("Android")
+        //Somatosensory("Android")
     }
 }
