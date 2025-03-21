@@ -49,7 +49,7 @@ fun Humidity_table(name: String, modifier: Modifier = Modifier,weatherState: Wea
         var targetAngle by remember { mutableStateOf(270f) }
         // 使用animateFloatAsState创建动画效果
         val animatedAngle by animateFloatAsState(
-            targetValue = targetAngle,
+            targetValue = weatherState.targetAngle,
             animationSpec = tween(durationMillis = 1000) // 动画时长1秒
         )
         // 获取父容器约束

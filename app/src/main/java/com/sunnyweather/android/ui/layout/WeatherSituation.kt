@@ -152,6 +152,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
             mainViewModel.place_name.value=mainViewModel.getSavedPlace()[pagerState.currentPage].formatted_address
         }
     }
+    var isIconVisible= remember { mutableStateOf(false) }
 
 
     Surface(
@@ -191,7 +192,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                         }
                     )
                 },
-                ) { contentPadding ->
+            ) { contentPadding ->
                 Box(modifier = Modifier.padding(contentPadding)
                     .pointerInput(Unit) {
                         detectVerticalDragGestures { change, dragAmount ->
@@ -215,26 +216,12 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                     ){
                         Box()
                         {
-                            //天气图标显示
-                            if (weatherState.temp.isNotEmpty()){
-                                Box( // Box 布局，用于显示天气图标
-                                    modifier = Modifier
-                                        .align(Alignment.Center) // 图标水平居中
-                                        .scale(6f)
-                                        .offset(x=15.dp,y=-50.dp)
-                                        .alpha(if (weatherState.isExpanded) 0f else 1f)
 
-                                    // 图标缩放为 60%
-                                ){
-                                    WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).anime_icon()
-                                }
-                            }else{
-                            }
+                            //天气图标显示
                             Column (
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .alpha(if (weatherState.isExpanded) 0f else 1f)
-
                             ) {
                                 // val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
                                 //天气实况
@@ -244,10 +231,12 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                     flingBehavior = PagerDefaults.flingBehavior(
                                         state = pagerState,)
                                 ){ page->
+                                    WeatherViewModel.set_isSkycon(page)
                                     // 根据当前页面索引动态调整 visible 状态
-                                    val isVisible = page == pagerState.currentPage
+                                    val isVisible2 = page == pagerState.currentPage
+                                    isIconVisible.value =isVisible2
                                     AnimatedVisibility(
-                                        visible = isVisible,
+                                        visible = isVisible2,
                                         enter = fadeIn(animationSpec = tween(durationMillis = 400)) + scaleIn(initialScale = 0.5f),
                                         exit = fadeOut(animationSpec = tween(durationMillis = 400)) + scaleOut(targetScale = 0.5f)
                                     ){
@@ -268,6 +257,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                     colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                     shape = RoundedCornerShape(0.dp)
                                 ) {
+
                                     // 获取模拟的 DailyWeather 数据
                                     if (weatherState.hourly.isNotEmpty()){
                                         val dailyWeather = WeatherDataProvider.dailyWeather.first()
@@ -297,8 +287,24 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                     }else{
 
                                     }
-
                                 }
+                            }
+                            Box( // Box 布局，用于显示天气图标
+                                modifier = Modifier
+                                    .align(Alignment.Center) // 图标水平居中
+                                    .scale(6f)
+                                    .offset(x=15.dp,y=-50.dp)
+                                    .alpha(if (weatherState.isExpanded) 0f else 1f)
+                                // 图标缩放为 60%
+                            ){
+                                AnimatedVisibility(
+                                    visible =weatherState.temp.isNotEmpty(),
+                                    enter = fadeIn(animationSpec = tween(durationMillis = 400)) ,
+                                    exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                                ){
+                                    WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).anime_icon()
+                                }
+
                             }
                         }
                     }

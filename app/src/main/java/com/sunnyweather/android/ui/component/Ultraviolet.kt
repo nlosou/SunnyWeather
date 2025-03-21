@@ -42,7 +42,7 @@ import com.sunnyweather.android.ui.myiconpack.Water
 import com.sunnyweather.android.ui.weather.WeatherState
 import kotlin.math.cos
 import kotlin.math.sin
-
+import androidx.compose.ui.graphics.lerp
 
 @Composable
 fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:WeatherState) {
@@ -59,6 +59,8 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:Weather
         0.9f to Color(0xFF9C27B0), // 紫色
         1.0f to Color(rgb(139, 102, 243)) // 蓝紫色
     )
+    val maxIndex = 11f // 最大紫外线指数假设为11
+    val initialAngle = 45f + (index / maxIndex) * 270f // 计算初始角度
     // 使用remember和mutableStateOf管理动态角度
     var targetAngle by remember { mutableStateOf(45f) }
     // 使用animateFloatAsState创建动画效果
@@ -66,6 +68,9 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:Weather
         targetValue = targetAngle,
         animationSpec = tween(durationMillis = 1000) // 动画时长1秒
     )
+    val progress = (animatedAngle - 45f) / 270f // 计算颜色进度
+    // 根据紫外线指数选择颜色
+    val uvColor = getColorFromProgress(progress.coerceIn(0f, 1f), colorStops)
     BoxWithConstraints(
         contentAlignment = Alignment.Center,
         modifier = modifier.background(Color.Transparent)
@@ -140,7 +145,7 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:Weather
             )
             //圆
             drawCircle(
-                color = colorStops[0].second,
+                color = uvColor,
                 radius = strokeWidthPx*0.8f,
                 center= Offset(x,y)
             )
@@ -160,7 +165,22 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:Weather
     }
 
 }
+// 颜色插值函数
+private fun getColorFromProgress(progress: Float, colorStops: List<Pair<Float, Color>>): Color {
+    if (colorStops.isEmpty()) return Color.Black
+    if (progress <= colorStops.first().first) return colorStops.first().second
+    if (progress >= colorStops.last().first) return colorStops.last().second
 
+    for (i in 0 until colorStops.size - 1) {
+        val current = colorStops[i]
+        val next = colorStops[i + 1]
+        if (progress in current.first..next.first) {
+            val fraction = (progress - current.first) / (next.first - current.first)
+            return lerp(current.second, next.second, fraction)
+        }
+    }
+    return Color.Black
+}
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview18() {

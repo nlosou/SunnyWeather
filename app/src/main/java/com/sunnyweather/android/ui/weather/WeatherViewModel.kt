@@ -36,6 +36,8 @@ data class WeatherState(
     var locationLng:String="",
     var locationLat:String="",
     var isExpanded: Boolean = false,
+    var targetAngle: Float =270f,
+    var page:Int=0
 )
 
 class WeatherViewModel:ViewModel() {
@@ -98,5 +100,13 @@ class WeatherViewModel:ViewModel() {
     fun get__hourly_Sky():List<RealtimeResponse.Result.Hourly.Skycon>
     {
         return  state.value.hourlySky
+    }
+
+    fun set_isSkycon(page: Int){
+        _state.value.page=page
+    }
+    fun  get_isSkycon():Int
+    {
+        return state.value.page
     }
 }

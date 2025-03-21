@@ -13,6 +13,7 @@ import com.sunnyweather.android.ui.myiconpack.Leaf
 import com.sunnyweather.android.ui.myiconpack.LetterT
 import com.sunnyweather.android.ui.myiconpack.ListSelect
 import com.sunnyweather.android.ui.myiconpack.MapPoint
+import com.sunnyweather.android.ui.myiconpack.Moon
 import com.sunnyweather.android.ui.myiconpack.NavigationPointer
 import com.sunnyweather.android.ui.myiconpack.PencilLine
 import com.sunnyweather.android.ui.myiconpack.Point
@@ -24,6 +25,7 @@ import com.sunnyweather.android.ui.myiconpack.TShirt
 import com.sunnyweather.android.ui.myiconpack.Umbrella
 import com.sunnyweather.android.ui.myiconpack.UndoLine
 import com.sunnyweather.android.ui.myiconpack.Water
+import com.sunnyweather.android.ui.myiconpack.WeatherSunny
 import com.sunnyweather.android.ui.myiconpack.Wind
 import com.sunnyweather.android.ui.myiconpack.Wind2
 import kotlin.collections.List as ____KtList
@@ -38,7 +40,7 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
       return __AllIcons!!
     }
     __AllIcons= listOf(Alarm, ArrowDown, Car, CheckCircle, Clothes, Cosmetic, Drugs, Image, Leaf,
-        LetterT, ListSelect, MapPoint, NavigationPointer, PencilLine, Point, Radioupnp, RedoLine,
-        SnowLine, Sport, TShirt, Umbrella, UndoLine, Water, Wind, Wind2)
+        LetterT, ListSelect, MapPoint, Moon, NavigationPointer, PencilLine, Point, Radioupnp,
+        RedoLine, SnowLine, Sport, TShirt, Umbrella, UndoLine, Water, WeatherSunny, Wind, Wind2)
     return __AllIcons!!
   }

@@ -136,7 +136,7 @@ fun LifeIndexItemView(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                scale = 0.9f
+                scale = 0.7f
                 "clickable".log("start")
                 showBottomSheet(true)
                 scope.launch {

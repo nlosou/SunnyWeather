@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sunnyweather.android.log
+import com.sunnyweather.android.logic.model.WeatherCodeConverter
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.CheckCircle
@@ -62,6 +63,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel,index:Int) {
     val weatherState by PlaceViewModel.__Place_State.collectAsState()
+    val weather_situation by WeatherViewModel.state.collectAsState()
     var place_list=PlaceViewModel.getSavedPlace()
     var start=0.dp
     var end=0.dp
@@ -80,18 +82,18 @@ fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherVi
             PlaceViewModel.show_edit.targetState=true
         },
         onClick = {
-                if(PlaceViewModel.show_edit.targetState)
-                {
-                    // 切换 Select_City 的值
-                    PlaceViewModel.toggleSelect(index)
-                }
-                // 点击时触发浮动效果
-                scale = 0.9f
-                // 延迟一段时间后恢复原状
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(200)
-                    scale = 1f
-                }
+            if(PlaceViewModel.show_edit.targetState)
+            {
+                // 切换 Select_City 的值
+                PlaceViewModel.toggleSelect(index)
+            }
+            // 点击时触发浮动效果
+            scale = 0.9f
+            // 延迟一段时间后恢复原状
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(200)
+                scale = 1f
+            }
             "onClick".log(index.toString())
             PlaceViewModel.place_current.value=index
             if(!PlaceViewModel.show_edit.targetState){
@@ -139,14 +141,14 @@ fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherVi
                     enter = fadeIn(animationSpec = tween(durationMillis = 400)), // 进入时淡入
                     exit = fadeOut(animationSpec = tween(durationMillis = 400)) // 退出时淡出
                 ){
-                        IconButton(
-                            modifier = Modifier,
-                            onClick = {
-                             
-                            }
-                        ) {
-                            Icon(Icons.Filled.Menu, contentDescription = "")
+                    IconButton(
+                        modifier = Modifier,
+                        onClick = {
+
                         }
+                    ) {
+                        Icon(Icons.Filled.Menu, contentDescription = "")
+                    }
                 }
                 Box(
                 ) {
@@ -155,23 +157,31 @@ fun City_Edit(navigation:NavController,PlaceViewModel: PlaceViewModel, WeatherVi
                         horizontalArrangement = Arrangement.SpaceBetween // 设置水平排列方式为两端对齐
                     ){
                         Column() {
-                                Column{
-                                    Text(place_list[index].formatted_address,
-                                        style = TextStyle(
-                                            fontSize = 20.sp
-                                        )
+                            Column{
+                                AutoScrollText(
+                                    text = if (place_list.isNotEmpty()) {
+                                        place_list[index].formatted_address
+                                    } else {
+                                        "地址"
+                                    },
+                                    textSize = 20.toFloat() // 设置你的文本大小
+                                )
+                                /*
+
+                                 */
+                                Row(verticalAlignment=Alignment.CenterVertically) {
+                                    Text(
+                                        WeatherCodeConverter.getSky(weather_situation.temp[0].result.realtime.skycon).info, style = TextStyle(
+                                        fontSize = 15.sp
                                     )
-                                    Row(verticalAlignment=Alignment.CenterVertically) {
-                                        Text("天气", style = TextStyle(
-                                            fontSize = 15.sp
-                                        )
-                                        )
-                                        Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                                        Text("11/12",style = TextStyle(
-                                            fontSize = 16.sp
-                                        ))
-                                    }
+
+                                    )
+                                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                                    Text("11/12",style = TextStyle(
+                                        fontSize = 16.sp
+                                    ))
                                 }
+                            }
                         }
                         Row (verticalAlignment=Alignment.CenterVertically){
                             Text("10",
