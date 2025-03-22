@@ -16,6 +16,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            // 设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
+            abiFilters.add("armeabi-v7a")
+            abiFilters.add("armeabi")
+            abiFilters.add("arm64-v8a")
+            abiFilters.add("x86")
+            abiFilters.add("x86_64")
+
+
+        }
     }
 
     buildTypes {
@@ -37,12 +47,23 @@ android {
     buildFeatures {
         compose = true
     }
+    sourceSets {
+        getByName("main") {
+            jniLibs.setSrcDirs(listOf("libs"))
+        }
+    }
 }
 
 dependencies {
 
     val nav_version = "2.8.8"
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
+    implementation(libs.accompanist.permissions)
+    implementation("com.baidu.lbsyun:BaiduMapSDK_Map:7.6.4")
+    implementation(libs.baidumapsdk.search)
+    implementation(libs.baidumapsdk.location)
+    implementation(files("libs/AMap2DMap_6.0.0_AMapSearch_9.7.4_AMapLocation_6.4.9_20241226.jar"))
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.30.1")
     implementation(libs.androidx.core.ktx)

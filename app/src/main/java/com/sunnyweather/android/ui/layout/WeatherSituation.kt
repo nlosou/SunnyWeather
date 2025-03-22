@@ -101,7 +101,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val scope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
 
-
     val state = rememberPullToRefreshState()
     if (state.isRefreshing) {
         LaunchedEffect(true) {

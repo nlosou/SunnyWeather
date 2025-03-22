@@ -15,9 +15,16 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.baidu.mapapi.map.MapView
+import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
+import com.sunnyweather.android.logic.GMS.LocationCollector
+import com.sunnyweather.android.logic.GMS.LocationState
 import com.sunnyweather.android.logic.model.data.Hourly_data
 import com.sunnyweather.android.ui.layout.Greeting
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
@@ -30,6 +37,7 @@ class MainActivity : ComponentActivity() {
      val mainViewModel: PlaceViewModel by viewModels()
     private val WeatherViewModel:WeatherViewModel by viewModels()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,6 +45,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             SunnyWeatherTheme {
                 val navController = rememberNavController()
+                var location2 by remember { mutableStateOf(LocationState()) }
+
+
+                LocationCollector(context) { newLocation ->
+                    location2 = newLocation
+                }
                 NavHost(
                     navController = navController,
                     startDestination = "greeting"  // 设置初始目的地

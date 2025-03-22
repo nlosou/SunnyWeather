@@ -1,5 +1,8 @@
 [versions]
+accompanistPermissions = "0.37.2"
 agp = "8.7.2"
+baidumapsdk_location = "9.6.4"
+baidumapsdk_search = "7.6.4"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -10,7 +13,10 @@ activityCompose = "1.10.0"
 composeBom = "2024.04.01"
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+baidumapsdk_search = { module = "com.baidu.lbsyun:BaiduMapSDK_Search", version.ref = "baidumapsdk_search" }
+baidumapsdk_location = { module = "com.baidu.lbsyun:BaiduMapSDK_Location", version.ref = "baidumapsdk_location" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

@@ -3,9 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sunnyweather.android">
 
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 访问网络，网络定位需要上网 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
 
     <application
         android:name=".SunnyWeatherApplication"
@@ -18,131 +23,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
-        <activity
-            android:name=".ui.component.AutoScrollText"
-            android:exported="false"
-            android:label="@string/title_activity_auto_scroll_text"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.SunriseSunset"
-            android:exported="false"
-            android:label="@string/title_activity_sunrise_sunset"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.LifeIndexSituation"
-            android:exported="false"
-            android:label="@string/title_activity_life_index_situation"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.LifeIndexSection"
-            android:exported="false"
-            android:label="@string/title_activity_life_index_section"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.AtmosphericPressure"
-            android:exported="false"
-            android:label="@string/title_activity_atmospheric_pressure"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.RotatingArrow"
-            android:exported="false"
-            android:label="@string/title_activity_rotating_arrow"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.scaleText"
-            android:exported="false"
-            android:label="@string/title_activity_scale_text"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.Wind"
-            android:exported="false"
-            android:label="@string/title_activity_wind"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.Somatosensory"
-            android:exported="false"
-            android:label="@string/title_activity_somatosensory"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.Ultraviolet"
-            android:exported="false"
-            android:label="@string/title_activity_ultraviolet"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.City_Edit"
-            android:exported="false"
-            android:label="@string/title_activity_city_edit"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.SearchBar_Onclick"
-            android:exported="false"
-            android:label="@string/title_activity_search_bar_onclick"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.layout.Place_manage"
-            android:exported="false"
-            android:label="@string/title_activity_place_manage"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.somatosensory"
-            android:exported="false"
-            android:label="@string/title_activity_somatosensory"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.humidity"
-            android:exported="false"
-            android:label="@string/title_activity_humidity"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.UV_table"
-            android:exported="false"
-            android:label="@string/title_activity_uv_table"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.UV"
-            android:exported="false"
-            android:label="@string/title_activity_uv"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.layout.Weather_other_info"
-            android:exported="false"
-            android:label="@string/title_activity_weather_other_info"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.Hour_Situation"
-            android:exported="false"
-            android:label="@string/title_activity_hour_situation"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.TemperatureDisplay"
-            android:exported="false"
-            android:label="@string/title_activity_temperature_display"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.theme.BackGroud"
-            android:exported="false"
-            android:label="@string/title_activity_back_groud"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.Alarm_Info"
-            android:exported="false"
-            android:label="@string/title_activity_alarm_info"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.Future_Weather_Cards"
-            android:exported="false"
-            android:label="@string/title_activity_future_weather_cards"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.component.Weather_location_easy_information"
-            android:exported="false"
-            android:label="@string/title_activity_weather_location_easy_information"
-            android:theme="@style/Theme.SunnyWeather" />
-        <activity
-            android:name=".ui.layout.WeatherSituation"
-            android:exported="false"
-            android:label="@string/title_activity_weather_situation"
-            android:theme="@style/Theme.SunnyWeather" />
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote"></service>
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="5O20J9rT79aRRqQciWabNtDMthXbOqtR" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
