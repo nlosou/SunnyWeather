@@ -31,4 +31,6 @@
     <string name="title_activity_life_index_situation">LifeIndexSituation</string>
     <string name="title_activity_sunrise_sunset">SunriseSunset</string>
     <string name="title_activity_auto_scroll_text">AutoScrollText</string>
+    <string name="title_activity_rainfall_entrance">rainfallEntrance</string>
+    <string name="title_activity_baidu_map">BaiduMap</string>
 </resources>

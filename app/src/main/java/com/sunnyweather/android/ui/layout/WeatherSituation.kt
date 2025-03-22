@@ -51,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -100,6 +101,18 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
+
+
+    // 添加一个状态变量来控制是否显示 Weather_other_info
+    var showWeatherOtherInfo by remember { mutableStateOf(false) }
+
+    // 当从 BaiduMap 返回时，通过导航回调更新这个状态
+    LaunchedEffect(navController.currentBackStackEntry) {
+        if (navController.currentBackStackEntry?.destination?.route == "greeting") {
+            showWeatherOtherInfo = true
+        }
+    }
+
 
     val state = rememberPullToRefreshState()
     if (state.isRefreshing) {
@@ -323,7 +336,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                             flingBehavior = PagerDefaults.flingBehavior(
                                 state = pagerState,)
                         ){
-                            Weather_other_info(Modifier,WeatherViewModel)
+                            Weather_other_info(Modifier,navController,mainViewModel,WeatherViewModel)
                         }
 
                     }
@@ -397,5 +410,4 @@ fun GreetingPreview5() {
     SunnyWeatherTheme {
         Greeting(navController,WeatherViewModel,mainViewModel)
     }
-
 }

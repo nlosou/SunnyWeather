@@ -12,6 +12,8 @@ import com.sunnyweather.android.ui.myiconpack.Image
 import com.sunnyweather.android.ui.myiconpack.Leaf
 import com.sunnyweather.android.ui.myiconpack.LetterT
 import com.sunnyweather.android.ui.myiconpack.ListSelect
+import com.sunnyweather.android.ui.myiconpack.Location
+import com.sunnyweather.android.ui.myiconpack.MapMarked
 import com.sunnyweather.android.ui.myiconpack.MapPoint
 import com.sunnyweather.android.ui.myiconpack.Moon
 import com.sunnyweather.android.ui.myiconpack.NavigationPointer
@@ -40,7 +42,8 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
       return __AllIcons!!
     }
     __AllIcons= listOf(Alarm, ArrowDown, Car, CheckCircle, Clothes, Cosmetic, Drugs, Image, Leaf,
-        LetterT, ListSelect, MapPoint, Moon, NavigationPointer, PencilLine, Point, Radioupnp,
-        RedoLine, SnowLine, Sport, TShirt, Umbrella, UndoLine, Water, WeatherSunny, Wind, Wind2)
+        LetterT, ListSelect, Location, MapMarked, MapPoint, Moon, NavigationPointer, PencilLine,
+        Point, Radioupnp, RedoLine, SnowLine, Sport, TShirt, Umbrella, UndoLine, Water,
+        WeatherSunny, Wind, Wind2)
     return __AllIcons!!
   }

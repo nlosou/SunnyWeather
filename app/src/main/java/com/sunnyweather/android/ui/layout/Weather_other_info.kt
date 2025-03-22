@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.sunnyweather.android.ui.component.AtmosphericPressure
 import com.sunnyweather.android.ui.component.Humidity_table
 import com.sunnyweather.android.ui.component.LifeIndexSection
@@ -29,13 +30,15 @@ import com.sunnyweather.android.ui.component.Somatosensory
 import com.sunnyweather.android.ui.component.SunriseSunset
 import com.sunnyweather.android.ui.component.Ultraviolet
 import com.sunnyweather.android.ui.component.Wind
+import com.sunnyweather.android.ui.component.rainfallEntrance
+import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.weather.WeatherState
 import com.sunnyweather.android.ui.weather.WeatherViewModel
 
 @Composable
-fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
-    val weatherState by weatherViewModel.state.collectAsState()
+fun Weather_other_info(modifier: Modifier, navController: NavController, mainViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel) {
+    val weatherState by WeatherViewModel.state.collectAsState()
     val windDirection = when (weatherState.temp[0].result.realtime.wind.direction) {
         in 348.76..360.0 -> "北"
         in 0.0..11.25 -> "北"
@@ -143,7 +146,10 @@ fun Weather_other_info(modifier: Modifier,weatherViewModel: WeatherViewModel) {
             )
         }
         // 生活指数
+        Spacer(Modifier.padding(2.dp))
         LifeIndexSection()
+        Spacer(Modifier.padding(5.dp))
+        rainfallEntrance(navController,mainViewModel,WeatherViewModel)
     }
 }
 

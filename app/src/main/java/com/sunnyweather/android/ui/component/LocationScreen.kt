@@ -32,9 +32,6 @@ fun LocationScreen(Modifier: Modifier) {
     }
      */
 
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        /*
         AndroidView(
             factory = { context ->
                 MapView(context).apply {
@@ -46,16 +43,6 @@ fun LocationScreen(Modifier: Modifier) {
                 view.onResume() // 根据需要调用生命周期方法
             }
         )
-
-         */
-
-        Column {
-            Text("纬度: ${location2.latitude}")
-            Text("经度: ${location2.longitude}")
-            Text("地址: ${location2.address}")
-        }
-    }
-
 
     DisposableEffect(Unit) {
         onDispose {

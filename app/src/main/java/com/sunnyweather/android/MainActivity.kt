@@ -13,6 +13,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +29,7 @@ import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.logic.GMS.LocationCollector
 import com.sunnyweather.android.logic.GMS.LocationState
 import com.sunnyweather.android.logic.model.data.Hourly_data
+import com.sunnyweather.android.ui.layout.BaiduMap
 import com.sunnyweather.android.ui.layout.Greeting
 import com.sunnyweather.android.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.layout.Greeting2
@@ -46,7 +50,6 @@ class MainActivity : ComponentActivity() {
             SunnyWeatherTheme {
                 val navController = rememberNavController()
                 var location2 by remember { mutableStateOf(LocationState()) }
-
 
                 LocationCollector(context) { newLocation ->
                     location2 = newLocation
@@ -102,6 +105,35 @@ class MainActivity : ComponentActivity() {
                         }
                     ) {  // 跳转页面
                         Greeting2(navController,mainViewModel,WeatherViewModel)
+                    }
+                    composable(
+                        "BaiduMap",
+                        enterTransition = {
+                            slideInHorizontally(
+                                animationSpec = tween(durationMillis = 600),
+                                initialOffsetX = { it } // 从右侧滑入
+                            )
+                        },
+                        exitTransition = {
+                            slideOutHorizontally(
+                                animationSpec = tween(durationMillis = 600),
+                                targetOffsetX = { -it } // 向左侧滑出
+                            )
+                        },
+                        popEnterTransition = {
+                            slideInHorizontally(
+                                animationSpec = tween(durationMillis = 600),
+                                initialOffsetX = { -it } // 从左侧滑入
+                            )
+                        },
+                        popExitTransition = {
+                            slideOutHorizontally(
+                                animationSpec = tween(durationMillis = 600),
+                                targetOffsetX = { it } // 向右侧滑出
+                            )
+                        }
+                    ) { // 跳转页面
+                        BaiduMap(navController, mainViewModel, WeatherViewModel)
                     }
                 }
             }
