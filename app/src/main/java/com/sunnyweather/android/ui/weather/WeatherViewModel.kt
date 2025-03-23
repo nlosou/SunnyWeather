@@ -29,7 +29,7 @@ import retrofit2.HttpException
 
 data class WeatherState(
     val temp: List<RealtimeResponse> = emptyList(),
-   // val aqi:Int=temp[0].result.realtime.air_quality.aqi.chn,
+    // val aqi:Int=temp[0].result.realtime.air_quality.aqi.chn,
     val hourly: List<RealtimeResponse.Result.Hourly.Temperature> = emptyList(),
     val hourlySky: List<RealtimeResponse.Result.Hourly.Skycon> = emptyList(),
     val daily: List<RealtimeResponse.Result.Daily.Metrics> = emptyList(),
@@ -39,6 +39,8 @@ data class WeatherState(
     var isExpanded: Boolean = false,
     var targetAngle: Float =270f,
     var page:Int=0,
+    var dailyWind:List<RealtimeResponse.Result.Daily.Wind> =emptyList(),
+    var dailyAir:List<RealtimeResponse.Result.Daily.AirQuality.Aqi> = emptyList()
 )
 
 class WeatherViewModel:ViewModel() {
@@ -56,14 +58,14 @@ class WeatherViewModel:ViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow=locationFlowData.flatMapLatest {
-        query->
+            query->
         "WeatherFlow_location".log(query.toString())
         Repository.RealWeather(query.lng, query.lat)
             .flowOn(Dispatchers.IO)
             .map {
-                result ->
+                    result ->
                 result.onSuccess {
-                    item->
+                        item->
                     "WeatherFlow_onSuccess".log(item.toString())
                     _state.value = WeatherState(
                         temp = item ?: emptyList(),
@@ -73,7 +75,9 @@ class WeatherViewModel:ViewModel() {
                         dailyWeather = item[0].result.daily.skycon,
                         locationLng = query.lng,
                         locationLat = query.lat,
-                        isExpanded = _state.value.isExpanded
+                        isExpanded = _state.value.isExpanded,
+                        dailyWind=item[0].result.daily.wind,
+                        dailyAir = item[0].result.daily.air_quality.aqi
                     )
                     _hourly.value=_state.value.hourly
                     _hourly_Sky.value=_state.value.hourlySky
@@ -85,7 +89,7 @@ class WeatherViewModel:ViewModel() {
                     }
                 }
             }.catch {
-                e->
+                    e->
                 "WeatherFlow_catch".log(e.toString())
             }
     }

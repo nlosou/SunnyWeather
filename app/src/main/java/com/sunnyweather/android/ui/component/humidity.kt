@@ -46,10 +46,10 @@ fun Humidity_table(name: String, modifier: Modifier = Modifier,weatherState: Wea
         modifier = modifier.background(Color.Transparent)
     ) {
         // 使用remember和mutableStateOf管理动态角度
-        var targetAngle by remember { mutableStateOf(270f) }
+        var targetAngle by remember { mutableStateOf(0f) }
         // 使用animateFloatAsState创建动画效果
         val animatedAngle by animateFloatAsState(
-            targetValue = weatherState.targetAngle,
+            targetValue = targetAngle+270*weatherState.temp[0].result.realtime.humidity,
             animationSpec = tween(durationMillis = 1000) // 动画时长1秒
         )
         // 获取父容器约束
@@ -128,7 +128,7 @@ fun Humidity_table(name: String, modifier: Modifier = Modifier,weatherState: Wea
             drawArc(
                 color = Color(rgb(11, 168, 254)),
                 startAngle = 45f,
-                sweepAngle = animatedAngle*weatherState.temp[0].result.realtime.humidity,
+                sweepAngle = animatedAngle,
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),

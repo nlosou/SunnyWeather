@@ -10,7 +10,11 @@ data class Place(
     var adcode: String,
     var formatted_address: String,
     var lng: Double,
-    var lat: Double
+    var lat: Double,
+    var max:String,
+    var min:String,
+    var sky:String,
+    var currentTemp:String
 )
 data class Location(var lng:String, var lat:String)
 

@@ -44,6 +44,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -141,8 +143,34 @@ fun Future_Weather_Cards(
                             modifier = Modifier.padding(top = (parentHeight.value*0.5).dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("风速", fontWeight = FontWeight.Light, fontSize = 16.sp)
-                            Text("空气状况", fontWeight = FontWeight.Light, fontSize = 16.sp)
+                            val windSpeedText = if (weatherState.dailyWind.isNotEmpty()) {
+                                val speed = weatherState.dailyWind[it].avg.speed.toInt().toString()
+                                AnnotatedString.Builder().apply {
+                                    // 添加风速值，保持默认样式
+                                    append(speed)
+                                    // 添加 "km/h"，并设置较小的字体
+                                    pushStyle(SpanStyle(fontSize = 12.sp, fontWeight = FontWeight.Black))
+                                    append("km/h")
+                                    pop()
+                                }.toAnnotatedString()
+                            } else {
+                                AnnotatedString("")
+                            }
+                            val air = if (weatherState.dailyAir.isNotEmpty()) {
+                                val speed = weatherState.dailyAir[it].avg.chn.toString()
+                                AnnotatedString.Builder().apply {
+                                    // 添加风速值，保持默认样式
+                                    append(speed)
+                                    // 添加 "km/h"，并设置较小的字体
+                                    pushStyle(SpanStyle(fontSize = 12.sp, fontWeight = FontWeight.Black))
+                                    append("Api")
+                                    pop()
+                                }.toAnnotatedString()
+                            } else {
+                                AnnotatedString("")
+                            }
+                            Text(windSpeedText, fontWeight = FontWeight.Light, fontSize = 16.sp)
+                            Text(air, fontWeight = FontWeight.Light, fontSize = 16.sp)
                         }
                     }
 
@@ -253,17 +281,31 @@ fun LineChart3(
                 )
             }
 
-            // 设置路径的起点
-            path.moveTo(points.first().x, points.first().y)
+            // 如果只有一个点，直接绘制点
+            if (points.size == 1) {
+                path.moveTo(points[0].x, points[0].y)
+            } else {
+                // 使用三次贝塞尔曲线平滑连接各个点
+                for (i in 0 until points.size - 1) {
+                    val startX = points[i].x
+                    val startY = points[i].y
+                    val endX = points[i + 1].x
+                    val endY = points[i + 1].y
 
-            // 使用直线连接各个温度点
-            (0 until points.size - 1).forEach { index ->
-                val x1 = points[index].x
-                val y1 = points[index].y
-                val x2 = points[index + 1].x
-                val y2 = points[index + 1].y
+                    // 计算控制点
+                    val controlX1 = startX + (endX - startX) / 3
+                    val controlY1 = startY
+                    val controlX2 = startX + 2 * (endX - startX) / 3
+                    val controlY2 = endY
 
-                path.lineTo(x2, y2)
+                    // 如果是第一个点，移动到起点
+                    if (i == 0) {
+                        path.moveTo(startX, startY)
+                    }
+
+                    // 绘制三次贝塞尔曲线
+                    path.cubicTo(controlX1, controlY1, controlX2, controlY2, endX, endY)
+                }
             }
 
             // 绘制顺序：从最高温度到最低温度
@@ -389,17 +431,31 @@ fun LineChart2(
                 )
             }
 
-            // 设置路径的起点
-            path.moveTo(points.first().x, points.first().y)
+            // 如果只有一个点，直接绘制点
+            if (points.size == 1) {
+                path.moveTo(points[0].x, points[0].y)
+            } else {
+                // 使用三次贝塞尔曲线平滑连接各个点
+                for (i in 0 until points.size - 1) {
+                    val startX = points[i].x
+                    val startY = points[i].y
+                    val endX = points[i + 1].x
+                    val endY = points[i + 1].y
 
-            // 使用直线连接各个温度点
-            (0 until points.size - 1).forEach { index ->
-                val x1 = points[index].x
-                val y1 = points[index].y
-                val x2 = points[index + 1].x
-                val y2 = points[index + 1].y
+                    // 计算控制点
+                    val controlX1 = startX + (endX - startX) / 3
+                    val controlY1 = startY
+                    val controlX2 = startX + 2 * (endX - startX) / 3
+                    val controlY2 = endY
 
-                path.lineTo(x2, y2)
+                    // 如果是第一个点，移动到起点
+                    if (i == 0) {
+                        path.moveTo(startX, startY)
+                    }
+
+                    // 绘制三次贝塞尔曲线
+                    path.cubicTo(controlX1, controlY1, controlX2, controlY2, endX, endY)
+                }
             }
 
             // 绘制顺序：从最高温度到最低温度
@@ -412,17 +468,7 @@ fun LineChart2(
                 Color.Black.copy(alpha = 1f).toArgb(), // 起始颜色：半透明黑色
                 Color.Transparent.toArgb() // 结束颜色：透明
             )
-            /*
 
-            val shader = android.graphics.LinearGradient(
-                0f, 0f, // 起始点坐标
-                0f, 200f, // 结束点坐标
-                colors, // 渐变颜色数组
-                null, // 颜色分布位置
-                android.graphics.Shader.TileMode.CLAMP // 渐变填充方式
-            )
-             */
-            // 使用纯黑色填充路径
             canvas.nativeCanvas.drawPath(
                 path,
                 Paint().apply {
@@ -480,14 +526,5 @@ fun <T> List<T>.safeMin(transform: (T) -> Float): Float {
         0f
     } else {
         minOfOrNull { transform(it) } ?: 0f
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview7() {
-    val WeatherViewModel = remember { WeatherViewModel() }
-    SunnyWeatherTheme {
-       // Future_Weather_Cards(WeatherViewModel)
     }
 }

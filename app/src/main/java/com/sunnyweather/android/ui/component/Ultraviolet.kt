@@ -65,7 +65,7 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:Weather
     var targetAngle by remember { mutableStateOf(45f) }
     // 使用animateFloatAsState创建动画效果
     val animatedAngle by animateFloatAsState(
-        targetValue = targetAngle,
+        targetValue = targetAngle+(225/11)*index,
         animationSpec = tween(durationMillis = 1000) // 动画时长1秒
     )
     val progress = (animatedAngle - 45f) / 270f // 计算颜色进度
@@ -109,7 +109,7 @@ fun Ultraviolet(name: String, modifier: Modifier = Modifier,weatherState:Weather
             //val dynamicAngle = 45f//45到335
 
             // 转换为数学坐标系弧度（）
-            val adjustedAngle = animatedAngle*(index*0.5)
+            val adjustedAngle = animatedAngle
             val radians = Math.toRadians(adjustedAngle.toDouble())
 
             // 计算圆心坐标

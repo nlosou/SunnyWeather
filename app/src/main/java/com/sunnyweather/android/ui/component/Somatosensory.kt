@@ -39,7 +39,16 @@ import kotlin.math.sin
 
 @Composable
 fun Somatosensory(name: String, modifier: Modifier = Modifier,weatherState: WeatherState) {
-    var sweeAngle by remember { mutableStateOf(-45f) }
+    var sweeAngle by remember { mutableStateOf(225f) }
+    var index=when(weatherState.temp[0].result.realtime.apparent_temperature){
+        in Double.NEGATIVE_INFINITY..0.0 -> 1
+        in 0.0..9.0 -> 2
+        in 9.0..17.0 -> 3
+        in 17.0..23.0 -> 4
+        in 23.0..27.0 -> 5
+        in 27.0..Double.POSITIVE_INFINITY -> 6
+        else -> 0
+    }
     BoxWithConstraints(
         contentAlignment = Alignment.Center,
         modifier = modifier.background(Color.Transparent)
@@ -56,12 +65,21 @@ fun Somatosensory(name: String, modifier: Modifier = Modifier,weatherState: Weat
         val strokeWidthDp = parentWidth * 0.07f
         // 使用animateFloatAsState创建动画效果
         val animatedAngle by animateFloatAsState(
-            targetValue = sweeAngle,
+            targetValue = sweeAngle-(270/6)*index,
             animationSpec = tween(durationMillis = 1000) // 动画时长1秒
         )
+        var text=when(weatherState.temp[0].result.realtime.apparent_temperature){
+            in Double.NEGATIVE_INFINITY..0.0 -> "寒冷"
+            in 0.0..9.0 -> "冷"
+            in 9.0..17.0 -> "凉爽"
+            in 17.0..23.0 -> "舒适"
+            in 23.0..27.0 -> "温暖"
+            in 27.0..Double.POSITIVE_INFINITY -> "炎热"
+            else -> "未知"
+        }
 
         Text(
-            text = "舒适",
+            text = text,
             modifier = Modifier.offset(y=parentHeight*0.3f),
             fontSize = textSize,
             color = Color.Gray
