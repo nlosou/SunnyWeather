@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun rainfallEntrance(navController: NavController, mainViewModel: PlaceViewModel, WeatherViewModel: WeatherViewModel) {
     var scale by remember { mutableStateOf(1f) }
+    val weatherState by WeatherViewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     BoxWithConstraints {
         val parentHeight=maxHeight

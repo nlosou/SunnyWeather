@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -84,27 +85,22 @@ fun Weather_location_easy_information(
 ) {
     val weatherState by WeatherViewModel.state.collectAsState()
     val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    // 是否授权了位置权限
-    val isLocationPermissionGranted = remember {
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-    // 是否开启了位置服务
-    var isLocationEnabled by remember {
-        mutableStateOf(
-            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                    locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-        )
-    }
-    val state = rememberPullToRefreshState()
-    if (state.isRefreshing) {
-        LaunchedEffect(true) {
-            WeatherViewModel.SeacherWeather("","")
-            WeatherViewModel.SeacherWeather(weatherState.locationLng,weatherState.locationLat)
-            "LaunchedEffect".log("start")
-            state.endRefresh()
+    val scope = rememberCoroutineScope()
+    var isIconVisible= remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) }
+    val lazyListState = rememberLazyListState()
+    val pullToRefreshState = rememberPullToRefreshState()
+
+    // 刷新逻辑控制
+    LaunchedEffect(pullToRefreshState.isRefreshing) {
+        if (pullToRefreshState.isRefreshing) {
+            scope.launch {
+                // 模拟网络请求
+                delay(2000)
+                isRefreshing = false
+                pullToRefreshState.endRefresh()
+                lazyListState.animateScrollToItem(0) // 刷新后滚动到顶部
+            }
         }
     }
     BoxWithConstraints(
@@ -127,22 +123,13 @@ fun Weather_location_easy_information(
                         },
                         textSize = textSize // 设置你的文本大小
                     )
-                    if (isLocationEnabled) {
-                        // 显示定位信息
-                        LocationUpdates(
-                            fusedLocationClient = fusedLocationClient,
-                            WeatherViewModel
-                        )
-                    } else {
-                        // 提示用户开启位置服务
-                    }
                 }
             }
-            Box(Modifier.nestedScroll(state.nestedScrollConnection).clipToBounds()) {
+            Box(Modifier.clipToBounds()) {
                 LazyColumn(
                     Modifier
                 ) {
-                    if (!state.isRefreshing) {
+
                         items(1) {
                             LazyRow { items(mainViewModel.place_num.value){
 
@@ -150,11 +137,11 @@ fun Weather_location_easy_information(
                             }
                             }
                         }
-                    }
                 }
+                // 刷新指示器
                 PullToRefreshContainer(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    state = state,
+                    state = pullToRefreshState,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                 )
             }
 

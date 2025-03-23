@@ -1,5 +1,7 @@
 package com.sunnyweather.android.ui.weather
 
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf

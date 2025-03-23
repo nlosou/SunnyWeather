@@ -24,6 +24,11 @@
         android:theme="@style/Theme.SunnyWeather"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.RefreshDemo"
+            android:exported="false"
+            android:label="@string/title_activity_refresh_demo"
+            android:theme="@style/Theme.SunnyWeather" />
+        <activity
             android:name=".ui.layout.Loading"
             android:exported="false"
             android:label="@string/title_activity_loading"

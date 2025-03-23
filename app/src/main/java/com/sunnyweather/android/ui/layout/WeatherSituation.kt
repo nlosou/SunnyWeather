@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
@@ -84,6 +85,7 @@ import com.sunnyweather.android.ui.myiconpack.Point
 import com.sunnyweather.android.ui.place.PlaceViewModel
 import com.sunnyweather.android.ui.theme.WeatherWallpaper
 import com.sunnyweather.android.ui.weather.WeatherViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -159,9 +161,9 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
         }
     }
 
-    var isIconVisible= remember { mutableStateOf(false) }
 
-    Box {
+
+    Box() {
         AnimatedVisibility(
             visible = isInitialLoading,
             enter = fadeIn(),
@@ -243,16 +245,11 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                 enter = fadeIn(animationSpec = tween(durationMillis = 400))+scaleIn(),
                                 exit = fadeOut(animationSpec = tween(durationMillis = 400))+ scaleOut()
                             ){
+
                                 Box()
                                 {
-
-                                    //天气图标显示
                                     Column (
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .alpha(if (weatherState.isExpanded) 0f else 1f)
                                     ) {
-                                        // val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
                                         //天气实况
                                         HorizontalPager(
                                             state = pagerState,
@@ -262,7 +259,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                             // 根据当前页面索引动态调整 visible 状态
                                             val isVisible2 = page == pagerState.currentPage
                                             WeatherViewModel.cacheWeather(isVisible2)
-                                            isIconVisible.value =isVisible2
                                             AnimatedVisibility(
                                                 visible = isVisible2,
                                                 enter = fadeIn(animationSpec = tween(durationMillis = 400)) + scaleIn(initialScale = 0.5f),
@@ -299,7 +295,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
 
                                             }
                                         }
-
                                         //未来几天天气
                                         Card (
                                             Modifier
@@ -317,6 +312,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                             }
                                         }
                                     }
+
                                     Box( // Box 布局，用于显示天气图标
                                         modifier = Modifier
                                             .align(Alignment.Center) // 图标水平居中
@@ -365,9 +361,6 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
             }
         }
     }
-
-
-
 }
 
 @Composable
