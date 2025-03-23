@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package com.sunnyweather.android.logic.model.data
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 
@@ -48,7 +47,6 @@ import com.sunnyweather.android.logic.model.data.WeatherBackground.RainBg
 import com.sunnyweather.android.logic.model.data.WeatherBackground.ShowersBg
 import com.sunnyweather.android.logic.model.data.WeatherBackground.SnowBg
 import com.sunnyweather.android.logic.model.data.WeatherBackground.StormBg
-import com.sunnyweather.android.logic.model.data.WeatherBackground.SunnyBg
 import com.sunnyweather.android.logic.model.data.WeatherComposedInfo.CloudyComposed
 import com.sunnyweather.android.logic.model.data.WeatherComposedInfo.CloudyRainComposed
 import com.sunnyweather.android.logic.model.data.WeatherComposedInfo.HeavyRainComposed
@@ -81,6 +79,7 @@ import com.sunnyweather.android.ui.Anime.Rains
 import com.sunnyweather.android.ui.Anime.Snow
 import com.sunnyweather.android.ui.Anime.Sun
 import com.sunnyweather.android.ui.Anime.Thunder
+import com.sunnyweather.android.ui.theme.WeatherType
 
 // 定义天气类型及其相关属性
 enum class Weather(
@@ -88,35 +87,35 @@ enum class Weather(
     val composedIcon: ComposeInfo, // 由多个元素组成的图标
     val icon: @Composable () -> Unit, // 静态图标
     val animatableIcon: @Composable () -> Unit, // 动态图标
-    val background: BgColors // 背景色
+    val background: WeatherType // 背景色
 ) {
     Sunny(
         "Sunny",
-        SunnyComposed, SunnyIcon, SunnyAnimatableIcon, SunnyBg
+        SunnyComposed, SunnyIcon, SunnyAnimatableIcon, WeatherType.SUNNY
     ), // 晴天
     MostlyClear(
         "Clear with periodic clouds",
-        MostlyClearComposed, MostlyClearIcon, MostlyClearAnimatableIcon, ClearBg
+        MostlyClearComposed, MostlyClearIcon, MostlyClearAnimatableIcon, WeatherType.SUNNY
     ), // 大部分晴朗
     Cloudy(
         "Cloudy",
-        CloudyComposed, CloudyIcon, CloudyAnimatableIcon, CloudyBg
+        CloudyComposed, CloudyIcon, CloudyAnimatableIcon, WeatherType.CLOUDY
     ), // 多云
     CloudyRain(
         "Cloudy with periodic showers",
-        CloudyRainComposed, RainIcon, RainAnimatableIcon, ShowersBg
+        CloudyRainComposed, RainIcon, RainAnimatableIcon, WeatherType.RAINY
     ), // 阵雨
     HeavyRain(
         "Heavy rain",
-        HeavyRainComposed, HeavyRainIcon, HeavyRainAnimatableIcon, RainBg
+        HeavyRainComposed, HeavyRainIcon, HeavyRainAnimatableIcon, WeatherType.RAINY
     ), // 大雨
     Snowy(
         "Snowy",
-        SnowyComposed, SnowyIcon, SnowAnimatableIcon, SnowBg
+        SnowyComposed, SnowyIcon, SnowAnimatableIcon, WeatherType.RAINY
     ), // 下雪
     Storm(
         "Thundery storm",
-        ThunderStormComposed, ThunderStormIcon, {ThunderStormAnimatableIcon()}, StormBg
+        ThunderStormComposed, ThunderStormIcon, {ThunderStormAnimatableIcon()}, WeatherType.RAINY
     ) // 雷暴
 }
 

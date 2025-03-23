@@ -41,23 +41,23 @@ fun WeatherWallpaper(
     modifier: Modifier = Modifier
 ) {
     val colors = when (weatherType) {
-        WeatherType.SUNNY -> WeatherColors(
-            primary = Color(0xFFFFF3E0),
-            secondary = Color(0xFFFFB300),
-            particle = Color(0xFFFF6D00),
+        WeatherType.SNOWY -> WeatherColors(
+            primary = Color(0xFFFF6D00),
+            secondary = Color(0xFFFFF3E0),
+            particle = Color(0xFFFFB300),
             accent = Color(0xFFFF1744)
         )
         WeatherType.RAINY -> WeatherColors(
-            primary = Color(0xFFE3F2FD),
-            secondary = Color(0xFF2196F3),
-            particle = Color(0xFF0D47A1),
+            primary = Color(0xFF2196F3),
+            secondary = Color(0xFFE3F2FD),
+            particle = Color(0xFF1A52AF),
             accent = Color(0xFF1565C0)
         )
-        WeatherType.SNOWY -> WeatherColors(
-            primary = Color(0xFFE0F7FA),
-            secondary = Color(0xFFB2EBF2),
-            particle = Color(0xFFFFFFFF),
-            accent = Color(0xFF80DEEA)
+        WeatherType.SUNNY -> WeatherColors(
+            primary = Color(0xFFB2EBF2),
+            secondary = Color(0xFFE0F7FA),
+            particle = Color(0xFF80DEEA),
+            accent = Color(0xFFFFFFFF)
         )
         WeatherType.CLOUDY -> WeatherColors(
             primary = Color(0xFFECEFF1),
@@ -69,16 +69,16 @@ fun WeatherWallpaper(
 
     // 背景渐变
     val gradient = Brush.linearGradient(
-        colors = listOf(colors.primary, colors.secondary),
+        colors = listOf(colors.primary, colors.secondary,colors.particle,colors.accent),
         start = Offset.Zero, // 左上角
-        end = Offset.Infinite // 右下角
+        end = Offset.Infinite, // 右下角
+        tileMode = TileMode.Repeated
     )
 
     Box(modifier = modifier.fillMaxSize()) {
         Canvas(modifier = Modifier
             .fillMaxSize()
             .background(gradient)) {
-
             // 绘制天气特效
             when (weatherType) {
                 WeatherType.SUNNY -> drawSunEffects(colors)

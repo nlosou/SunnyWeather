@@ -1,6 +1,7 @@
 package com.sunnyweather.android.ui.weather
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,7 +38,7 @@ data class WeatherState(
     var locationLat:String="",
     var isExpanded: Boolean = false,
     var targetAngle: Float =270f,
-    var page:Int=0
+    var page:Int=0,
 )
 
 class WeatherViewModel:ViewModel() {
@@ -46,6 +47,13 @@ class WeatherViewModel:ViewModel() {
     val state: StateFlow<WeatherState> = _state.asStateFlow()
     var _hourly = mutableStateOf<List<RealtimeResponse.Result.Hourly.Temperature>>(emptyList())
     var _hourly_Sky = mutableStateOf<List<RealtimeResponse.Result.Hourly.Skycon>>(emptyList())
+
+    val pageWeatherData = mutableStateOf(false)
+
+    fun cacheWeather(page: Boolean) {
+        pageWeatherData.value=page
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val WeatherFlow=locationFlowData.flatMapLatest {
         query->

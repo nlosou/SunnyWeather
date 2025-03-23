@@ -1,7 +1,10 @@
 package com.sunnyweather.android.ui.layout
 
 import Weather_other_info
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
@@ -10,6 +13,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -94,7 +98,7 @@ import com.sunnyweather.android.ui.weather.WeatherViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mainViewModel: PlaceViewModel) {
     val weatherState by WeatherViewModel.state.collectAsState()
@@ -102,6 +106,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val scope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
 
+    var isInitialLoading by remember { mutableStateOf(true) } // 新增加载状态
 
     // 添加一个状态变量来控制是否显示 Weather_other_info
     var showWeatherOtherInfo by remember { mutableStateOf(false) }
@@ -148,6 +153,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
         } else {
             "MainActivity".log("没保存")
         }
+        isInitialLoading=false
     }
     lateinit var fusedLocationClient: FusedLocationProviderClient
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -164,186 +170,214 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
             mainViewModel.place_name.value=mainViewModel.getSavedPlace()[pagerState.currentPage].formatted_address
         }
     }
+
     var isIconVisible= remember { mutableStateOf(false) }
 
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-    ){
-        WeatherWallpaper(WeatherType.SUNNY)
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        )
-        {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-                        title = {
-                            Box( // 使用 Box 包裹标题内容
-                                contentAlignment = Alignment.Center // 确保内容垂直居中
-                            ) {
-                                TopAppBarAddress(updateIsExpanded, mainViewModel, state)
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = {
-                                navController.navigate("Place_manage")
-                            }) {
-                                Icon(Icons.Filled.Add, contentDescription = "", modifier = Modifier.size(30.dp))
-                            }
-                            IconButton(onClick = {
-
-                            }) {
-                                Icon(Icons.Filled.MoreVert, contentDescription = "",modifier = Modifier.size(30.dp))
-                            }
-                        }
-                    )
-                },
-            ) { contentPadding ->
-                Box(modifier = Modifier.padding(contentPadding)
-                    .pointerInput(Unit) {
-                        detectVerticalDragGestures { change, dragAmount ->
-                            val verticalDragOffset = dragAmount
-                            // 根据垂直拖动的偏移量来控制weatherState.isExpanded的状态
-                            // 这里需要根据你的具体需求来实现
-                            if (verticalDragOffset > 0) {
-                                // 手指向上滑
-                                updateIsExpanded.value=false
-                            } else if (verticalDragOffset < 0) {
-                                // 手指向下滑
-                                updateIsExpanded.value=true
-                            }
-                        }
+    Box {
+        AnimatedVisibility(
+            visible = isInitialLoading,
+            enter = fadeIn(),
+            exit = fadeOut(animationSpec = tween(durationMillis = 700))
+        ){
+            Loading()
+        }
+        AnimatedVisibility(
+            visible = !isInitialLoading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ){
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+            ){
+                AnimatedVisibility(
+                    visible = WeatherViewModel.pageWeatherData.value,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 400)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                ){
+                    if (weatherState.temp.isNotEmpty()){
+                        WeatherWallpaper(WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).bg)
                     }
-                ) {
-                    AnimatedVisibility(
-                        visible = !updateIsExpanded.value,
-                        enter = fadeIn(animationSpec = tween(durationMillis = 400))+scaleIn(),
-                        exit = fadeOut(animationSpec = tween(durationMillis = 400))+ scaleOut()
-                    ){
-                        Box()
-                        {
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+                {
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        containerColor = Color.Transparent,
+                        topBar = {
+                            TopAppBar(
+                                colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
+                                title = {
+                                    Box( // 使用 Box 包裹标题内容
+                                        contentAlignment = Alignment.Center // 确保内容垂直居中
+                                    ) {
+                                        TopAppBarAddress(updateIsExpanded, mainViewModel, state)
+                                    }
+                                },
+                                actions = {
+                                    IconButton(onClick = {
+                                        navController.navigate("Place_manage")
+                                    }) {
+                                        Icon(Icons.Filled.Add, contentDescription = "", modifier = Modifier.size(30.dp))
+                                    }
+                                    IconButton(onClick = {
 
-                            //天气图标显示
-                            Column (
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .alpha(if (weatherState.isExpanded) 0f else 1f)
-                            ) {
-                                // val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
-                                //天气实况
+                                    }) {
+                                        Icon(Icons.Filled.MoreVert, contentDescription = "",modifier = Modifier.size(30.dp))
+                                    }
+                                }
+                            )
+                        },
+                    ) { contentPadding ->
+                        Box(modifier = Modifier.padding(contentPadding)
+                            .pointerInput(Unit) {
+                                detectVerticalDragGestures { change, dragAmount ->
+                                    val verticalDragOffset = dragAmount
+                                    // 根据垂直拖动的偏移量来控制weatherState.isExpanded的状态
+                                    // 这里需要根据你的具体需求来实现
+                                    if (verticalDragOffset > 0) {
+                                        // 手指向上滑
+                                        updateIsExpanded.value=false
+                                    } else if (verticalDragOffset < 0) {
+                                        // 手指向下滑
+                                        updateIsExpanded.value=true
+                                    }
+                                }
+                            }
+                        ) {
+                            AnimatedVisibility(
+                                visible = !updateIsExpanded.value,
+                                enter = fadeIn(animationSpec = tween(durationMillis = 400))+scaleIn(),
+                                exit = fadeOut(animationSpec = tween(durationMillis = 400))+ scaleOut()
+                            ){
+                                Box()
+                                {
+
+                                    //天气图标显示
+                                    Column (
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .alpha(if (weatherState.isExpanded) 0f else 1f)
+                                    ) {
+                                        // val (BoxWith, Easy_Weather, Weather_Icon, future_caed, Alarm, hour_situation) = remember { createRefs() }
+                                        //天气实况
+                                        HorizontalPager(
+                                            state = pagerState,
+                                            modifier = Modifier,
+                                            flingBehavior = PagerDefaults.flingBehavior(
+                                                state = pagerState,)
+                                        ){ page->
+                                            WeatherViewModel.set_isSkycon(page)
+                                            // 根据当前页面索引动态调整 visible 状态
+
+                                            val isVisible2 = page == pagerState.currentPage
+                                            WeatherViewModel.cacheWeather(isVisible2)
+                                            isIconVisible.value =isVisible2
+                                            AnimatedVisibility(
+                                                visible = isVisible2,
+                                                enter = fadeIn(animationSpec = tween(durationMillis = 400)) + scaleIn(initialScale = 0.5f),
+                                                exit = fadeOut(animationSpec = tween(durationMillis = 400)) + scaleOut(targetScale = 0.5f)
+                                            ){
+                                                Weather_location_easy_information(
+                                                    Modifier.padding(16.dp).wrapContentHeight(),
+                                                    fusedLocationClient = fusedLocationClient,
+                                                    WeatherViewModel,
+                                                    mainViewModel
+                                                )
+                                            }
+
+                                        }
+                                        //每小时天气状况
+                                        Card(
+                                            modifier = Modifier
+                                                .background(Color.Transparent)
+                                                .alpha(if (weatherState.isExpanded) 0.1f else 1f),
+                                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                            shape = RoundedCornerShape(0.dp)
+                                        ) {
+
+                                            // 获取模拟的 DailyWeather 数据
+                                            if (weatherState.hourly.isNotEmpty()){
+                                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                                "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
+                                                HourlyWeatherChart(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    dailyWeather = dailyWeather,
+                                                    WeatherViewModel
+                                                )
+                                            }else{
+
+                                            }
+                                        }
+
+                                        //未来几天天气
+                                        Card (
+                                            Modifier
+                                                .padding(3.dp),
+                                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                                            shape = RoundedCornerShape(0.dp)
+                                        ){
+                                            if (weatherState.daily.isNotEmpty()){
+                                                val dailyWeather = WeatherDataProvider.dailyWeather.first()
+                                                Future_Weather_Cards(WeatherViewModel,
+                                                    dailyWeather
+                                                )
+                                            }else{
+
+                                            }
+                                        }
+                                    }
+                                    Box( // Box 布局，用于显示天气图标
+                                        modifier = Modifier
+                                            .align(Alignment.Center) // 图标水平居中
+                                            .scale(6f)
+                                            .offset(x=15.dp,y=-50.dp)
+                                            .alpha(if (weatherState.isExpanded) 0f else 1f)
+                                        // 图标缩放为 60%
+                                    ){
+                                        AnimatedVisibility(
+                                            visible =weatherState.temp.isNotEmpty(),
+                                            enter = fadeIn(animationSpec = tween(durationMillis = 400)) ,
+                                            exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                                        ){
+                                            WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).anime_icon()
+                                        }
+
+                                    }
+                                }
+                            }
+                            // 使用 HorizontalPager 实现左右滑动切换城市
+                            AnimatedVisibility(
+                                visible = updateIsExpanded.value,
+                                enter = fadeIn(animationSpec = tween(durationMillis = 400))+slideIn { fullBounds ->
+                                    IntOffset(0, fullBounds.height)
+                                }  ,
+                                exit = fadeOut(animationSpec = tween(durationMillis = 400))+slideOut { fullBounds ->
+                                    IntOffset(0, fullBounds.height)
+                                }
+                            ){
                                 HorizontalPager(
                                     state = pagerState,
                                     modifier = Modifier,
                                     flingBehavior = PagerDefaults.flingBehavior(
                                         state = pagerState,)
-                                ){ page->
-                                    WeatherViewModel.set_isSkycon(page)
-                                    // 根据当前页面索引动态调整 visible 状态
-                                    val isVisible2 = page == pagerState.currentPage
-                                    isIconVisible.value =isVisible2
-                                    AnimatedVisibility(
-                                        visible = isVisible2,
-                                        enter = fadeIn(animationSpec = tween(durationMillis = 400)) + scaleIn(initialScale = 0.5f),
-                                        exit = fadeOut(animationSpec = tween(durationMillis = 400)) + scaleOut(targetScale = 0.5f)
-                                    ){
-                                        Weather_location_easy_information(
-                                            Modifier.padding(16.dp).wrapContentHeight(),
-                                            fusedLocationClient = fusedLocationClient,
-                                            WeatherViewModel,
-                                            mainViewModel
-                                        )
-                                    }
-
-                                }
-                                //每小时天气状况
-                                Card(
-                                    modifier = Modifier
-                                        .background(Color.Transparent)
-                                        .alpha(if (weatherState.isExpanded) 0.1f else 1f),
-                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                                    shape = RoundedCornerShape(0.dp)
-                                ) {
-
-                                    // 获取模拟的 DailyWeather 数据
-                                    if (weatherState.hourly.isNotEmpty()){
-                                        val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                        "dailyWeather".log(dailyWeather.toString())// 取第一个 DailyWeather
-                                        HourlyWeatherChart(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            dailyWeather = dailyWeather,
-                                            WeatherViewModel
-                                        )
-                                    }else{
-
-                                    }
-                                }
-
-                                //未来几天天气
-                                Card (
-                                    Modifier
-                                        .padding(3.dp),
-                                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                                    shape = RoundedCornerShape(0.dp)
                                 ){
-                                    if (weatherState.daily.isNotEmpty()){
-                                        val dailyWeather = WeatherDataProvider.dailyWeather.first()
-                                        Future_Weather_Cards(WeatherViewModel,
-                                            dailyWeather
-                                        )
-                                    }else{
-
-                                    }
-                                }
-                            }
-                            Box( // Box 布局，用于显示天气图标
-                                modifier = Modifier
-                                    .align(Alignment.Center) // 图标水平居中
-                                    .scale(6f)
-                                    .offset(x=15.dp,y=-50.dp)
-                                    .alpha(if (weatherState.isExpanded) 0f else 1f)
-                                // 图标缩放为 60%
-                            ){
-                                AnimatedVisibility(
-                                    visible =weatherState.temp.isNotEmpty(),
-                                    enter = fadeIn(animationSpec = tween(durationMillis = 400)) ,
-                                    exit = fadeOut(animationSpec = tween(durationMillis = 400))
-                                ){
-                                    WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).anime_icon()
+                                    Weather_other_info(Modifier,navController,mainViewModel,WeatherViewModel)
                                 }
 
                             }
                         }
-                    }
-                    // 使用 HorizontalPager 实现左右滑动切换城市
-                    AnimatedVisibility(
-                        visible = updateIsExpanded.value,
-                        enter = fadeIn(animationSpec = tween(durationMillis = 400))+slideIn { fullBounds ->
-                            IntOffset(0, fullBounds.height)
-                        }  ,
-                        exit = fadeOut(animationSpec = tween(durationMillis = 400))+slideOut { fullBounds ->
-                            IntOffset(0, fullBounds.height)
-                        }
-                    ){
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier,
-                            flingBehavior = PagerDefaults.flingBehavior(
-                                state = pagerState,)
-                        ){
-                            Weather_other_info(Modifier,navController,mainViewModel,WeatherViewModel)
-                        }
-
                     }
                 }
             }
         }
     }
+
+
+
 }
 
 @Composable
