@@ -2,11 +2,9 @@ package com.sunnyweather.android.ui.layout
 
 import Weather_other_info
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -40,10 +38,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -64,13 +60,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
@@ -80,9 +72,7 @@ import com.google.android.gms.location.LocationServices
 import com.sunnyweather.android.SunnyWeatherApplication.Companion.context
 import com.sunnyweather.android.logic.model.data.WeatherDataProvider
 import com.sunnyweather.android.log
-import com.sunnyweather.android.logic.GMS.LocationUpdates
 import com.sunnyweather.android.logic.model.WeatherCodeConverter
-import com.sunnyweather.android.ui.Anime.PagerState
 import com.sunnyweather.android.ui.Anime.animateOffsetAndAlpha
 import com.sunnyweather.android.ui.MyIconPack
 import com.sunnyweather.android.ui.component.AutoScrollText
@@ -92,10 +82,8 @@ import com.sunnyweather.android.ui.component.Weather_location_easy_information
 import com.sunnyweather.android.ui.layout.ui.theme.SunnyWeatherTheme
 import com.sunnyweather.android.ui.myiconpack.Point
 import com.sunnyweather.android.ui.place.PlaceViewModel
-import com.sunnyweather.android.ui.theme.WeatherType
 import com.sunnyweather.android.ui.theme.WeatherWallpaper
 import com.sunnyweather.android.ui.weather.WeatherViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -104,7 +92,7 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
     val weatherState by WeatherViewModel.state.collectAsState()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
-    val configuration = LocalConfiguration.current
+
 
     var isInitialLoading by remember { mutableStateOf(true) } // 新增加载状态
 
@@ -190,13 +178,15 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                 modifier = Modifier
                     .fillMaxSize()
             ){
-                AnimatedVisibility(
-                    visible = WeatherViewModel.pageWeatherData.value,
-                    enter = fadeIn(animationSpec = tween(durationMillis = 400)),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 400))
-                ){
-                    if (weatherState.temp.isNotEmpty()){
-                        WeatherWallpaper(WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).bg)
+                if (weatherState.temp.isNotEmpty()) {
+                    AnimatedContent(
+                        targetState = weatherState.temp[0].result.realtime.skycon,
+                        transitionSpec = {
+                            // 淡入新内容，同时淡出旧内容
+                            fadeIn(animationSpec = tween(400)) with fadeOut(animationSpec = tween(400))
+                        }
+                    ) { targetSkycon ->
+                        WeatherWallpaper(WeatherCodeConverter.getSky(targetSkycon).bg)
                     }
                 }
                 Box(
@@ -266,13 +256,10 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                         //天气实况
                                         HorizontalPager(
                                             state = pagerState,
-                                            modifier = Modifier,
-                                            flingBehavior = PagerDefaults.flingBehavior(
-                                                state = pagerState,)
+                                            modifier = Modifier
                                         ){ page->
                                             WeatherViewModel.set_isSkycon(page)
                                             // 根据当前页面索引动态调整 visible 状态
-
                                             val isVisible2 = page == pagerState.currentPage
                                             WeatherViewModel.cacheWeather(isVisible2)
                                             isIconVisible.value =isVisible2
@@ -338,14 +325,17 @@ fun Greeting(navController: NavController, WeatherViewModel:WeatherViewModel,mai
                                             .alpha(if (weatherState.isExpanded) 0f else 1f)
                                         // 图标缩放为 60%
                                     ){
-                                        AnimatedVisibility(
-                                            visible =weatherState.temp.isNotEmpty(),
-                                            enter = fadeIn(animationSpec = tween(durationMillis = 400)) ,
-                                            exit = fadeOut(animationSpec = tween(durationMillis = 400))
-                                        ){
-                                            WeatherCodeConverter.getSky(weatherState.temp[0].result.realtime.skycon).anime_icon()
+                                        if (weatherState.temp.isNotEmpty()) {
+                                            AnimatedContent(
+                                                targetState = weatherState.temp[0].result.realtime.skycon,
+                                                transitionSpec = {
+                                                    // 淡入新内容，同时淡出旧内容
+                                                    fadeIn(animationSpec = tween(300)) with fadeOut(animationSpec = tween(300))
+                                                }
+                                            ) { targetSkycon ->
+                                                WeatherCodeConverter.getSky(targetSkycon).anime_icon()
+                                            }
                                         }
-
                                     }
                                 }
                             }
