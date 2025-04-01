@@ -3,8 +3,8 @@
 纯新手，就想试试，顺便把一些框架的用法写下来
 
 目前大致的样子
-![](Markdown_Data/Screen_recording_20250401_140235.gif)
-![](Markdown_Data/Screen_recording_20250401_140313.gif)
+![3333](Markdown_Data/Screen_recording_20250401_140235.gif)
+![333](Markdown_Data/Screen_recording_20250401_140313.gif)
 <div style="text-align: center;">
   <img src="Markdown_Data/Screen_recording_20250401_140235.gif" 
        alt="动态演示" 
