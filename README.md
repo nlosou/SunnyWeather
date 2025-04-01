@@ -6,7 +6,6 @@
 ![](Markdown_Data/App演示1.gif)
 
 <img src="https://www.yangmutea.email/img/App1.gif" alt="描述" width="300" height="200" align="right"/>
-![](Markdown_Data/Screen_recording_20250401_130959.gif)
 
 ## 一，项目简介
 项目采取kotlin编写，结合ViewModel,Navigation,flow等搭建MVVM架构
