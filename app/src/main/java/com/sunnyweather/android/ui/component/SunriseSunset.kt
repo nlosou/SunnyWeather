@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sunnyweather.android.log
 import com.sunnyweather.android.ui.component.ui.theme.SunnyWeatherTheme
+import com.sunnyweather.android.ui.weather.WeatherState
 import java.lang.Math.pow
 import kotlin.math.PI
 import kotlin.math.cos
@@ -43,7 +44,7 @@ import kotlin.math.sqrt
 
 
 @Composable
-fun SunriseSunset(name: String, modifier: Modifier = Modifier) {
+fun SunriseSunset(name: String, modifier: Modifier = Modifier,weatherState:WeatherState) {
     BoxWithConstraints(
         contentAlignment = Alignment.Center,
         modifier = modifier.background(Color.Transparent)
@@ -66,13 +67,13 @@ fun SunriseSunset(name: String, modifier: Modifier = Modifier) {
         // 按父容器宽度 3% 设置线条宽度
         val strokeWidthDp = parentWidth * 0.05f
         Text(
-            text = "06:29",
+            text = weatherState.temp[0].result.daily.astro[0].sunrise.time,
             modifier = Modifier.offset(y=parentHeight*0.45f, x = parentHeight*-0.4f),
             fontSize = textSize,
             color = Color.Gray
         )
         Text(
-            text = "18:35",
+            text = weatherState.temp[0].result.daily.astro[2].sunset.time,
             modifier = Modifier.offset(y=parentHeight*0.45f, x = parentHeight*0.4f),
             fontSize = textSize,
             color = Color.Gray
@@ -201,8 +202,6 @@ private fun DrawScope.drawCosCurve(size: Size, strokeWidth: Float) {
         style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
     )
 
-
-
     drawPath(
         path = upperPath,
         color = Color(rgb(251,202,107)),
@@ -238,6 +237,6 @@ private fun calculateIntersection(
 @Composable
 fun GreetingPreview25() {
     SunnyWeatherTheme {
-        SunriseSunset("Android")
+        //SunriseSunset("Android")
     }
 }

@@ -208,7 +208,7 @@ fun WeatherCard(
                 title.contains("体感") -> Box(modifier = Modifier.weight(1f)) { Somatosensory("", Modifier, weatherState) }
                 title.contains("风") -> Box(modifier = Modifier.weight(1f)) { Wind("") }
                 title.contains("气压") -> Box(modifier = Modifier.weight(1f)) { AtmosphericPressure("") }
-                title.contains("日")-> Box(modifier=Modifier.weight(1f)){SunriseSunset("")}
+                title.contains("日")-> Box(modifier=Modifier.weight(1f)){SunriseSunset("",Modifier,weatherState)}
             }
 
         }

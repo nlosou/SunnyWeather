@@ -64,8 +64,6 @@ fun RefreshDemo() {
                 }
             }
 
-
-
             // 刷新逻辑控制
             LaunchedEffect(pullToRefreshState.isRefreshing) {
                 if (pullToRefreshState.isRefreshing) {

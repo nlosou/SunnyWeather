@@ -2,6 +2,9 @@
 ## 前言 
 纯新手，就想试试，顺便把一些框架的用法写下来
 
+目前大致的样子
+![演示](Markdown_Data/App演示1.gif)
+![演示](Markdown_Data/Screen_recording_20250401_130959.gif)
 ## 一，项目简介
 项目采取kotlin编写，结合ViewModel,Navigation,flow等搭建MVVM架构
 
