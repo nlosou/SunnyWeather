@@ -4,7 +4,7 @@
 
 目前大致的样子
 ![](Markdown_Data/App演示1.gif)
-![](Markdown_Data/Screen_recording_20250401_130959.gif)
+![](./Screen_recording_20250401_130959.gif)
 ## 一，项目简介
 项目采取kotlin编写，结合ViewModel,Navigation,flow等搭建MVVM架构
 
