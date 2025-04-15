@@ -3,14 +3,9 @@
 纯新手，就想试试，顺便把一些框架的用法写下来
 
 目前大致的样子
-![3333](Markdown_Data/Screen_recording_20250401_140235.gif)
-![333](Markdown_Data/Screen_recording_20250401_140313.gif)
-<div style="text-align: center;">
-  <img src="Markdown_Data/Screen_recording_20250401_140235.gif" 
-       alt="动态演示" 
-       width="60%" 
-       style="border-radius: 8px;">
-</div>
+![](Markdown_Data/Screen_recording_20250401_140235.gif)
+![](Markdown_Data/Screen_recording_20250401_140313.gif)
+
 
 ## 一，项目简介
 项目采取kotlin编写，结合ViewModel,Navigation,flow等搭建MVVM架构
